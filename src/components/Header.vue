@@ -26,7 +26,7 @@ export default{
     <div class="headerShow">
         <div class="box">
             <RouterLink to="/" class="a">首頁</RouterLink>
-            <RouterLink to="/shop" class="a">購票</RouterLink>
+            <RouterLink to="/ticket" class="a">購票</RouterLink>
             <RouterLink :to="`/mypage`" class="a">個人主頁</RouterLink>
             <RouterLink :to="`/create`" class="a">影迷創作</RouterLink>
             <div v-if="this.login == true" style="width: 250px;">

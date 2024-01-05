@@ -5,10 +5,10 @@ import Header from './components/Header.vue';
 
 <template class="body">
   <div class="total">
-    <div class="header" :class="{ccb:b}">
+    <div class="header">
       <Header />
     </div>
-    <div class="content" :class="{ccc:b}">
+    <div class="content">
       <RouterView />
     </div>
   </div>
@@ -21,8 +21,7 @@ import Header from './components/Header.vue';
   .header {
   height: 10vh;
 }
-
-.content{
+  .content{
   width: 100vw;
   height: 90vh;
   text-align: center;

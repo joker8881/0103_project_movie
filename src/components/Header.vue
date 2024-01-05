@@ -4,21 +4,20 @@ import { mapState,mapActions } from 'pinia';
 export default{
     data(){
         return{
+            login:'',
+            loginAccount:"AA123",
         }
     },
     components:{
         RouterLink,
     },
     computed:{
-        home(){
-            this.$router.push('/')
-        },
-        about(){
-            this.$router.push('/about')
-        },
-        c(){
-            this.$router.push('/VtextAndVmodel')
-        },
+    },
+    methods:{
+
+    },
+    mounted(){
+        // this.login = true
     }
 }
 </script>
@@ -26,9 +25,14 @@ export default{
 <template>
     <div class="headerShow">
         <div class="box">
-            <RouterLink to="/" class="a" :class="{'cass': this.location === 1}" >Home</RouterLink>
-            <RouterLink to="/about" class="a" :class="{'cass': this.location === 2}">About</RouterLink>
-            <RouterLink :to="`/login`" class="a" :class="{'cass': this.location === 16}">記帳表單</RouterLink>
+            <RouterLink to="/" class="a">首頁</RouterLink>
+            <RouterLink to="/shop" class="a">購票</RouterLink>
+            <RouterLink :to="`/mypage`" class="a">個人主頁</RouterLink>
+            <RouterLink :to="`/create`" class="a">影迷創作</RouterLink>
+            <div v-if="this.login == true" style="width: 250px;">
+                <p class="c">登入帳號：{{this.loginAccount }}</p>
+            </div>
+            <RouterLink :to="`/login`" class="b" v-if="this.login == false">登入</RouterLink>
         </div>
     </div>
 </template>
@@ -47,10 +51,11 @@ export default{
         height: 100%;
         background-color: #525f75;
         .a{
-            // margin-top: 20px;
+            margin-top: 10px;
+            font-family: "jf-openhuninn-2.0";
             height: 70%;
             width: 450px;
-            line-height: em;
+            line-height: 1.4em;
             font-size: 2em;
             text-decoration: none;
             white-space:nowrap;
@@ -62,6 +67,37 @@ export default{
                 color:darkslategray;
                 transform:scale(1.1,1.1);
             }
+        }
+        .b{
+            margin-top: 10px;
+            font-family: "jf-openhuninn-2.0";
+            height: 70%;
+            width: 450px;
+            line-height: 1.4em;
+            font-size: 2em;
+            text-decoration: none;
+            white-space:nowrap;
+            transition: 0.4s;
+            color: whitesmoke;
+            border-radius: 5px;
+            &:hover{
+                background-color: gainsboro;
+                color:darkslategray;
+                transform:scale(1.1,1.1);
+            }
+        }
+        .c{
+            margin-top: 0px;
+            font-family: "jf-openhuninn-2.0";
+            height: 100%;
+            width: 250px;
+            line-height: 1.6em;
+            font-size: 1.4em;
+            text-decoration: none;
+            white-space:nowrap;
+            transition: 0.4s;
+            color: whitesmoke;
+            border-radius: 5px;
         }
     }
 }

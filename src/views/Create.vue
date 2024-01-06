@@ -3,7 +3,7 @@
       <h1>This is an about page</h1>
       <p class="a">結果</p>
       <p class="a">結果</p>
-      <p class="a">結果</p>
+      <p class="a">結果123</p>
     </div>
   </template>
   

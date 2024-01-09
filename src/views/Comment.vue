@@ -294,12 +294,10 @@ export default {
   <button type="button"  @click="getPlayMovie()">按我看正在上映</button>
   <button type="button" @click="getComeMovie()">按我看即將上映</button>
   <button type="button" @click="getPerson()">按我看導演+演員</button>
-  <!-- {{ this.objPlayMovie }} -->
-  <!-- {{ this.objComeMovie }} -->
 
   <!-- 電影資料 -->
   <div class="movieData">
-    <table border="1" style="width: 50vw; margin: auto; color: #557">
+    <table border="1" style="width: 60vw; margin: auto; color: #557">
       <thead style="background-color: rgb(194, 190, 190)">
         <th>id</th>
         <th>海報</th>

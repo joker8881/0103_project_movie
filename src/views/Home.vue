@@ -175,7 +175,6 @@ export default {
 </script>
 
 <template>
-  
 <h1>近期上映電影</h1>
 <div class="container mt-5">
     <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">

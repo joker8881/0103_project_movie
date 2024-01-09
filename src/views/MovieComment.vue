@@ -2,8 +2,6 @@
 export default {
   data() {
     return {
-      objPlayMovies: [],
-      objComeMovies: [],
       objPlayPerson: [],
       objComePerson: [],
       comments: [
@@ -36,97 +34,6 @@ export default {
     },
   },
   methods: {
-    async getPlayMovie() { //上映中
-      const options = {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
-        },
-      };
-
-      let page = 1;
-      let count = 30; //要抓的電影數
-      let playingMovies = [];
-
-      try {
-        const nowDate = new Date();
-        const twoMonth = new Date();
-        twoMonth.setMonth(nowDate.getMonth() - 2);
-
-        while (playingMovies.length < count) {
-          const api = `https://api.themoviedb.org/3/movie/now_playing?language=zh-TW&page=${page}`;
-          const response = await fetch(api, options);
-
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const data = await response.json();
-          const moviesOnPage = data.results.filter((movie) => {
-            const releaseDate = new Date(movie.release_date);
-            return releaseDate >= twoMonth && releaseDate <= nowDate;
-          });
-          playingMovies = playingMovies.concat(moviesOnPage);
-          if (page < data.total_pages) {
-            page++;
-          } else {
-            break;
-          }
-        }
-        const playMovies = playingMovies.slice(0, count);
-        this.objPlayMovies = playMovies;
-        console.log('上映中 PlayMovies:', this.objPlayMovies);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    async getComeMovie() { //即將上映
-      const options = {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
-        },
-      };
-
-      let page = 1;
-      let count = 30; //要抓的電影數
-      let comingMovies = [];
-
-      try {
-        const nowDate = new Date();
-        const oneMonth = new Date();
-        oneMonth.setMonth(nowDate.getMonth() + 1);
-
-        while (comingMovies.length < count) {
-          const api = `https://api.themoviedb.org/3/movie/upcoming?language=zh-TW&page=${page}`;
-          const response = await fetch(api, options);
-
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const data = await response.json();
-          const moviesOnPage = data.results.filter((movie) => {
-            const releaseDate = new Date(movie.release_date);
-            return releaseDate >= nowDate && releaseDate <= oneMonth;
-          });
-          comingMovies = comingMovies.concat(moviesOnPage);
-          if (page < data.total_pages) {
-            page++;
-          } else {
-            break;
-          }
-        }
-        // 截取前 count 筆資料
-        const comeMovies = comingMovies.slice(0, count);
-        this.objComeMovies = comeMovies;
-        console.log('即將上映 ComeMovies:', this.objComeMovies);
-      } catch (error) {
-        console.error(error);
-      }
-    },
     getPlayPerson(movieId) { //上映中 演員*5 + 導演*1
       const options = {
         method: "GET",
@@ -340,68 +247,22 @@ export default {
     
   },
   async mounted() {
-    await this.getPlayMovie();
-    await this.getComeMovie();
+  //   for (const item of this.objPlayMovies) {
+  //   await this.getPlayPerson(item.id);
+  // }
 
-    for (const item of this.objPlayMovies) {
-    await this.getPlayPerson(item.id);
-  }
-
-  for (const item of this.objComeMovies) {
-    await this.getComePerson(item.id);
-  }
-
-  //   setTimeout(() => {
-  //   this.objPlayMovies.forEach((item) => {
-  //     this.getPlayPerson(item.id);
-  //     // this.getPlayTrailer(item.id);
-  //   });
-  // }, 3000);
-  //   setTimeout(() => {
-  //   this.objComeMovies.forEach((item) => {
-  //     this.getComePerson(item.id);
-  //     // this.getComeTrailer(item.id);
-  //   });
-  // }, 3000);
+  // for (const item of this.objComeMovies) {
+  //   await this.getComePerson(item.id);
+  // }
   },
 };
 </script>
 
 <template>
 <!-- 電影資料 -->
-  <div class="movieData">
-  <!-- <button type="button"  @click="getPlayMovie()">按我看正在上映</button>
-  <button type="button" @click="getComeMovie()">按我看即將上映</button>
-  <button type="button" @click="getPerson()">按我看導演+演員</button> -->
-  <!-- {{ this.objPlayMovies }} -->
-  <!-- {{ this.objComeMovies }} -->
-
-  
-    <table border="1" style="width: 60vw; margin: auto; color: #557">
-      <thead style="background-color: rgb(194, 190, 190)">
-        <th>id</th>
-        <th>海報</th>
-        <th>原文名稱</th>
-        <th>名稱</th>
-        <th>簡介</th>
-        <th>上映日期</th>
-      </thead>
-      <tbody>
-        <tr v-for="(item, index) of this.objPlayMovies" :key="index">
-          <td>{{ item.id }}</td>
-          <td>
-            <!-- w92/w154/w185/w342/w500/original(原圖大小) -->
-            <img :src="'https://image.tmdb.org/t/p/w92' + item.poster_path" alt="Movie Poster"/> 
-          </td>
-          <td>{{ item.original_title }}</td>
-          <td>{{ item.title }}</td>
-          <td class="font state" v-if="item.overview === ''">此電影無簡介</td>
-          <td class="font state" v-if="item.overview !== ''">{{ item.overview }}</td>
-          <td>{{ item.release_date }}</td>
-        </tr>
-      </tbody>
-    </table>
-
+<div class="movieData">
+  <button type="button" @click="getPerson()">按我看導演+演員</button>
+      
       <!-- 導演演員資料 -->
       <div class="playDirector">
         <table border="1" style="width: 60vw; margin: auto; color: #557">
@@ -414,17 +275,7 @@ export default {
         </tr>
       </tbody>
     </table>
-      <!-- </div>
-      <div class="comeDirector" v-for="(item, index) of this.objComeDirectors" :key="index">
-        <span>{{ this.objComeDirectors.original_name }}</span>
-      </div>
-      <div class="playCast" v-for="(item, index) of this.objPlayCasts" :key="index">
-        <span>{{ item.original_name }}</span>  
-      </div>
-      <div class="comeCast" v-for="(item, index) of this.objComeCasts" :key="index">
-        <span>{{ item.original_name }}</span>   -->
-      </div>
-    
+    </div>
   </div>
 
   <!-- 討論區 -->

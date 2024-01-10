@@ -155,8 +155,22 @@ export default {
         console.error(error);
       }
     },
-    chooseMovie(x){
-      console.log(x)
+    chooseMovie(item) { //點擊電影抓此電影資訊
+      console.log(item)
+      this.$router.push({
+        name: 'moviecomment', // 新的路由
+        query: { 
+          movieGenreid: item.genre_ids,
+          movieId: item.id,
+          movieOriginaltitle: item.original_title, 
+          movieTitle: item.original_title, 
+          movieOverview: item.overview, 
+          moviePoster: item.poster_path, 
+          movieBack: item.backdrop_path, 
+          movieReleasedate: item.release_date, 
+          movieVoteavg: item.vote_average, 
+        }
+      });
     },
     nextSlide() {
       this.currentSlide = (this.currentSlide + 1) % this.itemscutArray.length;
@@ -175,6 +189,7 @@ export default {
 </script>
 
 <template>
+  
 <h1>近期上映電影</h1>
 <div class="container mt-5">
     <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
@@ -183,7 +198,15 @@ export default {
           <div class="row">
             <div v-for="(item, innerIndex) in itemsChunk" :key="innerIndex" class="col-md-4">
               <a @click="chooseMovie(item)">
-                <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100" alt="">
+                <div class="card" style="width: 420px;">
+                  <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100 card-img-top" alt="">
+                  <div class="card-body">
+                    <p class="card-text">
+                      <span>{{ "名稱：" + item.title }}</span><br>
+                      <span>{{ "上映日期：" + item.release_date }}</span>
+                    </p>
+                  </div>
+                </div>
               </a>
               <div class="carousel-caption d-none d-md-block">
               </div>
@@ -191,12 +214,12 @@ export default {
           </div>
         </div>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev" @click="prevSlide">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev" @click="prevSlide" style="left: -150px;">
+        <span class="carousel-control-prev-icon" aria-hidden="true"><i class="fa-solid fa-circle-arrow-left" style="font-size: 50px;"></i></span>
         <span class="visually-hidden">Previous</span>
       </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next" @click="nextSlide">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next" @click="nextSlide" style="right: -150px;">
+        <span class="carousel-control-next-icon" aria-hidden="true"><i class="fa-solid fa-circle-arrow-right" style="font-size: 50px"></i></span>
         <span class="visually-hidden">Next</span>
       </button>
     </div>
@@ -210,7 +233,15 @@ export default {
           <div class="row">
             <div v-for="(item, innerIndex) in itemsChunk" :key="innerIndex" class="col-md-4">
               <a @click="chooseMovie(item)">
-                <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100" alt="">
+                <div class="card" style="width: 420px;">
+                  <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100 card-img-top" alt="">
+                  <div class="card-body">
+                    <p class="card-text">
+                      <span>{{ "名稱：" + item.title }}</span><br>
+                      <span>{{ "上映日期：" + item.release_date }}</span>
+                    </p>
+                  </div>
+                </div>
               </a>
               <div class="carousel-caption d-none d-md-block">
               </div>
@@ -218,12 +249,12 @@ export default {
           </div>
         </div>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample1" data-bs-slide="prev" @click="prevSlide">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample1" data-bs-slide="prev" @click="prevSlide" style="left: -150px;">
+        <span class="carousel-control-prev-icon" aria-hidden="true"><i class="fa-solid fa-circle-arrow-left" style="font-size: 50px;"></i></span>
         <span class="visually-hidden">Previous</span>
       </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExample1" data-bs-slide="next" @click="nextSlide">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExample1" data-bs-slide="next" @click="nextSlide" style="right: -150px;">
+        <span class="carousel-control-next-icon" aria-hidden="true"><i class="fa-solid fa-circle-arrow-right" style="font-size: 50px"></i></span>
         <span class="visually-hidden">Next</span>
       </button>
     </div>

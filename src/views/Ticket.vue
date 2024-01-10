@@ -11,32 +11,52 @@
 
   <div class="sortMoive">
     <div class="moviePic">
-      <button type="button" @click="nowPlaying()">正在上映</button>
-      <button type="button" @click="nowPlayingTest()">正在上映</button>
     </div>
   </div>
 
-  <table class="table">
+  <table v-if="selectedTab === '正在熱映'" style="width: 60vw; margin: 0 auto">
     <thead>
-      <tr class="index">
+      <tr>
         <th>順序</th>
         <th>編號</th>
         <th>封面</th>
         <th>名稱</th>
         <th>介紹</th>
-        <th>開始時間</th>
-        <th>結束時間</th>
-        <th>結果</th>
+        <th>上映時間</th>
+        <th>預告片</th>
       </tr>
-      <tr v-for="(item, index) in playingMovie" :key="index">
-        <td>{{ index+1 }}</td>
-        <td>{{ item.id}}</td>
-        <td><img :src="'https://image.tmdb.org/t/p/w154'+item.poster_path" alt="" ></td>
-        <td>{{ item.original_title }}</td>
-        <td>{{ item.overview }}</td>
-        <td>{{ item.startDate }}</td>
-        <td>{{ item.endDate }}</td>
-        <td>{{ this.view }}</td>
+      <tr v-for="(item, index) in this.objPlayingMovie" :key="index">
+        <td>{{ index + 1 }}</td>
+        <td>{{ item.id }}</td>
+        <td><img :src="'https://image.tmdb.org/t/p/w154' + item.poster_path" alt=""></td>
+        <td>{{ item.title }}</td>
+        <td v-if="item.overview === ''">此電影無簡介</td>
+        <td v-if="item.overview !== ''">{{ item.overview }}</td>
+        <td>{{ item.release_date }}</td>
+        <td>{{ }}</td>
+      </tr>
+    </thead>
+  </table>
+
+  <table v-if="selectedTab === '即將上映'" style="width: 60vw; margin: 0 auto">
+    <thead>
+      <tr>
+        <th>順序</th>
+        <th>編號</th>
+        <th>封面</th>
+        <th>名稱</th>
+        <th>介紹</th>
+        <th>上映時間</th>
+        <th>預告片</th>
+      </tr>
+      <tr v-for="(item, index) in this.objUpComing" :key="index">
+        <td>{{ index + 1 }}</td>
+        <td>{{ item.id }}</td>
+        <td><img :src="'https://image.tmdb.org/t/p/w154' + item.poster_path" alt=""></td>
+        <td>{{ item.title }}</td>
+        <td v-if="item.overview === ''">此電影無簡介</td>
+        <td v-if="item.overview !== ''">{{ item.overview }}</td>
+        <td>{{ item.release_date }}</td>
       </tr>
     </thead>
   </table>
@@ -48,14 +68,16 @@ export default {
   data() {
     return {
       selectedTab: "正在熱映",
-      playingMovie: []
+      objPlayingMovie: [],
+      objUpComing: [],
+      objTrailer:[]
     };
   },
   methods: {
     selectTab(tab) {
       this.selectedTab = tab;
     },
-    nowPlayingTest() {
+    nowPlaying() {
       axios({
         method: 'GET',
         url: 'https://api.themoviedb.org/3/movie/now_playing',
@@ -67,28 +89,43 @@ export default {
       }).then(res => {
         console.log(res);
         console.log(res.data.results);
-        this.playingMovie = res.data.results
+        this.objPlayingMovie = res.data.results
       })
     },
-    nowPlaying() {
-      const options = {
+    upComing() {
+      axios({
         method: 'GET',
-        url: 'https://api.themoviedb.org/3/movie/now_playing',
+        url: 'https://api.themoviedb.org/3/movie/upcoming',
+        params: { language: 'zh-tw', page: '1' },
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNTFmNDFjYjUxYWI2NmIzMjJkMGM1OGZkMDY1Y2I1YSIsInN1YiI6IjY1NThmNzFmMDgxNmM3MDBhYmJlNWQ3MCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RtMbqdUQUCfdqaLD5SoZ18e4PlSq9Ap4ShtGhmUMm10'
+        }
+      }).then(res => {
+        console.log(res);
+        console.log(res.data.results);
+        this.objUpComing = res.data.results
+      })
+    },
+    trailer() {
+      axios({
+        method: 'GET',
+        url: 'https://api.themoviedb.org/3/movie/' +{movie_id}/videos,
         params: { language: 'en-US', page: '1' },
         headers: {
           accept: 'application/json',
           Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNTFmNDFjYjUxYWI2NmIzMjJkMGM1OGZkMDY1Y2I1YSIsInN1YiI6IjY1NThmNzFmMDgxNmM3MDBhYmJlNWQ3MCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RtMbqdUQUCfdqaLD5SoZ18e4PlSq9Ap4ShtGhmUMm10'
         }
-      };
-      axios
-        .request(options)
-        .then(function (response) {
-          console.log(response.data);
-        })
-        .catch(function (error) {
-          console.error(error);
-        });
+      }).then(res => {
+        console.log(res);
+        // console.log(res.data.results);
+        // this.objTrailer = res.data.results
+      });
     }
+  },
+  mounted() {
+    this.nowPlaying()
+    this.upComing()
   }
 };
 </script>

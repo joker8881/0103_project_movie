@@ -27,8 +27,8 @@ export default{
         <div class="box">
             <RouterLink to="/" class="a">首頁</RouterLink>
             <RouterLink to="/ticket" class="a">購票</RouterLink>
-            <RouterLink :to="`/mypage`" class="a">個人主頁</RouterLink>
-            <RouterLink :to="`/create`" class="a">影迷創作</RouterLink>
+            <RouterLink to="/mypage" class="a">個人主頁</RouterLink>
+            <RouterLink to="/create" class="a">影迷創作</RouterLink>
             <div v-if="this.login == true" style="width: 250px;">
                 <p class="c">登入帳號：{{this.loginAccount }}</p>
             </div>

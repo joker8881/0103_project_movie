@@ -273,7 +273,8 @@ export default {
 };
 </script>
 
-<template> 
+<template>
+ 
 <h1>熱映中電影</h1>
 <div class="container mt-5">
     <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">

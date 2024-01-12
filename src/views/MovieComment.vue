@@ -398,7 +398,7 @@ export default {
   </div>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 span, button, p, label, select {
   font-family: "Montserrat", sans-serif, sans-serif, "M PLUS 1";
   color: #557;

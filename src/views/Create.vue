@@ -7,7 +7,15 @@ export default {
       searchText: '',           // 搜尋文字
       searchResults: '',         // 搜尋結果
       abc: false,
-
+      //電影相關
+      objPlayMovies: [], //"篩選"過後所剩下的所有電影 (應該是這樣)
+      type: [],
+      selectedGenre: null, // 現在選擇的電影類型 (下拉不要賦予預設值，就不會影響搜尋文字)
+      movieGenres: [], //所有電影類型
+      maxVisibleCards: 8, // 控制最大显示的卡片数量
+      noResultsModal: false, // 控制无匹配电影的模态框显示
+      
+      //畫板相關
       canvasWidth: 763, // 畫板的寬度
       canvasHeight: 450, // 畫板的高度
       canvasContext: null,
@@ -55,25 +63,83 @@ export default {
       count: 0
     }
   },
+
+  created() {
+  // 先取得所有電影類型
+  this.getMovieType();
+},
+
+  computed: {
+    filteredMovies() {
+    // 如果有选中的电影类型，则首先过滤电影类型
+    let filteredByGenre = this.selectedGenre
+      ? this.objPlayMovies.filter(movie => movie.genre_ids.includes(this.selectedGenre.id))
+      : this.objPlayMovies;
+
+    // 如果有输入的搜索文本，则再次过滤电影标题
+    if (this.searchText.trim() !== '') {
+      const searchTerm = this.searchText.toLowerCase();
+      filteredByGenre = filteredByGenre.filter(movie => movie.title.toLowerCase().includes(searchTerm));
+    }
+
+    return filteredByGenre;
+  },
+
+    visibleFilteredMovies() {
+      // 仅显示前 maxVisibleCards 个过滤后的卡片
+      return this.filteredMovies.slice(0, this.maxVisibleCards);
+    },
+  },
+
   methods: {
     PerformSearch() {
       // 執行搜尋邏輯
       this.searchResults = this.searchText;
       this.searchMode = 'result';
       this.abc = true;
+
+      if (this.selectedGenre && this.selectedGenre.value === '') {
+    // 如果選擇的是「所有電影」，顯示所有電影
+    this.filteredMovies = this.objPlayMovies;
+  } else if (this.searchText === '') {
+    // 如果搜索文本为空，显示所有电影（這裡保留原有的邏輯）
+    this.filteredMovies = this.objPlayMovies;
+  } else {
+    // 根据搜索文本和選擇的類型過濾電影
+    const searchTerm = this.searchText.toLowerCase();
+    this.filteredMovies = this.objPlayMovies.filter(movie =>
+      movie.title.toLowerCase().includes(searchTerm) &&
+      (!this.selectedGenre || movie.genre_ids.includes(this.selectedGenre.id))
+    );
+
+    // 检查是否有搜索结果
+    if (this.filteredMovies.length === 0) {
+      // 显示无匹配电影的模态框
+      this.noResultsModal = true;
+      // 切回原始模式
+      this.searchMode = 'original';
+      return; // 结束方法，不再继续执行
+    }
+  }
+    // 切换到结果模式this.searchMode = 'original'
+    // this.searchMode = 'result';
+    console.log('Performing search:', this.searchText);
     },
     ResetSearch() {
       // 重置搜尋相關資料
       this.searchText = '';
       this.searchResults = '';
+      // this.selectedGenre = null; // 重置选中的电影类型
+      this.maxVisibleCards = 8; // 重置显示卡片数量
+      this.noResultsModal = false; // 確保這行存在並將 noResultsModal 設為 false
       this.searchMode = 'original';
       this.abc = false;
     },
+    
 
     onCanvasMouseDown() {
       this.isCanvasMouseDown = true
       this.setTempCanvas()
-
     },
     onCanvasMouseUp() {
       this.saveCanvasToHistory()
@@ -213,15 +279,136 @@ export default {
     },
     forward() {
       window.history.forward()
-    }
+    },
 
+    async getPlayMovie() { //上映中
+      const options = {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
+        },
+      };
+
+      let page = 1;
+      let count = 3000; //要抓的電影數
+      let playingMovies = [];//上映中的電影
+
+      try {
+        const nowDate = new Date();
+        const sixMonth = new Date();
+        sixMonth.setMonth(nowDate.getMonth() - 9);
+
+        while (playingMovies.length < count) {
+          const api = `https://api.themoviedb.org/3/movie/now_playing?language=zh-TW&page=${page}`;
+          const response = await fetch(api, options);
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await response.json();
+          
+      //      data.results.forEach((movie) => {
+            
+      //  });
+
+          const moviesOnPage = data.results.filter((movie) => {
+            const releaseDate = new Date(movie.release_date);
+            // 檢查發佈日期是否在指定範圍內
+            if (!(releaseDate >= sixMonth && releaseDate <= nowDate)) {
+              return false;
+            }
+            // 檢查poster_path是否存在
+            if (!movie.poster_path) {
+              return false;
+            }
+            // 检查genre_ids是否为空
+            if (!movie.genre_ids || movie.genre_ids.length === 0) {
+              return false;
+            }
+            return true;
+          });
+          // 移除已存在的電影，避免重複
+          for (const movie of moviesOnPage) {
+              if (!playingMovies.some((existingMovie) => existingMovie.title === movie.title)) {
+                // console.log('標題:', movie.title);
+                // console.log('電影類型:', movie.genre_ids);
+                // console.log('海报路徑:', movie.poster_path);
+                  playingMovies.push(movie);
+              }
+          }
+            if (page < data.total_pages) {
+                page++;
+        } else {
+        break;
+          }
+        }
+        // 過濾掉沒有 poster_path 的電影
+        const playMovies = playingMovies.filter((movie) => movie.poster_path).sort((a, b) => new Date(a.release_date) - new Date(b.release_date));
+        this.objPlayMovies = playMovies;
+        console.log('上映中 PlayMovies:', this.objPlayMovies);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    getMovieType() { //電影類型 
+        const options = {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww'
+        }
+      };
+      fetch('https://api.themoviedb.org/3/genre/movie/list?language=zh-TW', options)
+        .then((response) => response.json())
+        .then((response) => {
+          // 使用扩展运算符将this.type的内容赋值给movieGenres，并保留this.type
+      this.movieGenres = [...response.genres];
+      console.log(this.movieGenres);
+
+      // 設置 預設電影類型 (選項的value值由"genre.id"更改為"genre")
+      if (this.movieGenres.length > 0) {
+        this.selectedGenre = this.movieGenres[0];
+        // this.selectedGenre = this.movieGenres.find(genre => genre.id === null); //這個也可以用
+        console.log("Selected Genre:", this.selectedGenre);
+      }
+        })
+        .catch(err => console.error(err));
+    },
+
+    enterGenreArea() { //下拉選單的方法，選擇電影類型
+      this.searchMode = 'result';
+      this.abc = true;
+    // 在这里执行进入区域的逻辑
+    console.log('進入區域，選擇的電影類型是：', this.selectedGenre);
+    // 可以根据选中的电影类型执行相应的操作
   },
-  mounted() {
+
+  getMoviePosterPath(posterPath) {
+      // 返回电影的完整海报路径
+      return `https://image.tmdb.org/t/p/w500${posterPath}`;
+    },
+
+    // 显示更多卡片
+    showMoreCards() {
+      // 每次点击增加显示的卡片数量
+      this.maxVisibleCards += 4; // 或其他你希望增加的数量
+    },
+
+
+    
+},
+
+  
+async mounted() {
     this.setCanvas()
     this.currentColor = this.colors[0]
     this.setWindowEvent()
+    await this.getPlayMovie();
+    await this.getMovieType();
   },
-
 
 };
 </script>
@@ -230,20 +417,38 @@ export default {
 
 <!-- Search First -->
       <div class="First" v-if="searchMode === 'original'">
-    <input class="searchMovie1" type="text" v-model="searchText" placeholder="搜尋電影...">
-    <button @click="PerformSearch">進入區域</button>
-    
+        <select v-model="selectedGenre" @change="enterGenreArea">
+          <option value="">所有電影</option> <!-- 新增這行 -->
+          <option v-for="genre in movieGenres" :key="genre.id" :value="genre">{{ genre.name }}</option>
+        </select>
+        <input class="searchMovie1" type="text" v-model="searchText"  placeholder="搜尋電影...">
+        <button @click="PerformSearch">進入區域</button>
+        <!-- 提示信息 -->
+  <p v-if="!searchText.trim()">請輸入搜索條件</p>
+  <p v-else-if="noResultsModal">無相關電影</p>
   </div>
 
   <!-- Search First Result -->
   <div class="First2" v-if="searchMode === 'result'">
-    <button @click="ResetSearch">重新搜尋</button>
-    <p>電影名稱: {{ searchResults }}</p>
-    
-  </div>
+    <button @click="ResetSearch" style="margin-top:25px" >重搜電影</button>
+    <!-- <p>電影名稱: {{ searchResults }}</p> -->
+
+    <div class="moviePosterAll">
+      <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id" class="card" style="width: 18rem; height: 30rem; margin-right:2%; margin-top:0.2%;">
+        <img class="card-img-top" :src="getMoviePosterPath(movie.poster_path)" alt="Card image cap" style="height: 25rem;">
+        <div class="card-body">
+          <h5 class="card-title">{{ movie.title }}</h5>
+          <a href="#Second" class="btn btn-primary" style="margin-top:10px;">前往展示區</a>
+        </div>
+      </div>
+    </div>
+    <!-- Learn More 按钮 -->
+    <button v-if="visibleFilteredMovies.length < filteredMovies.length" @click="showMoreCards">Learn More</button>
+    <a href="#" class="btn btn-primary" style="">回頂部</a>
+</div>
     
 
-    <div class="bord" v-show="abc"  >
+    <div class="bord" v-show="abc" id="bord"  >
       <p>電影名稱: {{ searchResults }}</p>
  <ul class="navbar " 
      :class="{hideNavBar}"
@@ -310,33 +515,9 @@ export default {
  </ul>
 </div>
 
-  <div class="Second" v-show="abc">
+  <div class="Second" v-show="abc" id="Second">
     <p>電影名稱: {{ searchResults }}</p>
-    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="../picture/circle.png" class="d-block w-100 imgsrc" alt="...">
-      <img src="../picture/circle.png" class="d-block w-100 imgsrc" alt="...">
-
-    </div>
-    <div class="carousel-item">
-      <img src="../picture/circle.png" class="d-block w-100" alt="...">
-      <img src="../picture/circle.png" class="d-block w-100" alt="...">
-    </div>
-    <div class="carousel-item">
-      <img src="../picture/circle.png" class="d-block w-100" alt="...">
-      <img src="../picture/circle.png" class="d-block w-100" alt="...">
-    </div>
-  </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
+    
 </div>
 </template>
 
@@ -352,9 +533,27 @@ export default {
 }
 
 .First2 {
-  width: 100vw;
-  height: 100vh;
+  position: relative;
+  overflow: auto;
+  // width: 100vw;
+  // height: 100vh;
   border: 1px solid black;
+
+  .moviePosterAll{
+    width: 100%;
+    // height: 100%;
+    border: 1px solid black;
+    display: flex;
+    flex-wrap: wrap;
+    height: auto;
+    justify-content: center;
+    align-items: center;
+
+    // .card-body{
+    //   margin-top: 10px;
+    //   margin-bottom: 20px;
+    // }
+  }
 }
 
 .bord {
@@ -366,20 +565,6 @@ export default {
   width: 100vw;
   height: 100vh;
   border: 1px solid black;
-
-  .slide{
-    width:380.1px;
-    height: 500px;
-    border: 1px solid black;
-    display: flex;
-  flex-wrap: wrap;
-
-    .imgsrc{
-    border: 1px solid black;
-
-    }
-    
-  }
 
 }
 
@@ -393,14 +578,14 @@ export default {
   text-align: center;
   line-height: 60px;
   height: 75px;
-  margin-left: 315px;
+  margin-left: 385px;
   margin-top: 30px;
   // border: 2px solid #000;
 
   // left: 50%; 
   // top: 0;
   // transform: translateX(-50%);
-  width: 54.9%;
+  width: 49.9%;
   background-color: #535353;
   transition: all 0.1s;
 
@@ -433,8 +618,8 @@ export default {
   // bottom: 100px; 
   // left: 50%; 
   // transform: translateX(-50%);
-  width: 54.9%;
-  margin-left: 315px;
+  width: 49.9%;
+  margin-left: 385px;
   margin-top: -5.8px; // 往上推
   background-color: #535353;
   height: 80px;

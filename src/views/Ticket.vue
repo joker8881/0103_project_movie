@@ -70,7 +70,8 @@ export default {
       selectedTab: "正在熱映",
       objPlayingMovie: [],
       objUpComing: [],
-      objTrailer:[]
+      objTrailer:[],
+      
     };
   },
   methods: {

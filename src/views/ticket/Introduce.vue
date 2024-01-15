@@ -22,11 +22,13 @@
             </div>
         </div>
         <div class="trailer">
-            <iframe width="80%" height="500px
-    " src="https://www.youtube.com/embed/ClaD-3qPunA?si=awMfKAZKxW0Tih4N" title="YouTube video player" frameborder="0"
+            <!-- <iframe width="80%" height="500px" src="https://www.youtube.com/embed/pDak4qLyF4Q" title="YouTube video player"
+                frameborder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen></iframe>
+                allowfullscreen></iframe> -->
+            <iframe width="80%" height="500px" :src="youtubeVideoUrl" frameborder="0" allowfullscreen></iframe>
         </div>
+
         <div class="down">
             <div class="turn">
                 線上訂票
@@ -58,9 +60,17 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            video:[],
             objPlayingMovie: [],
             isVisible: false,
+            videoKey: "", // 將影片的鏈接（key）替換為實際的值
+            videoId: ""
         }
+    },
+    computed: {
+        youtubeVideoUrl() {
+            return `https://www.youtube.com/embed/${this.videoKey}`;
+        },
     },
     methods: {
         show() {
@@ -97,18 +107,40 @@ export default {
                 }
             }).then(res => {
                 console.log(res);
-                console.log(res.data.results[0]);
-                this.objPlayingMovie = res.data.results[0]
+                console.log(res.data.results[2]);
+                this.objPlayingMovie = res.data.results[2]
+                this.videoId = res.data.results[2].id
+                console.log(this.videoId);
+                this.catchTrailer()
             })
         },
+        catchTrailer() {
+            axios({
+                method: 'GET',
+                url: `https://api.themoviedb.org/3/movie/${this.videoId}/videos`,
+                params: { language: 'en-US', page: '1' },
+                headers: {
+                    accept: 'application/json',
+                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNTFmNDFjYjUxYWI2NmIzMjJkMGM1OGZkMDY1Y2I1YSIsInN1YiI6IjY1NThmNzFmMDgxNmM3MDBhYmJlNWQ3MCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RtMbqdUQUCfdqaLD5SoZ18e4PlSq9Ap4ShtGhmUMm10'
+                }
+            }).then(res => {
+                console.log(res.data.results);
+                this.video =res.data.results
+                this.video.forEach(item => {
+                    if(item.type == "Trailer"){
+                        this.videoKey = item.key
+                    }
+                }
+                );
+                console.log(this.videoKey);
+            });
+        },
     },
-    mounted() {
-        this.nowPlaying()
-        this.destroyed()
-        window.addEventListener('scroll', this.handleScroll);
-
-    }
-};
+        mounted() {
+            this.nowPlaying()
+            window.addEventListener('scroll', this.handleScroll);
+        }
+    };
 </script>
 
 <style scoped lang="scss">

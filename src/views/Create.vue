@@ -97,6 +97,7 @@ export default {
       this.searchResults = this.searchText;
       this.searchMode = 'result';
       this.abc = true;
+      this.checkCanEnterArea(); // 每次搜索后检查是否可以进入区域
 
       if (this.selectedGenre && this.selectedGenre.value === '') {
     // 如果選擇的是「所有電影」，顯示所有電影
@@ -129,11 +130,22 @@ export default {
       // 重置搜尋相關資料
       this.searchText = '';
       this.searchResults = '';
-      // this.selectedGenre = null; // 重置选中的电影类型
+      // this.selectedGenre = this.movieGenres[0]; // 重置选中的电影类型
       this.maxVisibleCards = 8; // 重置显示卡片数量
       this.noResultsModal = false; // 確保這行存在並將 noResultsModal 設為 false
       this.searchMode = 'original';
       this.abc = false;
+      this.canEnterArea = true; // 重置为可以进入区域
+    },
+
+    filterMoviesByGenre() {
+      // 根据下拉菜单选择的电影类型过滤电影
+      this.filteredMovies = this.objPlayMovies.filter(movie => movie.genre_ids.includes(this.selectedGenre.id));
+    },
+
+    checkCanEnterArea() {
+      // 检查是否可以进入区域
+      this.canEnterArea = this.filteredMovies.length > 0;
     },
     
 
@@ -371,7 +383,7 @@ export default {
       // 設置 預設電影類型 (選項的value值由"genre.id"更改為"genre")
       if (this.movieGenres.length > 0) {
         this.selectedGenre = this.movieGenres[0];
-        // this.selectedGenre = this.movieGenres.find(genre => genre.id === null); //這個也可以用
+        // this.selectedGenre = this.movieGenres.find(genre => genre.id === 28); //這個也可以用
         console.log("Selected Genre:", this.selectedGenre);
       }
         })

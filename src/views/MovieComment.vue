@@ -241,6 +241,30 @@ export default {
     resetBlur() { //暴雷背景模糊
       this.blurredArea = false;
     },
+    // 連接後端相關
+    search() {
+            fetch('http://localhost:8080/quiz/search', {
+                method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    quizName:this.searchText,
+                    startDate:this.searchStart,
+                    endDate:this.searchEnd,
+                    login: false,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+            // 處理返回的數據
+                console.log(data)
+                
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+    },
   },
   async mounted() {
     this.movieInfo = this.$route.query;

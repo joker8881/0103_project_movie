@@ -23,6 +23,11 @@ const router = createRouter({
       name: 'create',
       component: () => import('../views/Create.vue')
     },
+    {
+      path: '/moviecomment',
+      name: 'moviecomment',
+      component: () => import('../views/MovieComment.vue')
+    },
   ]
 })
 

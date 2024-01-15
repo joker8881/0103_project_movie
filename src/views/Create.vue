@@ -304,66 +304,71 @@ export default {
       };
 
       let page = 1;
-      let count = 3000; //要抓的電影數
+      let count = 9000; //要抓的電影數
       let playingMovies = [];//上映中的電影
 
       try {
-        const nowDate = new Date();
-        const sixMonth = new Date();
-        sixMonth.setMonth(nowDate.getMonth() - 9);
+    // 循環遞增頁數，直到達到指定的電影數量
+    while (playingMovies.length < count) {
+      // 組成 API 請求的 URL
+      const api = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=zh-TW&page=${page}`;
+      // 發送 API 請求
+      const response = await fetch(api, options);
 
-        while (playingMovies.length < count) {
-          const api = `https://api.themoviedb.org/3/movie/now_playing?language=zh-TW&page=${page}`;
-          const response = await fetch(api, options);
-
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const data = await response.json();
-          
-      //      data.results.forEach((movie) => {
-            
-      //  });
-
-          const moviesOnPage = data.results.filter((movie) => {
-            const releaseDate = new Date(movie.release_date);
-            // 檢查發佈日期是否在指定範圍內
-            if (!(releaseDate >= sixMonth && releaseDate <= nowDate)) {
-              return false;
-            }
-            // 檢查poster_path是否存在
-            if (!movie.poster_path) {
-              return false;
-            }
-            // 检查genre_ids是否为空
-            if (!movie.genre_ids || movie.genre_ids.length === 0) {
-              return false;
-            }
-            return true;
-          });
-          // 移除已存在的電影，避免重複
-          for (const movie of moviesOnPage) {
-              if (!playingMovies.some((existingMovie) => existingMovie.title === movie.title)) {
-                // console.log('標題:', movie.title);
-                // console.log('電影類型:', movie.genre_ids);
-                // console.log('海报路徑:', movie.poster_path);
-                  playingMovies.push(movie);
-              }
-          }
-            if (page < data.total_pages) {
-                page++;
-        } else {
-        break;
-          }
-        }
-        // 過濾掉沒有 poster_path 的電影
-        const playMovies = playingMovies.filter((movie) => movie.poster_path).sort((a, b) => new Date(a.release_date) - new Date(b.release_date));
-        this.objPlayMovies = playMovies;
-        console.log('上映中 PlayMovies:', this.objPlayMovies);
-      } catch (error) {
-        console.error(error);
+      // 檢查是否成功獲取數據
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
-    },
+      
+
+      // 解析 JSON 數據
+      const data = await response.json();
+
+      // 檢查poster_path是否存在
+      const moviesOnPage = data.results.filter((movie) => {
+        if (!movie.poster_path) {
+          return false;
+        }
+        // if (!movie.genre_ids || movie.genre_ids.length === 0) {
+        //   return false;
+        // }
+        return true;
+      });
+
+      // 移除已存在的電影，避免重複
+      for (const movie of moviesOnPage) {
+        if (!playingMovies.some((existingMovie) => existingMovie.title === movie.title)) {
+          playingMovies.push(movie);
+        }
+      }
+
+      
+      if (page < data.total_pages) {
+        page++;
+      } else {
+        break;
+      }
+    }
+
+    // 過濾掉沒有 poster_path 的電影
+    const playMovies = playingMovies.filter((movie) => movie.poster_path && movie.genre_ids && movie.genre_ids.length > 0).slice(0, count);
+this.objPlayMovies = playMovies;
+// 打印出被過濾前的電影數量
+console.log('Before filtering, total movies:', playingMovies.length);
+const playMoviesWithGenre = playingMovies.filter((movie) => movie.poster_path && movie.genre_ids && movie.genre_ids.length > 0).slice(0, count);
+this.objPlayMoviesWithGenre = playMoviesWithGenre;
+
+// 打印出被過濾掉的電影信息
+const filteredOutMovies = playingMovies.filter(movie => !playMovies.includes(movie));
+console.log('Filtered out movies:', filteredOutMovies);
+
+console.log('After slicing:', this.objPlayMovies.length);
+console.log('上映中 PlayMovies:', this.objPlayMovies);
+  } catch (error) {
+    // 處理錯誤
+    console.error(error);
+  }
+},
 
     getMovieType() { //電影類型 
         const options = {
@@ -373,7 +378,7 @@ export default {
           Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww'
         }
       };
-      fetch('https://api.themoviedb.org/3/genre/movie/list?language=zh-TW', options)
+      fetch('https://api.themoviedb.org/3/genre/movie/list?language=en-US', options)
         .then((response) => response.json())
         .then((response) => {
           // 使用扩展运算符将this.type的内容赋值给movieGenres，并保留this.type
@@ -391,7 +396,7 @@ export default {
     },
 
     enterGenreArea() { //下拉選單的方法，選擇電影類型
-      this.searchMode = 'result';
+      // this.searchMode = 'result'; //這行註解掉的原因是，不管有沒有搜到電影 他都會跳進下一頁
       this.abc = true;
     // 在这里执行进入区域的逻辑
     console.log('進入區域，選擇的電影類型是：', this.selectedGenre);
@@ -430,7 +435,7 @@ async mounted() {
 <!-- Search First -->
       <div class="First" v-if="searchMode === 'original'">
         <select v-model="selectedGenre" @change="enterGenreArea">
-          <option value="">所有電影</option> <!-- 新增這行 -->
+          <option value="">All genres</option> <!-- 新增這行 -->
           <option v-for="genre in movieGenres" :key="genre.id" :value="genre">{{ genre.name }}</option>
         </select>
         <input class="searchMovie1" type="text" v-model="searchText"  placeholder="搜尋電影...">

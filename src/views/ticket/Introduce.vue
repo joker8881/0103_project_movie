@@ -1,18 +1,18 @@
 <template>
     <div class="top" id="first">
         <div class="post">
-            <img :src="'https://image.tmdb.org/t/p/w300' + objPlayingMovie.poster_path" style="width: 100%; height: 100%;">
+            <img :src="'https://image.tmdb.org/t/p/w342' + movieInfo.moviePoster" style="width: 100%; height: 100%;">
         </div>
         <div class="movieInfo">
-            <h1>{{ objPlayingMovie.title }}</h1>
-            <p>{{ objPlayingMovie.original_title }}</p>
-            <p>評分: {{ objPlayingMovie.vote_average }}</p>
+            <h1>{{ this.movieInfo.movieTitle }}</h1>
+            <p>{{ this.movieInfo.movieOriginaltitle }}</p>
+            <p>評分: {{ this.movieInfo.movieVoteavg }}</p>
             <p>片長:</p>
-            <p>上映日: {{ objPlayingMovie.release_date }}</p>
+            <p>上映日: {{ this.movieInfo.movieReleasedate }}</p>
             <p>類型</p>
             <p>演員</p>
             <p>導演</p>
-            <p>簡介: {{ objPlayingMovie.overview }}</p>
+            <p>簡介: {{ this.movieInfo.movieOverview }}</p>
         </div>
     </div>
     <div class="middleInfo">
@@ -60,6 +60,7 @@ import axios from 'axios';
 export default {
     data() {
         return {
+            movieInfo: {},
             video:[],
             objPlayingMovie: [],
             isVisible: false,
@@ -136,8 +137,14 @@ export default {
             });
         },
     },
-        mounted() {
-            this.nowPlaying()
+    async mounted() {
+        this.movieInfo = this.$route.query;
+        console.log("Movie Details:", this.movieInfo);
+        // console.log("Movie Details:", this.movieInfo);
+        // setTimeout(() => {
+        //     $(".loader").hide();
+        // }, 2000);
+            // this.nowPlaying()
             window.addEventListener('scroll', this.handleScroll);
         }
     };

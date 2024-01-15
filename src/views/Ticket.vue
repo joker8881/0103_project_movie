@@ -28,7 +28,7 @@
       <tr v-for="(item, index) in this.objPlayingMovie" :key="index">
         <td>{{ index + 1 }}</td>
         <td>{{ item.id }}</td>
-        <td><img :src="'https://image.tmdb.org/t/p/w154' + item.poster_path" alt=""></td>
+        <td><img :src="'https://image.tmdb.org/t/p/w154' + item.poster_path" alt="" @click="gotointroduce(item)"></td>
         <td>{{ item.title }}</td>
         <td v-if="item.overview === ''">此電影無簡介</td>
         <td v-if="item.overview !== ''">{{ item.overview }}</td>
@@ -52,7 +52,7 @@
       <tr v-for="(item, index) in this.objUpComing" :key="index">
         <td>{{ index + 1 }}</td>
         <td>{{ item.id }}</td>
-        <td><img :src="'https://image.tmdb.org/t/p/w154' + item.poster_path" alt=""></td>
+        <td><img :src="'https://image.tmdb.org/t/p/w154' + item.poster_path" alt="" @click="gotointroduce(item)"></td>
         <td>{{ item.title }}</td>
         <td v-if="item.overview === ''">此電影無簡介</td>
         <td v-if="item.overview !== ''">{{ item.overview }}</td>
@@ -121,6 +121,23 @@ export default {
         console.log(res);
         // console.log(res.data.results);
         // this.objTrailer = res.data.results
+      });
+    },
+    gotointroduce(item){
+      console.log(item)
+      this.$router.push({
+        name: 'introduce',
+        query: { 
+          movieGenreid: item.genre_ids,
+          movieId: item.id,
+          movieOriginaltitle: item.original_title, 
+          movieTitle: item.title, 
+          movieOverview: item.overview, 
+          moviePoster: item.poster_path, 
+          movieBack: item.backdrop_path, 
+          movieReleasedate: item.release_date, 
+          movieVoteavg: item.vote_average, 
+        }
       });
     }
   },

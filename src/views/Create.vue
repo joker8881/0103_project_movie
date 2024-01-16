@@ -1,5 +1,10 @@
 <script>
-export default {
+import { defineComponent } from 'vue'
+import { NCarousel } from 'naive-ui'
+export default defineComponent({
+  components: {
+    NCarousel
+    },
 
   data() {
     return {
@@ -92,6 +97,9 @@ export default {
   },
 
   methods: {
+
+    
+
     PerformSearch() {
       // 執行搜尋邏輯
       this.searchResults = this.searchText;
@@ -304,7 +312,7 @@ export default {
       };
 
       let page = 1;
-      let count = 9000; //要抓的電影數
+      let count = 900; //要抓的電影數
       let playingMovies = [];//上映中的電影
 
       try {
@@ -397,7 +405,7 @@ console.log('上映中 PlayMovies:', this.objPlayMovies);
 
     enterGenreArea() { //下拉選單的方法，選擇電影類型
       // this.searchMode = 'result'; //這行註解掉的原因是，不管有沒有搜到電影 他都會跳進下一頁
-      this.abc = true;
+      //this.abc = true;
     // 在这里执行进入区域的逻辑
     console.log('進入區域，選擇的電影類型是：', this.selectedGenre);
     // 可以根据选中的电影类型执行相应的操作
@@ -427,7 +435,7 @@ async mounted() {
     await this.getMovieType();
   },
 
-};
+});
 </script>
 
 <template lang="">
@@ -455,7 +463,9 @@ async mounted() {
         <img class="card-img-top" :src="getMoviePosterPath(movie.poster_path)" alt="Card image cap" style="height: 25rem;">
         <div class="card-body">
           <h5 class="card-title">{{ movie.title }}</h5>
+          <div class="GoShowText">
           <a href="#Second" class="btn btn-primary" style="margin-top:10px;">前往展示區</a>
+        </div>
         </div>
       </div>
     </div>
@@ -534,7 +544,24 @@ async mounted() {
 
   <div class="Second" v-show="abc" id="Second">
     <p>電影名稱: {{ searchResults }}</p>
-    
+    <div class="ShowPoster">
+      <n-carousel
+  direction="vertical"
+  dot-placement="right"
+  mousewheel
+  style="width: 54%; height: 68.4%"
+>
+  <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id">
+    <div>
+    <img
+      class="carousel-img"
+      :src="getMoviePosterPath(movie.poster_path)"
+    />
+    <h5>{{ movie.title }}</h5>
+    </div>
+  </div>
+</n-carousel>
+</div>
 </div>
 </template>
 
@@ -570,6 +597,12 @@ async mounted() {
     //   margin-top: 10px;
     //   margin-bottom: 20px;
     // }
+
+    .GoShowText{
+      position: absolute;
+      bottom: 0px;
+      left: 36%;
+    }
   }
 }
 
@@ -582,6 +615,29 @@ async mounted() {
   width: 100vw;
   height: 100vh;
   border: 1px solid black;
+
+  .ShowPoster{
+    width: 100%;
+    height: 100%;
+  border: 1px solid black;
+  position: relative;
+
+  .n-carousel{
+    position: absolute;
+    top:22%;
+    left:23%;
+  border: 1px solid black;
+  }
+
+  .carousel-img {
+  width: 20%;
+  height: 20%;
+  object-fit: cover;
+}
+
+  }
+
+
 
 }
 

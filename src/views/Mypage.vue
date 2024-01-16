@@ -243,6 +243,9 @@ export default {
       是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
       電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
   </p>
+    <div class="footer">
+      
+    </div>
   </div>
 </template>
 
@@ -436,7 +439,9 @@ span, button {
     margin: 0 auto;
   }
   .footer{
-
+    width: 95vw;
+    height: 60vh;
+    margin: 0 auto;
   }
 }
 

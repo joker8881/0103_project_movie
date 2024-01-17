@@ -34,15 +34,15 @@ export default {
       }
       return cutArray;
     },
-    typePerPage() {
-      const cutArray = [];
+    // typePerPage() {
+    //   const cutArray = [];
 
-      for (let i = 0; i < this.objtype.length; i += this.itemTypePerSize) {
-        cutArray.push(this.objtype.slice(i, i + this.itemTypePerSize));
-      }
+    //   for (let i = 0; i < this.objtype.length; i += this.itemTypePerSize) {
+    //     cutArray.push(this.objtype.slice(i, i + this.itemTypePerSize));
+    //   }
 
-      return cutArray;
-    },
+    //   return cutArray;
+    // },
 },
   methods: {
     async getPlayMovie() { //上映中
@@ -455,12 +455,10 @@ export default {
 
 <h1>分類選擇</h1>
 <div class="movieType">
-  <div v-for="(item, index) in typePerPage" :key="index">
-    <button type="button" v-for="(item, index1) in item" :key="index1">
-      {{ item.name }}
-    </button>
+    <select>
+      <option  v-for="(item, index) in this.objtype" :key="index" value="">{{ item.name }}</option>
+    </select>
   </div>
-</div>
 </template>
 
 <style scoped lang="scss">

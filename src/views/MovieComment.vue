@@ -1,4 +1,6 @@
 <script>
+import { mapState,mapActions } from 'pinia';
+import auth from '../store/auth';
 export default {
   data() {
     return {
@@ -22,6 +24,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(auth,["getAuth","getuser"]),
     sortedComments() {
       //篩選留言
       const sorted = this.comments.slice();
@@ -183,7 +186,7 @@ export default {
           movieID:this.movieInfo.movieId,
           commentText:this.commentText,
           movie:this.movieInfo.movieTitle,
-          account: this.name,
+          account: this.getuser,
         })
       })
       .then(response => response.json())
@@ -222,8 +225,6 @@ export default {
             // 處理返回的數據
             console.log(data);
             this.comments = data.commentList;
-            console.log(data);
-            this.comments = data.commentList;
             console.log(this.comments);
             for(let i=0;i<this.comments.length;i++){
               if(this.comments[i].commentIndexIndex!=0){
@@ -249,7 +250,7 @@ export default {
           movie: this.movieInfo.movieTitle,
           movieID: this.movieInfo.movieId,
           commentText: this.replyText,
-          account: this.name,
+          account: this.getuser,
         })
       })
       .then(response => response.json())
@@ -306,7 +307,7 @@ export default {
   },
   async mounted() {
     this.movieInfo = this.$route.query;
-    console.log("Movie Details:", this.movieInfo);
+    console.log("Movie Details:", this.movieInfo.movieId);
     this.getPerson();
     await this.getTrailer();
     await this.initYouTubePlayer();
@@ -407,11 +408,11 @@ export default {
             </div>
             <!-- 新增留言 -->
             <form class="mt-4" @click.prevent="">
-              <div class="mb-3">
+              <div class="mb-3" v-if="this.getAuth">
                 <label for="commentInput" class="form-label"><span>新增留言</span></label>
                 <textarea rows="1" v-model="commentText" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                 <div style="text-align: end;">
-                  <button type="submit" class="btn btn-outline-dark" required @click="commentCreate">留言</button>
+                  <button type="submit" class="btn btn-outline-dark" required @click="commentCreate" v-if="this.getAuth">留言</button>
                 </div>
               </div>
             </form>
@@ -422,8 +423,10 @@ export default {
                 <span>{{ "@"+comment.account }}</span>
                 <small class="text-muted">{{ this.commentTimeDif(comment.commentTime) }}</small>
                 <button @click="editComment(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+                <!-- v-if="this.getAuth" -->
                 <button v-if="comment.editing" @click="saveEdit(comment)" class="btn btn-link" style="text-decoration: none">儲存</button>
                 <button @click="deleteComment(comment)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                <!-- v-if="this.getAuth" -->
                 <span>{{ comment.commentText }}</span><br>
                 <button @click="likeButton(item)" class="btn btn-outline-primary" style="border: 0">
                   <i class="fa-regular fa-thumbs-up"></i>{{ comment.favorite }}

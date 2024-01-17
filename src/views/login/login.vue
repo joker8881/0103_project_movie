@@ -1,91 +1,89 @@
 <script>
-import { RouterLink, RouterView } from "vue-router";
-export default {
+import { RouterLink } from "vue-router";
+import { defineComponent } from 'vue';
+import { useAuthStore } from '../store/auth';
+
+export default defineComponent({
   data() {
-    return{
-      cBox:false,
-      account:"",
-      password:"",
-      setacc:"",
-      accall:[],
-      acc:[],
-      pas:[],
-      show:0,
-      dog:{
-        date:21,
-        name:"果醬",
-        money:400
-      },
-      cat:{},
-    }
+    return {
+      cBox: false,
+      account: "",
+      password: "",
+      setacc: "",
+      accall: [],
+      acc: [],
+      pas: [],
+      show: 0,
+    };
   },
   components: {
     RouterLink,
   },
-  methods:{
-    log(){
-      if(this.cBox == true){
-        localStorage.setItem("keep","keep")
-        localStorage.setItem("setacc",this.account)
+  methods: {
+    log() {
+      if (this.cBox == true) {
+        localStorage.setItem("keep", "keep");
+        localStorage.setItem("setacc", this.account);
       }
-      this.acc = JSON.parse(localStorage.getItem("account"))
-      this.pas = JSON.parse(localStorage.getItem("password"))
-      console.log(this.acc)
-      console.log(this.pas)
-      for(let i = 0 ; i<this.acc.length ; i++){
-        if( this.acc[i] == this.account){
-          if(this.pas[i] == this.password){
-            localStorage.setItem("logacc",this.account)
-            this.$router.push("/count")
-          } else{
-            localStorage.removeItem("setacc")
-            break
+      this.acc = JSON.parse(localStorage.getItem("account"));
+      this.pas = JSON.parse(localStorage.getItem("password"));
+      console.log(this.acc);
+      console.log(this.pas);
+      
+      for (let i = 0; i < this.acc.length; i++) {
+        if (this.acc[i] == this.account) {
+          if (this.pas[i] == this.password) {
+            localStorage.setItem("logacc", this.account);
+            this.$router.push("/count");
+          } else {
+            localStorage.removeItem("setacc");
+            break;
           }
         }
       }
     },
-    clickC(){
-      let e = document.getElementsByName("eye")
-      let acc = document.getElementById("acc")
-      if(e.class == "fa-solid fa-eye fa-lg eye"){
-        e.class="fa-solid fa-eye-slash fa-lg eye"
-        acc.type="text"
-        this.show = 1
-      } else{
-        e.class="fa-solid fa-eye fa-lg eye"
-        acc.type="password"
-        this.show = 0
+    clickC() {
+      let e = document.getElementsByName("eye");
+      let acc = document.getElementById("acc");
+      if (e.class == "fa-solid fa-eye fa-lg eye") {
+        e.class = "fa-solid fa-eye-slash fa-lg eye";
+        acc.type = "text";
+        this.show = 1;
+      } else {
+        e.class = "fa-solid fa-eye fa-lg eye";
+        acc.type = "password";
+        this.show = 0;
       }
     },
-    register(){
-        this.$router.push("/register")
-    }
+    register() {
+      this.$router.push("/register");
+    },
   },
-  mounted(){
-    if(localStorage.getItem("keep") == "keep"){
-      this.setacc =localStorage.getItem("setacc")
-      this.acc = JSON.parse(localStorage.getItem("account"))
-      this.pas = JSON.parse(localStorage.getItem("password"))
-      for(let i = 0 ; i<this.acc.length ; i++){
-        if( this.acc[i] == this.setacc){
-            console.log(this.acc[i])
-            console.log(this.pas[i])
-            this.account = this.acc[i]
-            this.password = this.pas[i]
-          }
+  mounted() {
+    if (localStorage.getItem("keep") == "keep") {
+      this.setacc = localStorage.getItem("setacc");
+      this.acc = JSON.parse(localStorage.getItem("account"));
+      this.pas = JSON.parse(localStorage.getItem("password"));
+      for (let i = 0; i < this.acc.length; i++) {
+        if (this.acc[i] == this.setacc) {
+          console.log(this.acc[i]);
+          console.log(this.pas[i]);
+          this.account = this.acc[i];
+          this.password = this.pas[i];
         }
       }
-    localStorage.removeItem("keep")
-    localStorage.removeItem("setacc")
-    localStorage.removeItem("logacc")
-  }
-};
+    }
+    localStorage.removeItem("keep");
+    localStorage.removeItem("setacc");
+    localStorage.removeItem("logacc");
+  },
+});
 </script>
 
 <template>
     <div class="cBox">
         <div class="box">
-            <p class="textT">記帳小能手</p>
+            <p class="textT">這裡是登入</p>
             <p class="textL">帳號</p>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control tb" id="floatingInput" placeholder="" v-model="this.account">

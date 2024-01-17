@@ -23,19 +23,19 @@ export default{
     },
     mounted(){
         // this.login = true
-        if(localStorage.getItem("keep") == "keep"){
-            this.setacc =localStorage.getItem("setacc")
-            this.acc = JSON.parse(localStorage.getItem("account"))
-            this.pas = JSON.parse(localStorage.getItem("password"))
-            for(let i = 0 ; i<this.acc.length ; i++){
-        if( this.acc[i] == this.setacc){
-            console.log(this.acc[i])
-            console.log(this.pas[i])
-            this.account = this.acc[i]
-            this.password = this.pas[i]
-          }
-        }
-      }
+    //     if(localStorage.getItem("keep") == "keep"){
+    //         this.setacc =localStorage.getItem("setacc")
+    //         this.acc = JSON.parse(localStorage.getItem("account"))
+    //         this.pas = JSON.parse(localStorage.getItem("password"))
+    //         for(let i = 0 ; i<this.acc.length ; i++){
+    //     if( this.acc[i] == this.setacc){
+    //         console.log(this.acc[i])
+    //         console.log(this.pas[i])
+    //         this.account = this.acc[i]
+    //         this.password = this.pas[i]
+    //       }
+    //     }
+    //   }
     }
 }
 </script>

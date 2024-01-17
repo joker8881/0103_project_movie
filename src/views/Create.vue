@@ -1,6 +1,8 @@
 <script>
 import { defineComponent } from 'vue'
 import { NCarousel } from 'naive-ui'
+import { mapState,mapActions } from 'pinia';
+import auth from '../store/auth';
 export default defineComponent({
   components: {
     NCarousel
@@ -80,8 +82,8 @@ export default defineComponent({
     // 先取得所有電影類型
     this.getMovieType();
   },
-
   computed: {
+    ...mapState(auth,["getAuth","getuser"]),
     filteredMovies() {
       // 如果有选中的电影类型，则首先过滤电影类型
       let filteredByGenre = this.selectedGenre
@@ -598,10 +600,10 @@ fetch('http://localhost:8080/movie/art/create', {
 </div>
     
 
-    <div class="bord" v-show="abc" id="bord"  >
+    <div class="bord" v-show="this.getAuth" id="bord">
       <div v-if="selectedMovie">
-    <p>電影名稱: {{ selectedMovie.title }}</p>
-    <p>電影id: {{ selectedMovie.id }}</p>
+        <p>電影名稱: {{ selectedMovie.title }}</p>
+        <p>電影id: {{ selectedMovie.id }}</p>
 
     <!-- 其他的顯示內容... -->
   </div>

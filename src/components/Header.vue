@@ -1,6 +1,7 @@
 <script>
 import { RouterLink, RouterView } from 'vue-router'
 import { mapState,mapActions } from 'pinia';
+import auth from '../store/auth';
 export default{
     data(){
         return{
@@ -12,9 +13,13 @@ export default{
         RouterLink,
     },
     computed:{
+        ...mapState(auth,["getAuth","getuser"]),
     },
     methods:{
-
+        ...mapActions(auth,["login","logout"]),
+        loga(){
+            this.$router.push("/login")
+        }
     },
     mounted(){
         // this.login = true
@@ -43,10 +48,16 @@ export default{
             <RouterLink to="/ticket" class="a">購票</RouterLink>
             <RouterLink :to="`/mypage`" class="a">個人主頁</RouterLink>
             <RouterLink :to="`/create`" class="a">影迷創作</RouterLink>
-            <div v-if="this.login == true" style="width: 250px;">
-                <p class="c">登入帳號：{{this.loginAccount }}</p>
+            <div v-if="this.getAuth == true" class="a">
+                <p>登入帳號：{{this.getuser }}</p>
             </div>
-            <RouterLink :to="`/login`" class="b" v-if="this.login == false">登入</RouterLink>
+            <div v-if="this.getAuth == true" class="a">
+                <p @click="this.logout()">登出</p>
+            </div>
+            <div v-if="this.getAuth == false" class="a" style="">
+                <p @click="loga">登入</p>
+            </div>
+            
         </div>
     </div>
 </template>
@@ -103,8 +114,6 @@ export default{
         .c{
             margin-top: 0px;
             font-family: "jf-openhuninn-2.0";
-            height: 100%;
-            width: 250px;
             line-height: 1.6em;
             font-size: 1.4em;
             text-decoration: none;

@@ -1,89 +1,94 @@
 <script>
+import { mapState,mapActions } from 'pinia'
+import { ref } from 'vue';
 import { RouterLink } from "vue-router";
-import { defineComponent } from 'vue';
-import { useAuthStore } from '../store/auth';
-
-export default defineComponent({
+import auth from '../../store/auth';
+export default {
   data() {
-    return {
-      cBox: false,
-      account: "",
-      password: "",
-      setacc: "",
-      accall: [],
-      acc: [],
-      pas: [],
-      show: 0,
-    };
+    return{
+      cBox:false,
+      account:"",
+      password:"",
+      setacc:"",
+      setpas:"",
+      accall:[],
+      show:0,
+      cat:{},
+    }
+  },
+  computed:{
+    ...mapState(auth,["getAuth","getuser"]),
   },
   components: {
     RouterLink,
   },
-  methods: {
-    log() {
-      if (this.cBox == true) {
-        localStorage.setItem("keep", "keep");
-        localStorage.setItem("setacc", this.account);
+  methods:{
+    ...mapActions(auth,["login","logout"]),
+    log(){
+      if(this.cBox == true){
+        localStorage.setItem("keep","keep")
+        localStorage.setItem("setacc",this.account)
+        localStorage.setItem("setpas",this.password)
       }
-      this.acc = JSON.parse(localStorage.getItem("account"));
-      this.pas = JSON.parse(localStorage.getItem("password"));
-      console.log(this.acc);
-      console.log(this.pas);
-      
-      for (let i = 0; i < this.acc.length; i++) {
-        if (this.acc[i] == this.account) {
-          if (this.pas[i] == this.password) {
-            localStorage.setItem("logacc", this.account);
-            this.$router.push("/count");
-          } else {
-            localStorage.removeItem("setacc");
-            break;
+      fetch('http://localhost:8080/movie/user/login', {
+          method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            account:this.account,
+            password:this.password,
+          })
+      })
+      .then(response => response.json())
+      .then(data => {
+      // 處理返回的數據
+          console.log(data)
+          console.log(data.code)
+          if(data.code = 200){
+            this.login(this.account);
           }
-        }
+          this.$router.push("/")
+      })
+      .catch(error => {
+          console.error('Error fetching data:', error);
+      });
+    },
+    clickC(){
+      let e = document.getElementsByName("eye")
+      let acc = document.getElementById("acc")
+      if(e.class == "fa-solid fa-eye fa-lg eye"){
+        e.class="fa-solid fa-eye-slash fa-lg eye"
+        acc.type="text"
+        this.show = 1
+      } else{
+        e.class="fa-solid fa-eye fa-lg eye"
+        acc.type="password"
+        this.show = 0
       }
     },
-    clickC() {
-      let e = document.getElementsByName("eye");
-      let acc = document.getElementById("acc");
-      if (e.class == "fa-solid fa-eye fa-lg eye") {
-        e.class = "fa-solid fa-eye-slash fa-lg eye";
-        acc.type = "text";
-        this.show = 1;
-      } else {
-        e.class = "fa-solid fa-eye fa-lg eye";
-        acc.type = "password";
-        this.show = 0;
-      }
-    },
-    register() {
-      this.$router.push("/register");
-    },
-  },
-  mounted() {
-    if (localStorage.getItem("keep") == "keep") {
-      this.setacc = localStorage.getItem("setacc");
-      this.acc = JSON.parse(localStorage.getItem("account"));
-      this.pas = JSON.parse(localStorage.getItem("password"));
-      for (let i = 0; i < this.acc.length; i++) {
-        if (this.acc[i] == this.setacc) {
-          console.log(this.acc[i]);
-          console.log(this.pas[i]);
-          this.account = this.acc[i];
-          this.password = this.pas[i];
-        }
-      }
+    register(){
+        this.$router.push("/register")
     }
-    localStorage.removeItem("keep");
-    localStorage.removeItem("setacc");
-    localStorage.removeItem("logacc");
   },
-});
+  mounted(){
+    if(localStorage.getItem("keep") == "keep"){
+      this.setacc =localStorage.getItem("setacc")
+      this.setacc =localStorage.getItem("setpas")
+    localStorage.removeItem("keep")
+    localStorage.removeItem("setacc")
+    localStorage.removeItem("setpas")
+  }
+}
+};
 </script>
 
 <template>
     <div class="cBox">
         <div class="box">
             <p class="textT">這裡是登入</p>
+            <p>{{ this.getAuth }}</p>
+            <p>{{ this.getuser }}</p>
             <p class="textL">帳號</p>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control tb" id="floatingInput" placeholder="" v-model="this.account">

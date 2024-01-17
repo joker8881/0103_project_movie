@@ -7,6 +7,9 @@ export default {
       account:"",
       password:"",
       password2:"",
+      email:"",
+      phone:"",
+      name:"",
       acc:[],
       pas:[],
       show:0,
@@ -21,42 +24,69 @@ export default {
   },
   methods:{
     register(){
-      this.acc = JSON.parse(localStorage.getItem("account"))
-      this.pas = JSON.parse(localStorage.getItem("password"))
-      console.log(this.acc)
-      if(this.acc == null && this.password == this.password2 && this.account != this.password){
-          this.acc = []
-          this.pas = []
-          this.acc.push(this.account)
-          this.pas.push(this.password)
-          localStorage.setItem("account",JSON.stringify(this.acc))
-          localStorage.setItem("password",JSON.stringify(this.pas))
-          this.$router.push("/")
-      } else if(this.acc == null && this.password != this.password2){
+      if(this.account != "" && this.password == this.password2 && this.account != this.password && this.email .toString().length > 6 && this.phone.toString().length == 10 && this.name !=""){
+          fetch('http://localhost:8080/movie/user/search', {
+          method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            account:this.account,
+          })
+      })
+      .then(response => response.json())
+      .then(data => {
+      // 處理返回的數據
+          console.log(data)
+          console.log(data.code)
+          if(data.code = 200){
+            fetch('http://localhost:8080/movie/user/create', {
+              method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                account:this.account,
+                password:this.password,
+                name:this.name,
+                email:this.email,
+                phone:this.phone
+              })
+            })
+            .then(response => response.json())
+            .then(kk => {
+            // 處理返回的數據
+              console.log(kk)
+              if(kk.code =200){
+                this.$router.push("/")
+              }
+            })
+            .catch(error => {
+              console.error('Error fetching data:', error);
+            });
+          } else if (data.code = 400){
+            this.b = "已有相同的帳號存在"
+          }
+      })
+      .catch(error => {
+          console.error('Error fetching data:', error);
+      });
+      // this.$router.push("/")
+      } else if( this.account=="") {
+        this.b = "請確認帳號的輸入"
+      } else if( this.account!="" && this.password=="") {
+        this.b = "請確認密碼的輸入"
+      } else if(this.account!="" && this.password != this.password2){
         this.b = "請確認你輸入的密碼是否一致"
-      }else if(this.acc == null && this.account == this.password){
+      } else if(this.account!="" && this.account == this.password){
         this.b = "請確認你輸入的帳號密碼是否重複了"
-      } else {
-        for(let i = 0 ; i < this.acc.length ; i++){
-        if( this.acc[i] == this.account){
-            this.b = "此帳號已註冊，請選擇其他帳號名稱"
-            break
-        } else{
-          if(this.password == this.password2 && this.account != this.password){
-          this.acc.push(this.account)
-          this.pas.push(this.password)
-          localStorage.setItem("account",JSON.stringify(this.acc))
-          localStorage.setItem("password",JSON.stringify(this.pas))
-          this.$router.push("/")
-          break
-        }else if(this.password != this.password2){
-          this.b = "請確認你輸入的密碼是否一致"
-        }else if(this.account == this.password){
-          this.b = "請確認你輸入的帳號密碼是否重複了"
-        }
+      } else if( this.email.toString().length <= 6) {
+        this.b = "請確認信箱是否正確輸入"
+      } else if( this.phone.toString().length < 10 || this.phone.toString().length > 10) {
+        this.b = "請確認手機是否正確輸入"
+      } else if( this.name =="") {
+        this.b = "請確認名字/暱稱"
       }
-    }
-  }
     },
     clickC(){
       let e = document.getElementsByName("eye")
@@ -99,28 +129,43 @@ export default {
             <p class="textT">註冊</p>
             <p class="textL">帳號</p>
             <div class="form-floating mb-3">
-            <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="this.account">
-            <label class="tbc" for="floatingInput">請在這裡輸入帳號</label>
+              <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="this.account">
+              <label class="tbc" for="floatingInput">請在這裡輸入帳號</label>
             </div>
             <p class="textL">密碼</p>
             <div class="form-floating mb-3">
-            <input type="password" class="form-control tbp" id="acc" placeholder="" v-model="this.password">
-            <i v-if="this.show == 0" class="fa-solid fa-eye fa-lg eye" @click="this.clickC()" name="eye"></i>
-            <i v-if="this.show == 1" class="fa-solid fa-eye-slash fa-lg eye" @click="this.clickC()" name="eye"></i>
-            <label class="tbc" for="floatingInput">請在這裡輸入密碼</label>
+              <input type="password" class="form-control tbp" id="acc" placeholder="" v-model="this.password">
+              <i v-if="this.show == 0" class="fa-solid fa-eye fa-lg eye" @click="this.clickC()" name="eye"></i>
+              <i v-if="this.show == 1" class="fa-solid fa-eye-slash fa-lg eye" @click="this.clickC()" name="eye"></i>
+              <label class="tbc" for="floatingInput">請在這裡輸入密碼</label>
             </div>
             <p class="textL">請再次輸入密碼</p>
             <div class="form-floating mb-3">
-            <input type="password" class="form-control tbp" id="acc2" placeholder="" v-model="this.password2">
-            <i v-if="this.show2 == 0" class="fa-solid fa-eye fa-lg eye" @click="this.clickC2()" name="eye2"></i>
-            <i v-if="this.show2 == 1" class="fa-solid fa-eye-slash fa-lg eye" @click="this.clickC2()" name="eye2"></i>
+              <input type="password" class="form-control tbp" id="acc2" placeholder="" v-model="this.password2">
+              <i v-if="this.show2 == 0" class="fa-solid fa-eye fa-lg eye" @click="this.clickC2()" name="eye2"></i>
+              <i v-if="this.show2 == 1" class="fa-solid fa-eye-slash fa-lg eye" @click="this.clickC2()" name="eye2"></i>
             <label class="tbc" for="floatingInput">再確認一次密碼</label>
             </div>
-            <div class="logbox">
-            <button type="button" class="buttonR" @click="back">取消</button>
-            <Popper  arrow placement="top" class="root" :content="this.b">
+            <p class="textL">Email</p>
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="this.email">
+              <label class="tbc" for="floatingInput">請在這裡輸入Email</label>
+            </div>
+            <p class="textL">手機</p>
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="this.phone" onkeyup="value=value.replace(/[^\d]/g,'') ">
+              <label class="tbc" for="floatingInput">請在這裡輸入手機(純數字)</label>
+            </div>
+            <p class="textL">名字/暱稱</p>
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="this.name">
+              <label class="tbc" for="floatingInput">請在這裡輸入名字/暱稱</label>
+            </div>
+            <div class="logbox" style="margin-top: 30px;" >
+              <button type="button" class="buttonR" @click="back">取消</button>
+              <Popper  arrow placement="top" class="root" :content="this.b">
                 <button type="button" class="buttonR" @click="register()">註冊</button>
-            </Popper>
+              </Popper>
             </div>
         </div>
     </div>
@@ -129,12 +174,12 @@ export default {
 <style scoped lang="scss">
 .cBox{
   width: 100vw;
-  height: 90vh;
+  height: 120vh;
   text-align: center;
   display: flex;
   justify-content: center;
 .box{
-  height: 80%;
+  height: 92%;
   width: 40%;
   // margin-top: 2%;
   align-self: center;

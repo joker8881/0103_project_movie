@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-<template>
-    <div class="about">
-      <h1>This is an about page</h1>
-      <p class="a">結果123</p>
-      <p class="a">結果</p>
-      <p class="a">結果</p>
-    </div>
-  </template>
-  
-  <style>
-    .a{
-      font-size: 2em;
-=======
 <script>
 import { defineComponent } from 'vue'
 import { NCarousel } from 'naive-ui'
@@ -87,7 +73,6 @@ export default defineComponent({
       tempPosition: null,
       tempCanvas: null,
       count: 0
->>>>>>> origin/Tzu
     }
   },
 

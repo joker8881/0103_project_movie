@@ -4,7 +4,7 @@ import { NCarousel } from 'naive-ui'
 export default defineComponent({
   components: {
     NCarousel
-    },
+  },
 
   data() {
     return {
@@ -19,7 +19,14 @@ export default defineComponent({
       movieGenres: [], //所有電影類型
       maxVisibleCards: 8, // 控制最大显示的卡片数量
       noResultsModal: false, // 控制无匹配电影的模态框显示
+      //電影海報
+      selectedMovie: null,
+      //電影獨立id
       
+
+      name: "Kass123",
+      artName:"遊戲",
+
       //畫板相關
       canvasWidth: 763, // 畫板的寬度
       canvasHeight: 450, // 畫板的高度
@@ -70,25 +77,25 @@ export default defineComponent({
   },
 
   created() {
-  // 先取得所有電影類型
-  this.getMovieType();
-},
+    // 先取得所有電影類型
+    this.getMovieType();
+  },
 
   computed: {
     filteredMovies() {
-    // 如果有选中的电影类型，则首先过滤电影类型
-    let filteredByGenre = this.selectedGenre
-      ? this.objPlayMovies.filter(movie => movie.genre_ids.includes(this.selectedGenre.id))
-      : this.objPlayMovies;
+      // 如果有选中的电影类型，则首先过滤电影类型
+      let filteredByGenre = this.selectedGenre
+        ? this.objPlayMovies.filter(movie => movie.genre_ids.includes(this.selectedGenre.id))
+        : this.objPlayMovies;
 
-    // 如果有输入的搜索文本，则再次过滤电影标题
-    if (this.searchText.trim() !== '') {
-      const searchTerm = this.searchText.toLowerCase();
-      filteredByGenre = filteredByGenre.filter(movie => movie.title.toLowerCase().includes(searchTerm));
-    }
+      // 如果有输入的搜索文本，则再次过滤电影标题
+      if (this.searchText.trim() !== '') {
+        const searchTerm = this.searchText.toLowerCase();
+        filteredByGenre = filteredByGenre.filter(movie => movie.title.toLowerCase().includes(searchTerm));
+      }
 
-    return filteredByGenre;
-  },
+      return filteredByGenre;
+    },
 
     visibleFilteredMovies() {
       // 仅显示前 maxVisibleCards 个过滤后的卡片
@@ -98,7 +105,65 @@ export default defineComponent({
 
   methods: {
 
-    
+    // kk(){
+    //   fetch('http://localhost:8080/movie/art/create', {
+    //     method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //       movie: this.selectedMovie,
+    //       // artName: link.download,
+    //       artDescription: this.url,
+    //       account: this.name,
+    //     })
+    //   })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //       // 處理返回的數據
+    //       console.log(data);
+    //     })
+    //     .catch(error => {
+    //       console.error('Error fetching data:', error);
+    //     });
+    // },
+
+    // Create() { //儲存
+
+      // let url = this.$refs['sketchpad'].toDataURL("image/png", 1.0)
+      // const link = document.createElement('a')
+      // link.innerText = 'Download'
+      // link.href = url
+      // link.download = `circl${this.count}`
+      // this.count++
+      // link.click()
+    //   console.log(this.selectedMovie)
+
+    //   fetch('http://localhost:8080/movie/art/create', {
+    //     method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //     },
+    //     body: JSON.stringify({
+    //       movie: this.selectedMovie.title,
+    //       movieId: this.selectedMovie.id,
+    //       // artName: link.download,
+    //       artlocation: this.url,
+    //       account: this.name,
+          
+    //     })
+    //   })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //       // 處理返回的數據
+    //       console.log(data);
+    //     })
+    //     .catch(error => {
+    //       console.error('Error fetching data:', error);
+    //     });
+    // },
+
+
 
     PerformSearch() {
       // 執行搜尋邏輯
@@ -108,31 +173,31 @@ export default defineComponent({
       this.checkCanEnterArea(); // 每次搜索后检查是否可以进入区域
 
       if (this.selectedGenre && this.selectedGenre.value === '') {
-    // 如果選擇的是「所有電影」，顯示所有電影
-    this.filteredMovies = this.objPlayMovies;
-  } else if (this.searchText === '') {
-    // 如果搜索文本为空，显示所有电影（這裡保留原有的邏輯）
-    this.filteredMovies = this.objPlayMovies;
-  } else {
-    // 根据搜索文本和選擇的類型過濾電影
-    const searchTerm = this.searchText.toLowerCase();
-    this.filteredMovies = this.objPlayMovies.filter(movie =>
-      movie.title.toLowerCase().includes(searchTerm) &&
-      (!this.selectedGenre || movie.genre_ids.includes(this.selectedGenre.id))
-    );
+        // 如果選擇的是「所有電影」，顯示所有電影
+        this.filteredMovies = this.objPlayMovies;
+      } else if (this.searchText === '') {
+        // 如果搜索文本为空，显示所有电影（這裡保留原有的邏輯）
+        this.filteredMovies = this.objPlayMovies;
+      } else {
+        // 根据搜索文本和選擇的類型過濾電影
+        const searchTerm = this.searchText.toLowerCase();
+        this.filteredMovies = this.objPlayMovies.filter(movie =>
+          movie.title.toLowerCase().includes(searchTerm) &&
+          (!this.selectedGenre || movie.genre_ids.includes(this.selectedGenre.id))
+        );
 
-    // 检查是否有搜索结果
-    if (this.filteredMovies.length === 0) {
-      // 显示无匹配电影的模态框
-      this.noResultsModal = true;
-      // 切回原始模式
-      this.searchMode = 'original';
-      return; // 结束方法，不再继续执行
-    }
-  }
-    // 切换到结果模式this.searchMode = 'original'
-    // this.searchMode = 'result';
-    console.log('Performing search:', this.searchText);
+        // 检查是否有搜索结果
+        if (this.filteredMovies.length === 0) {
+          // 显示无匹配电影的模态框
+          this.noResultsModal = true;
+          // 切回原始模式
+          this.searchMode = 'original';
+          return; // 结束方法，不再继续执行
+        }
+      }
+      // 切换到结果模式this.searchMode = 'original'
+      // this.searchMode = 'result';
+      console.log('Performing search:', this.searchText);
     },
     ResetSearch() {
       // 重置搜尋相關資料
@@ -155,7 +220,7 @@ export default defineComponent({
       // 检查是否可以进入区域
       this.canEnterArea = this.filteredMovies.length > 0;
     },
-    
+
 
     onCanvasMouseDown() {
       this.isCanvasMouseDown = true
@@ -174,6 +239,31 @@ export default defineComponent({
       link.download = `circl${this.count}`
       this.count++
       link.click()
+
+      console.log(this.selectedMovie)
+
+fetch('http://localhost:8080/movie/art/create', {
+  method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    movie: this.selectedMovie.title,
+    movieId: this.selectedMovie.id,
+    artname: this.artName,
+    artlocation: url,
+    account: this.name,
+    
+  })
+})
+  .then(response => response.json())
+  .then(data => {
+    // 處理返回的數據
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  });
     },
     setWindowEvent() {
       window.addEventListener('mousemove', (event) => {
@@ -316,70 +406,70 @@ export default defineComponent({
       let playingMovies = [];//上映中的電影
 
       try {
-    // 循環遞增頁數，直到達到指定的電影數量
-    while (playingMovies.length < count) {
-      // 組成 API 請求的 URL
-      const api = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=zh-TW&page=${page}`;
-      // 發送 API 請求
-      const response = await fetch(api, options);
+        // 循環遞增頁數，直到達到指定的電影數量
+        while (playingMovies.length < count) {
+          // 組成 API 請求的 URL
+          const api = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=zh-TW&page=${page}`;
+          // 發送 API 請求
+          const response = await fetch(api, options);
 
-      // 檢查是否成功獲取數據
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      
+          // 檢查是否成功獲取數據
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
 
-      // 解析 JSON 數據
-      const data = await response.json();
 
-      // 檢查poster_path是否存在
-      const moviesOnPage = data.results.filter((movie) => {
-        if (!movie.poster_path) {
-          return false;
+          // 解析 JSON 數據
+          const data = await response.json();
+
+          // 檢查poster_path是否存在
+          const moviesOnPage = data.results.filter((movie) => {
+            if (!movie.poster_path) {
+              return false;
+            }
+            // if (!movie.genre_ids || movie.genre_ids.length === 0) {
+            //   return false;
+            // }
+            return true;
+          });
+
+          // 移除已存在的電影，避免重複
+          for (const movie of moviesOnPage) {
+            if (!playingMovies.some((existingMovie) => existingMovie.title === movie.title)) {
+              playingMovies.push(movie);
+            }
+          }
+
+
+          if (page < data.total_pages) {
+            page++;
+          } else {
+            break;
+          }
         }
-        // if (!movie.genre_ids || movie.genre_ids.length === 0) {
-        //   return false;
-        // }
-        return true;
-      });
 
-      // 移除已存在的電影，避免重複
-      for (const movie of moviesOnPage) {
-        if (!playingMovies.some((existingMovie) => existingMovie.title === movie.title)) {
-          playingMovies.push(movie);
-        }
+        // 過濾掉沒有 poster_path 的電影
+        const playMovies = playingMovies.filter((movie) => movie.poster_path && movie.genre_ids && movie.genre_ids.length > 0).slice(0, count);
+        this.objPlayMovies = playMovies;
+        // 打印出被過濾前的電影數量
+        console.log('Before filtering, total movies:', playingMovies.length);
+        const playMoviesWithGenre = playingMovies.filter((movie) => movie.poster_path && movie.genre_ids && movie.genre_ids.length > 0).slice(0, count);
+        this.objPlayMoviesWithGenre = playMoviesWithGenre;
+
+        // 打印出被過濾掉的電影信息
+        const filteredOutMovies = playingMovies.filter(movie => !playMovies.includes(movie));
+        console.log('Filtered out movies:', filteredOutMovies);
+
+        console.log('After slicing:', this.objPlayMovies.length);
+        console.log('上映中 PlayMovies:', this.objPlayMovies);
+      } catch (error) {
+        // 處理錯誤
+        console.error(error);
       }
-
-      
-      if (page < data.total_pages) {
-        page++;
-      } else {
-        break;
-      }
-    }
-
-    // 過濾掉沒有 poster_path 的電影
-    const playMovies = playingMovies.filter((movie) => movie.poster_path && movie.genre_ids && movie.genre_ids.length > 0).slice(0, count);
-this.objPlayMovies = playMovies;
-// 打印出被過濾前的電影數量
-console.log('Before filtering, total movies:', playingMovies.length);
-const playMoviesWithGenre = playingMovies.filter((movie) => movie.poster_path && movie.genre_ids && movie.genre_ids.length > 0).slice(0, count);
-this.objPlayMoviesWithGenre = playMoviesWithGenre;
-
-// 打印出被過濾掉的電影信息
-const filteredOutMovies = playingMovies.filter(movie => !playMovies.includes(movie));
-console.log('Filtered out movies:', filteredOutMovies);
-
-console.log('After slicing:', this.objPlayMovies.length);
-console.log('上映中 PlayMovies:', this.objPlayMovies);
-  } catch (error) {
-    // 處理錯誤
-    console.error(error);
-  }
-},
+    },
 
     getMovieType() { //電影類型 
-        const options = {
+      const options = {
         method: 'GET',
         headers: {
           accept: 'application/json',
@@ -390,15 +480,15 @@ console.log('上映中 PlayMovies:', this.objPlayMovies);
         .then((response) => response.json())
         .then((response) => {
           // 使用扩展运算符将this.type的内容赋值给movieGenres，并保留this.type
-      this.movieGenres = [...response.genres];
-      console.log(this.movieGenres);
+          this.movieGenres = [...response.genres];
+          console.log(this.movieGenres);
 
-      // 設置 預設電影類型 (選項的value值由"genre.id"更改為"genre")
-      if (this.movieGenres.length > 0) {
-        this.selectedGenre = this.movieGenres[0];
-        // this.selectedGenre = this.movieGenres.find(genre => genre.id === 28); //這個也可以用
-        console.log("Selected Genre:", this.selectedGenre);
-      }
+          // 設置 預設電影類型 (選項的value值由"genre.id"更改為"genre")
+          if (this.movieGenres.length > 0) {
+            this.selectedGenre = this.movieGenres[0];
+            // this.selectedGenre = this.movieGenres.find(genre => genre.id === 28); //這個也可以用
+            console.log("Selected Genre:", this.selectedGenre);
+          }
         })
         .catch(err => console.error(err));
     },
@@ -406,12 +496,12 @@ console.log('上映中 PlayMovies:', this.objPlayMovies);
     enterGenreArea() { //下拉選單的方法，選擇電影類型
       // this.searchMode = 'result'; //這行註解掉的原因是，不管有沒有搜到電影 他都會跳進下一頁
       //this.abc = true;
-    // 在这里执行进入区域的逻辑
-    console.log('進入區域，選擇的電影類型是：', this.selectedGenre);
-    // 可以根据选中的电影类型执行相应的操作
-  },
+      // 在这里执行进入区域的逻辑
+      console.log('進入區域，選擇的電影類型是：', this.selectedGenre);
+      // 可以根据选中的电影类型执行相应的操作
+    },
 
-  getMoviePosterPath(posterPath) {
+    getMoviePosterPath(posterPath) {
       // 返回电影的完整海报路径
       return `https://image.tmdb.org/t/p/w500${posterPath}`;
     },
@@ -422,12 +512,42 @@ console.log('上映中 PlayMovies:', this.objPlayMovies);
       this.maxVisibleCards += 4; // 或其他你希望增加的数量
     },
 
+    //點選電影海報 (需要抓他的電影名稱)
+    selectMovie(movie) {
+      this.selectedMovie = movie;
 
-    
+      fetch('http://localhost:8080/movie/art/search', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      movie: this.selectedMovie.title,
+      movieId: this.selectedMovie.id,
+      artname: this.artName,
+    })
+  })
+  .then(response => response.blob())  // 使用 blob() 來處理二進位資料
+  .then(blobData => {
+    // 將 Blob 資料轉換成 URL
+    const imageUrl = URL.createObjectURL(blobData);
+
+    // 在這裡你可以將 imageUrl 存放在適當的數據結構中，以供輪播使用
+    // 可以將 imageUrl 加入到 movie 物件中，或是在 data 中建立一個陣列存放所有的圖片 URL
+
+    // 然後觸發輪播更新或直接修改 visibleFilteredMovies 中相應的 movie 物件
+  })
+  .catch(error => {
+    console.error('Error fetching data:', error);
+  });
 },
 
-  
-async mounted() {
+
+
+  },
+
+
+  async mounted() {
     this.setCanvas()
     this.currentColor = this.colors[0]
     this.setWindowEvent()
@@ -439,7 +559,6 @@ async mounted() {
 </script>
 
 <template lang="">
-
 <!-- Search First -->
       <div class="First" v-if="searchMode === 'original'">
         <select v-model="selectedGenre" @change="enterGenreArea">
@@ -459,12 +578,16 @@ async mounted() {
     <!-- <p>電影名稱: {{ searchResults }}</p> -->
 
     <div class="moviePosterAll">
-      <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id" class="card" style="width: 18rem; height: 30rem; margin-right:2%; margin-top:0.2%;">
-        <img class="card-img-top" :src="getMoviePosterPath(movie.poster_path)" alt="Card image cap" style="height: 25rem;">
-        <div class="card-body">
+      <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id" class="card" style="width: 18rem; height: 34.8rem; margin-right:2%; margin-top:2%;">
+        <div class="box" @click="selectMovie(movie)">
+      <div class="box1"></div><a href="#bord" class="btn btn-primary" style="">
+        <img class="card-img-top" :src="getMoviePosterPath(movie.poster_path)" alt="Card image cap" style="height: 27rem;">
+        </a>
+      </div>
+        <div class="card-body" style="height: 10rem;">
           <h5 class="card-title">{{ movie.title }}</h5>
           <div class="GoShowText">
-          <a href="#Second" class="btn btn-primary" style="margin-top:10px;">前往展示區</a>
+          <a href="#Second" class="btn btn-primary">前往展示區</a>
         </div>
         </div>
       </div>
@@ -476,11 +599,15 @@ async mounted() {
     
 
     <div class="bord" v-show="abc" id="bord"  >
-      <p>電影名稱: {{ searchResults }}</p>
+      <div v-if="selectedMovie">
+    <p>電影名稱: {{ selectedMovie.title }}</p>
+    <p>電影id: {{ selectedMovie.id }}</p>
+
+    <!-- 其他的顯示內容... -->
+  </div>
  <ul class="navbar " 
      :class="{hideNavBar}"
      >
-
    <li @click="canvasToImage">
      <i class="fa fa-save imageColor"></i>
      儲存
@@ -555,7 +682,7 @@ async mounted() {
     <div>
     <img
       class="carousel-img"
-      :src="getMoviePosterPath(movie.poster_path)"
+      :src="movie.imageUrl"
     />
     <h5>{{ movie.title }}</h5>
     </div>
@@ -568,10 +695,10 @@ async mounted() {
 <style scoped lang="scss">
 .First {
   width: 100vw;
-  height: 90vh;
+  height: 100vh;
   border: 1px solid black;
 
-  .searchMovie1{
+  .searchMovie1 {
     margin-top: 280px;
   }
 }
@@ -583,7 +710,7 @@ async mounted() {
   // height: 100vh;
   border: 1px solid black;
 
-  .moviePosterAll{
+  .moviePosterAll {
     width: 100%;
     // height: 100%;
     border: 1px solid black;
@@ -593,22 +720,57 @@ async mounted() {
     justify-content: center;
     align-items: center;
 
-    // .card-body{
-    //   margin-top: 10px;
-    //   margin-bottom: 20px;
-    // }
+    
+  a.btn.btn-primary {
+    text-decoration: none !important; /* 使用 !important 強制覆蓋其他樣式 */
+    border: none; /* 移除邊框 */
+    outline: none; /* 移除聚焦時的藍色框線 */
+}
 
-    .GoShowText{
+    .box {
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: all 0.2s;
+      cursor: pointer; //變手指選擇
+    }
+
+    .box1 {
       position: absolute;
-      bottom: 0px;
+      left: -110%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+      transform: skew(-30deg);
+    }
+
+    .box:hover .box1 {
+      left: 110%;
+      transition: all 1s;
+    }
+
+    .box:hover {
+      transform: translateY(-20px);
+      box-shadow: 0 26px 40px -24px rgb(0 36 100 / 50%);
+    }
+
+    .card-title {
+      margin-top: 10px;
+    }
+
+    .GoShowText {
+      position: absolute;
+      bottom: 20px;
       left: 36%;
     }
   }
 }
 
 .bord {
-  height: 120vh;
-  margin-top: 150px;
+  height: 100vh;
+  margin-top: 120px;
 }
 
 .Second {
@@ -616,27 +778,26 @@ async mounted() {
   height: 100vh;
   border: 1px solid black;
 
-  .ShowPoster{
+  .ShowPoster {
     width: 100%;
     height: 100%;
-  border: 1px solid black;
-  position: relative;
+    border: 1px solid black;
+    position: relative;
 
-  .n-carousel{
-    position: absolute;
-    top:22%;
-    left:23%;
-  border: 1px solid black;
+    .n-carousel {
+      position: absolute;
+      top: 22%;
+      left: 23%;
+      border: 1px solid black;
+    }
+
+    .carousel-img {
+      width: 20%;
+      height: 20%;
+      object-fit: cover;
+    }
+
   }
-
-  .carousel-img {
-  width: 20%;
-  height: 20%;
-  object-fit: cover;
-}
-
-  }
-
 
 
 }
@@ -671,14 +832,14 @@ async mounted() {
     border-radius: 50px;
     color: pink;
 
-    &:hover{
-                background-color: pink;
-                color:#535353;
-                transform:scale(1.1,1.1);
-                cursor: pointer;
-                transition: 0.5s;
-                border-radius: 30px;
-            }
+    &:hover {
+      background-color: pink;
+      color: #535353;
+      transform: scale(1.1, 1.1);
+      cursor: pointer;
+      transition: 0.5s;
+      border-radius: 30px;
+    }
   }
 
 }
@@ -726,7 +887,7 @@ async mounted() {
     font-size: 100%;
     margin: 0 20px;
     color: pink;
-    
+
   }
 
   input {
@@ -746,7 +907,7 @@ async mounted() {
 
 span {
   font-size: 100%;
-  
+
   // margin-right: 5px;
   // position: a;
   color: pink;
@@ -776,8 +937,8 @@ span {
   }
 }
 
-.imageColor{
-  color:red;
+.imageColor {
+  color: red;
 }
 
 .toolbar__tool {
@@ -787,4 +948,5 @@ span {
   .active {
     background-color: #d8d8d8;
   }
-}</style>
+}
+</style>

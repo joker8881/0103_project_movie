@@ -34,15 +34,15 @@ export default {
       }
       return cutArray;
     },
-    // typePerPage() {
-    //   const cutArray = [];
+    typePerPage() {
+      const cutArray = [];
 
-    //   for (let i = 0; i < this.objtype.length; i += this.itemTypePerSize) {
-    //     cutArray.push(this.objtype.slice(i, i + this.itemTypePerSize));
-    //   }
-
-    //   return cutArray;
-    // },
+      for (let i = 0; i < this.objtype.length; i += this.itemTypePerSize) {
+        cutArray.push(this.objtype.slice(i, i + this.itemTypePerSize));
+      }
+      console.log(cutArray)
+      return cutArray;
+    },
 },
   methods: {
     async getPlayMovie() { //上映中
@@ -473,10 +473,10 @@ span, button, p, label, select {
     width: 200px;
     height: 100px;
     margin: 20px;
+
     &:hover{
       background-color: gray;
     }
   }
 }
-
 </style>

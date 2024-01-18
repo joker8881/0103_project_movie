@@ -19,13 +19,12 @@ export default defineComponent({
       type: [],
       selectedGenre: null, // 現在選擇的電影類型 (下拉不要賦予預設值，就不會影響搜尋文字)
       movieGenres: [], //所有電影類型
-      maxVisibleCards: 8, // 控制最大显示的卡片数量
-      noResultsModal: false, // 控制无匹配电影的模态框显示
-      //電影海報
+      maxVisibleCards: 8, // 控制最大顯示卡片數量
+      noResultsModal: false, // 控制無匹配電影時的模板框顯示
+      //點選電影海報後，才出現的電影資料
       selectedMovie: null,
-      //電影獨立id
       
-
+      //假資料
       name: "Kass123",
       artName:"遊戲",
 
@@ -85,7 +84,7 @@ export default defineComponent({
   computed: {
     ...mapState(auth,["getAuth","getuser"]),
     filteredMovies() {
-      // 如果有选中的电影类型，则首先过滤电影类型
+      // 如有選中的電影類型，則首先過濾電影類型
       let filteredByGenre = this.selectedGenre
         ? this.objPlayMovies.filter(movie => movie.genre_ids.includes(this.selectedGenre.id))
         : this.objPlayMovies;
@@ -106,66 +105,6 @@ export default defineComponent({
   },
 
   methods: {
-
-    // kk(){
-    //   fetch('http://localhost:8080/movie/art/create', {
-    //     method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({
-    //       movie: this.selectedMovie,
-    //       // artName: link.download,
-    //       artDescription: this.url,
-    //       account: this.name,
-    //     })
-    //   })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //       // 處理返回的數據
-    //       console.log(data);
-    //     })
-    //     .catch(error => {
-    //       console.error('Error fetching data:', error);
-    //     });
-    // },
-
-    // Create() { //儲存
-
-      // let url = this.$refs['sketchpad'].toDataURL("image/png", 1.0)
-      // const link = document.createElement('a')
-      // link.innerText = 'Download'
-      // link.href = url
-      // link.download = `circl${this.count}`
-      // this.count++
-      // link.click()
-    //   console.log(this.selectedMovie)
-
-    //   fetch('http://localhost:8080/movie/art/create', {
-    //     method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //     },
-    //     body: JSON.stringify({
-    //       movie: this.selectedMovie.title,
-    //       movieId: this.selectedMovie.id,
-    //       // artName: link.download,
-    //       artlocation: this.url,
-    //       account: this.name,
-          
-    //     })
-    //   })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //       // 處理返回的數據
-    //       console.log(data);
-    //     })
-    //     .catch(error => {
-    //       console.error('Error fetching data:', error);
-    //     });
-    // },
-
-
 
     PerformSearch() {
       // 執行搜尋邏輯
@@ -580,7 +519,7 @@ fetch('http://localhost:8080/movie/art/create', {
     <!-- <p>電影名稱: {{ searchResults }}</p> -->
 
     <div class="moviePosterAll">
-      <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id" class="card" style="width: 18rem; height: 34.8rem; margin-right:2%; margin-top:2%;">
+      <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id" class="card" style="width: 18rem; height: 34.8rem; margin-right:2%; margin-top:2%; margin-bottom:2%;">
         <div class="box" @click="selectMovie(movie)">
       <div class="box1"></div><a href="#bord" class="btn btn-primary" style="">
         <img class="card-img-top" :src="getMoviePosterPath(movie.poster_path)" alt="Card image cap" style="height: 27rem;">
@@ -595,7 +534,7 @@ fetch('http://localhost:8080/movie/art/create', {
       </div>
     </div>
     <!-- Learn More 按钮 -->
-    <button v-if="visibleFilteredMovies.length < filteredMovies.length" @click="showMoreCards">Learn More</button>
+    <button v-if="visibleFilteredMovies.length < filteredMovies.length" @click="showMoreCards" class="LearnMore">Learn More</button>
     <a href="#" class="btn btn-primary" style="">回頂部</a>
 </div>
     
@@ -682,10 +621,11 @@ fetch('http://localhost:8080/movie/art/create', {
 >
   <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id">
     <div>
-    <img
+    <!-- <img
       class="carousel-img"
       :src="movie.imageUrl"
-    />
+    /> -->
+    <img class="carousel-img" src="../picture/circle.png" />
     <h5>{{ movie.title }}</h5>
     </div>
   </div>
@@ -748,15 +688,49 @@ fetch('http://localhost:8080/movie/art/create', {
       transform: skew(-30deg);
     }
 
-    .box:hover .box1 {
-      left: 110%;
-      transition: all 1s;
-    }
+    box {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: all 0.2s;
+  cursor: pointer;
+}
 
-    .box:hover {
-      transform: translateY(-20px);
-      box-shadow: 0 26px 40px -24px rgb(0 36 100 / 50%);
-    }
+.box1 {
+  position: absolute;
+  left: -110%;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+  transform: skew(-30deg);
+  transition: all 1s; /* 將 transition 移至這裡 */
+}
+
+.box:hover .box1 {
+  left: 110%;
+  transform: skew(-30deg) scaleX(2); /* 新增一個 scaleX 可以讓閃爍效果更突顯 */
+}
+
+.box:hover {
+  transform: translateY(-20px);
+  box-shadow: 0 26px 40px -24px rgb(0 36 100 / 50%);
+}
+
+/* 新增的部分，使用 animation 來產生瞬間變化 */
+.box1-shimmer {
+  animation: shimmer 1s;
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    transform: skew(-30deg) scaleX(0);
+  }
+  50% {
+    transform: skew(-30deg) scaleX(2);
+  }
+}
 
     .card-title {
       margin-top: 10px;

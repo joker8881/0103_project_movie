@@ -2,7 +2,7 @@
 import { mapState,mapActions } from 'pinia'
 import { ref } from 'vue';
 import { RouterLink } from "vue-router";
-import auth from '../../store/auth';
+import Cookies from 'js-cookie'
 export default {
   data() {
     return{
@@ -17,13 +17,11 @@ export default {
     }
   },
   computed:{
-    ...mapState(auth,["getAuth","getuser"]),
   },
   components: {
     RouterLink,
   },
   methods:{
-    ...mapActions(auth,["login","logout"]),
     log(){
       if(this.cBox == true){
         localStorage.setItem("keep","keep")
@@ -45,8 +43,10 @@ export default {
       // 處理返回的數據
           console.log(data)
           console.log(data.code)
-          if(data.code = 200){
-            this.login(this.account);
+          if(data.code == 200){
+            Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
+            Cookies.set('account', this.account, { expires: 7, path: '/' });
+            console.log("A")
           }
           this.$router.push("/")
       })
@@ -87,8 +87,6 @@ export default {
     <div class="cBox">
         <div class="box">
             <p class="textT">這裡是登入</p>
-            <p>{{ this.getAuth }}</p>
-            <p>{{ this.getuser }}</p>
             <p class="textL">帳號</p>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control tb" id="floatingInput" placeholder="" v-model="this.account">

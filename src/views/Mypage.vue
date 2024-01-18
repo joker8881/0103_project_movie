@@ -1,6 +1,7 @@
 <script>
   import { Swiper, SwiperSlide } from 'swiper/vue';
   import 'swiper/css';
+  import Cookies from 'js-cookie'
 export default {
   data() {
     return {
@@ -44,6 +45,7 @@ export default {
       sortOrder: "sort",
       baoleiButton: false, //暴雷按鈕
       blurredArea: true, //模糊區域
+      userLoggedIn:false,
     };
   },
   computed: {
@@ -188,6 +190,15 @@ export default {
         this.pages.push(this.mymovie.slice(i, i + pageSize));
       }
     },
+    logincheck(){
+        this.userLoggedIn = Cookies.get('userLoggedIn')
+        if (userLoggedIn) {
+          let a = Cookies.get('account')
+          Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
+          Cookies.set('account', a, { expires: 7, path: '/' });
+        }
+      console.log(this.userLoggedIn)
+    }
   },
   async mounted() {
     // this.movieInfo = this.$route.query;
@@ -216,7 +227,8 @@ export default {
             observeParents: true,
           });
         })
-  },
+    this.logincheck()
+    },
 };
 </script>
 
@@ -247,7 +259,7 @@ export default {
           <div class="movieDataRight1">
             <div class="movieDataRight22">
               <div class="type">
-                <h3 class="textHeader">類型：</h3>
+                <h3 class="textHeader" v-if="this.userLoggedIn">類型：</h3>
                 <span class="textall" style="line-height: 50px;" v-for="(item,index) in this.movieType" :key="index">{{ item }}<span v-if="index < this.movieType.length - 1" class="textall" style="font-size: 1em;">、</span></span><br>
               </div>
               <div class="director">

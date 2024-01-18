@@ -14,19 +14,10 @@ export default {
       trailerLink: null,
       type: [],
       movieType: [],
-      //評論區相關
-      comments: [
-        //先放假資料
-        { id: 1, text: "good!!!", likes: 7, dislikes: 0, timestamp: Date.now() - 1000 * 60 * 5, replies: [], editing: false, },
-        { id: 2, text: "what???", likes: 3, dislikes: 9, timestamp: Date.now() - 1000 * 86400 * 70, replies: [], editing: false, },
-        { id: 3, text: "bad...", likes: 1, dislikes: 20, timestamp: Date.now() - 1000 * 86400 * 700, replies: [], editing: false, },
-        // ...其他假留言...
-      ],
       name: "John123456",
       commentText: "",
       sortOrder: "sort",
-      baoleiButton: false, //暴雷按鈕
-      blurredArea: true, //模糊區域
+      userLoggedIn:false,
     };
   },
   computed: {
@@ -146,6 +137,19 @@ export default {
         })
         .catch(err => console.error(err));
     },
+    login(){
+      const cookiesArray = document.cookie.split(';');
+      console.log(cookiesArray)
+      console.log("AAAAA")
+      for (const cookie of cookiesArray) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'userLoggedIn' && value === 'true') {
+          this.userLoggedIn = true;
+          break;
+        }
+      }
+      console.log(this.userLoggedIn)
+    }
   },
   async mounted() {
     // this.movieInfo = this.$route.query;
@@ -157,7 +161,7 @@ export default {
     await this.getTrailer();
     await this.initYouTubePlayer();
     await this.getMovieType();
-    
+    this.login()
   },
 };
 </script>

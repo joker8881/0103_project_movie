@@ -1,11 +1,9 @@
 <template>
-  <button type="button" @click="goIntroduce()">introduce</button>
+  <button type="button" @click="goTest()">test</button>
   <button type="button" @click="goSeat()">Seat</button>
-
-
-  <div>
-    <iframe width="560" height="315" :src="youtubeVideoUrl" frameborder="0" allowfullscreen></iframe>
-  </div>
+  <button type="button" @click="gobackCreate()">backCreate</button>
+  <button type="button" @click="gobackSearch()">backSearch</button>
+  <button type="button" @click="gobackAdd()">/backAdd</button>
 </template>
 
 
@@ -13,21 +11,26 @@
 import { RouterLink, RouterView } from 'vue-router'
 export default {
   data() {
-    return {
-      youtubeVideoKey: "pDak4qLyF4Q", // 將影片的鏈接（key）替換為實際的值
-    };
+    return
   },
   computed: {
-    youtubeVideoUrl() {
-      return `https://www.youtube.com/embed/${this.youtubeVideoKey}`;
-    },
+
   },
   methods: {
-    goIntroduce() {
-      this.$router.push('/introduce')
+    goTest() {
+      this.$router.push('/test')
+    },
+    gobackSearch() {
+      this.$router.push('/backSearch')
+    },
+    gobackCreate() {
+      this.$router.push('/backCreate')
     },
     goSeat() {
       this.$router.push('/seat')
+    },
+    gobackAdd() {
+      this.$router.push('/backAdd')
     }
   },
   mounted() {

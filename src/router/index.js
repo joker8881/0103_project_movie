@@ -33,6 +33,31 @@ const router = createRouter({
       name: 'seat',
       component: () => import('../views/ticket/Seat.vue')
     },
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import('../views/ticket/test.vue')
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import('../views/ticket/test.vue')
+    },
+    {
+    path: '/backCreate',
+      name: 'backCreate',
+      component: () => import('../views/ticket/backCreate.vue')
+    },
+    {
+      path: '/backSearch',
+        name: 'backSearch',
+        component: () => import('../views/ticket/backSearch.vue')
+      },
+      {
+      path: '/backAdd',
+        name: 'backAdd',
+        component: () => import('../views/ticket/backAdd.vue')
+      }
   ]
 })
 

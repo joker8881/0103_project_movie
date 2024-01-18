@@ -23,17 +23,15 @@
         <th>名稱</th>
         <th>介紹</th>
         <th>上映時間</th>
-        <th>預告片</th>
       </tr>
-      <tr v-for="(item, index) in this.objPlayingMovie" :key="index">
+      <tr v-for="(item, index) in this.objPlayingMovie" :key="index" >
         <td>{{ index + 1 }}</td>
         <td>{{ item.id }}</td>
-        <td><img :src="'https://image.tmdb.org/t/p/w154' + item.poster_path" alt=""></td>
+        <td><img :src="'https://image.tmdb.org/t/p/w154' + item.poster_path" alt="" @click="gotointroduce(item)" ></td>
         <td>{{ item.title }}</td>
         <td v-if="item.overview === ''">此電影無簡介</td>
         <td v-if="item.overview !== ''">{{ item.overview }}</td>
         <td>{{ item.release_date }}</td>
-        <td>{{ }}</td>
       </tr>
     </thead>
   </table>
@@ -47,12 +45,11 @@
         <th>名稱</th>
         <th>介紹</th>
         <th>上映時間</th>
-        <th>預告片</th>
       </tr>
       <tr v-for="(item, index) in this.objUpComing" :key="index">
         <td>{{ index + 1 }}</td>
         <td>{{ item.id }}</td>
-        <td><img :src="'https://image.tmdb.org/t/p/w154' + item.poster_path" alt=""></td>
+        <td><img :src="'https://image.tmdb.org/t/p/w154' + item.poster_path" alt="" @click="gotointroduce(item)"></td>
         <td>{{ item.title }}</td>
         <td v-if="item.overview === ''">此電影無簡介</td>
         <td v-if="item.overview !== ''">{{ item.overview }}</td>
@@ -70,8 +67,8 @@ export default {
       selectedTab: "正在熱映",
       objPlayingMovie: [],
       objUpComing: [],
-      objTrailer:[],
-      
+      objTrailer: [],
+
     };
   },
   methods: {
@@ -89,7 +86,7 @@ export default {
         }
       }).then(res => {
         console.log(res);
-        console.log(res.data.results);
+        // console.log(res.data.results);
         this.objPlayingMovie = res.data.results
       })
     },
@@ -104,14 +101,14 @@ export default {
         }
       }).then(res => {
         console.log(res);
-        console.log(res.data.results);
+        // console.log(res.data.results);
         this.objUpComing = res.data.results
       })
     },
     trailer() {
       axios({
         method: 'GET',
-        url: 'https://api.themoviedb.org/3/movie/' +{movie_id}/videos,
+        url: 'https://api.themoviedb.org/3/movie/' + { movie_id } / videos,
         params: { language: 'en-US', page: '1' },
         headers: {
           accept: 'application/json',
@@ -121,6 +118,23 @@ export default {
         console.log(res);
         // console.log(res.data.results);
         // this.objTrailer = res.data.results
+      });
+    },
+    gotointroduce(item) {
+      console.log(item)
+      this.$router.push({
+        name: 'introduce',
+        query: {
+          movieGenreid: item.genre_ids,
+          movieId: item.id,
+          movieOriginaltitle: item.original_title,
+          movieTitle: item.title,
+          movieOverview: item.overview,
+          moviePoster: item.poster_path,
+          movieBack: item.backdrop_path,
+          movieReleasedate: item.release_date,
+          movieVoteavg: item.vote_average,
+        }
       });
     }
   },

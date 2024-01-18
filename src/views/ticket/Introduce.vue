@@ -1,18 +1,18 @@
 <template>
     <div class="top" id="first">
         <div class="post">
-            <img :src="'https://image.tmdb.org/t/p/w300' + objPlayingMovie.poster_path" style="width: 100%; height: 100%;">
+            <img :src="'https://image.tmdb.org/t/p/w342' + movieInfo.moviePoster" style="width: 100%; height: 100%;">
         </div>
         <div class="movieInfo">
-            <h1>{{ objPlayingMovie.title }}</h1>
-            <p>{{ objPlayingMovie.original_title }}</p>
-            <p>評分: {{ objPlayingMovie.vote_average }}</p>
+            <h1>{{ this.movieInfo.movieTitle }}</h1>
+            <p>{{ this.movieInfo.movieOriginaltitle }}</p>
+            <p>評分: {{ this.movieInfo.movieVoteavg }}</p>
             <p>片長:</p>
-            <p>上映日: {{ objPlayingMovie.release_date }}</p>
+            <p>上映日: {{ this.movieInfo.movieReleasedate }}</p>
             <p>類型</p>
             <p>演員</p>
             <p>導演</p>
-            <p>簡介: {{ objPlayingMovie.overview }}</p>
+            <p>簡介: {{ this.movieInfo.movieOverview }}</p>
         </div>
     </div>
     <div class="middleInfo">
@@ -43,11 +43,12 @@
             <button type="button" @click="show()">紹仁戲院</button>
             <button type="button" @click="show()">裕峰影城</button>
             <button type="button" @click="show()">梓宏影院</button>
-            <button type="button" @click="show()">偉恆劇院</button>
+            <button type="button" @click="show()">暐衡劇院</button>
         </div>
         <div class="selectDate" v-show="isVisible" id="book">
             <h1>影院幾廳</h1>
             <h1>時段</h1>
+            <button type="button" @click="gotoSeat(movieInfo)">選取位置</button>
         </div>
     </div>
     <div class="back" @click="scrollToTop()">
@@ -60,11 +61,12 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            video:[],
+            movieInfo: {},
+            video: [],
             objPlayingMovie: [],
             isVisible: false,
             videoKey: "", // 將影片的鏈接（key）替換為實際的值
-            videoId: ""
+            videoId: "",
         }
     },
     computed: {
@@ -75,6 +77,26 @@ export default {
     methods: {
         show() {
             this.isVisible = true
+        },
+        goSeat() {
+            this.$router.push('/seat')
+        },
+        gotoSeat(movieInfo) {
+            console.log(movieInfo)
+            this.$router.push({
+                name: 'seat',
+                query: {
+                    movieGenreid: movieInfo.movieGenreid,
+                    movieId: movieInfo.movieId,
+                    movieOriginaltitle: movieInfo.movieOriginaltitle,
+                    movieTitle: movieInfo.movieTitle,
+                    movieOverview: movieInfo.movieOverview,
+                    moviePoster: movieInfo.moviePoster,
+                    movieBack: movieInfo.movieBack,
+                    movieReleasedate:movieInfo.movieReleasedate,
+                    movieVoteavg: movieInfo.movieVoteavg,
+                }
+            });
         },
         destroyed() {
             // 在組件被銷毀時移除滾動事件監聽器，避免內存洩漏
@@ -96,28 +118,10 @@ export default {
                 });
             }
         },
-        nowPlaying() {
-            axios({
-                method: 'GET',
-                url: 'https://api.themoviedb.org/3/movie/now_playing',
-                params: { language: 'zh-tw', page: '1' },
-                headers: {
-                    accept: 'application/json',
-                    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNTFmNDFjYjUxYWI2NmIzMjJkMGM1OGZkMDY1Y2I1YSIsInN1YiI6IjY1NThmNzFmMDgxNmM3MDBhYmJlNWQ3MCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RtMbqdUQUCfdqaLD5SoZ18e4PlSq9Ap4ShtGhmUMm10'
-                }
-            }).then(res => {
-                console.log(res);
-                console.log(res.data.results[2]);
-                this.objPlayingMovie = res.data.results[2]
-                this.videoId = res.data.results[2].id
-                console.log(this.videoId);
-                this.catchTrailer()
-            })
-        },
         catchTrailer() {
             axios({
                 method: 'GET',
-                url: `https://api.themoviedb.org/3/movie/${this.videoId}/videos`,
+                url: `https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}/videos`,
                 params: { language: 'en-US', page: '1' },
                 headers: {
                     accept: 'application/json',
@@ -125,9 +129,9 @@ export default {
                 }
             }).then(res => {
                 console.log(res.data.results);
-                this.video =res.data.results
+                this.video = res.data.results
                 this.video.forEach(item => {
-                    if(item.type == "Trailer"){
+                    if (item.type == "Trailer") {
                         this.videoKey = item.key
                     }
                 }
@@ -136,11 +140,13 @@ export default {
             });
         },
     },
-        mounted() {
-            this.nowPlaying()
-            window.addEventListener('scroll', this.handleScroll);
-        }
-    };
+    async mounted() {
+        this.movieInfo = this.$route.query;
+        console.log("Movie Details:", this.movieInfo);
+        window.addEventListener('scroll', this.handleScroll);
+        this.catchTrailer()
+    }
+};
 </script>
 
 <style scoped lang="scss">

@@ -62,7 +62,11 @@ export default {
     data() {
         return {
             movieInfo: {},
+<<<<<<< HEAD
             video: [],
+=======
+            video:[],
+>>>>>>> 7f8d4575011d164ca46f46552a9fc86fd821fa49
             objPlayingMovie: [],
             isVisible: false,
             videoKey: "", // 將影片的鏈接（key）替換為實際的值
@@ -143,10 +147,21 @@ export default {
     async mounted() {
         this.movieInfo = this.$route.query;
         console.log("Movie Details:", this.movieInfo);
+<<<<<<< HEAD
         window.addEventListener('scroll', this.handleScroll);
         this.catchTrailer()
     }
 };
+=======
+        // console.log("Movie Details:", this.movieInfo);
+        // setTimeout(() => {
+        //     $(".loader").hide();
+        // }, 2000);
+            // this.nowPlaying()
+            window.addEventListener('scroll', this.handleScroll);
+        }
+    };
+>>>>>>> 7f8d4575011d164ca46f46552a9fc86fd821fa49
 </script>
 
 <style scoped lang="scss">

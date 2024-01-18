@@ -75,12 +75,12 @@ export default {
             (person) => person.job === "Director"
           );
           const cast = response.cast.slice(0, 5);
-          console.log(directors);
-          console.log(cast);
+          // console.log(directors);
+          // console.log(cast);
           this.directors = directors;
           this.casts = cast;
-          console.log("全部電影的上映中 導演 objPerson", this.directors);
-          console.log("全部電影的上映中 演員 objPerson", this.casts);
+          console.log("導演 objPerson", this.directors);
+          console.log("演員 objPerson", this.casts);
         })
         .catch((error) => {
           console.error(error);
@@ -106,7 +106,7 @@ export default {
         const data = await response.json();
         const firstTrailerKey = data.results?.[0]?.key;
         this.trailerLink = `${firstTrailerKey}`;
-        console.log("firstTrailerKey", this.trailerLink);
+        // console.log("firstTrailerKey", this.trailerLink);
       } catch (error) {
         console.error(error);
         return null; // 或者返回其他适当的值，视情况而定
@@ -124,8 +124,8 @@ export default {
         .then((response) => response.json())
         .then((response) => {
           this.type = response.genres,
-          console.log(this.type)
-          console.log(this.movieInfo.movieGenreid)
+          console.log("所有類型", this.type)
+          console.log("此電影類型", this.movieInfo.movieGenreid)
           // console.log(this.movieInfo.movieGenreid.length)
           // console.log(this.type.length)
           // console.log(this.movieInfo.movieGenreid[0])
@@ -307,7 +307,7 @@ export default {
   },
   async mounted() {
     this.movieInfo = this.$route.query;
-    console.log("Movie Details:", this.movieInfo.movieId);
+    console.log("Movie Details:", this.movieInfo);
     this.getPerson();
     await this.getTrailer();
     await this.initYouTubePlayer();

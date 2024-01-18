@@ -426,7 +426,7 @@ fetch('http://localhost:8080/movie/art/create', {
 
           // 設置 預設電影類型 (選項的value值由"genre.id"更改為"genre")
           if (this.movieGenres.length > 0) {
-            this.selectedGenre = this.movieGenres[0];
+            this.selectedGenre = ""; //修改1
             // this.selectedGenre = this.movieGenres.find(genre => genre.id === 28); //這個也可以用
             console.log("Selected Genre:", this.selectedGenre);
           }
@@ -502,20 +502,25 @@ fetch('http://localhost:8080/movie/art/create', {
 <template lang="">
 <!-- Search First -->
       <div class="First" v-if="searchMode === 'original'">
-        <select v-model="selectedGenre" @change="enterGenreArea">
+        <select v-model="selectedGenre" @change="enterGenreArea" class="selectionBoxGenres">
           <option value="">All genres</option> <!-- 新增這行 -->
           <option v-for="genre in movieGenres" :key="genre.id" :value="genre">{{ genre.name }}</option>
         </select>
-        <input class="searchMovie1" type="text" v-model="searchText"  placeholder="搜尋電影...">
-        <button @click="PerformSearch">進入區域</button>
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="searchText">
+          <label class="tbc" for="floatingInput" v-if="!searchText.trim()">搜尋電影...</label>
+          <label class="tbc" for="floatingInput" v-else-if="noResultsModal">無相關電影</label>
+        </div>
+        <!-- <input class="searchMovie1" type="text" v-model="searchText"  placeholder="搜尋電影..."> -->
+        <button @click="PerformSearch" class="btn btn-primary allbuttonshoulduseit2">進入區域</button>
         <!-- 提示信息 -->
-  <p v-if="!searchText.trim()">請輸入搜索條件</p>
-  <p v-else-if="noResultsModal">無相關電影</p>
+  <!-- <p v-if="!searchText.trim()">請輸入搜索條件</p> //修改1 整合功能510行
+  <p v-else-if="noResultsModal">無相關電影</p> -->
   </div>
 
   <!-- Search First Result -->
   <div class="First2" v-if="searchMode === 'result'">
-    <button @click="ResetSearch" style="margin-top:25px" >重搜電影</button>
+    <button @click="ResetSearch" style="margin-top:25px" class="btn btn-primary allbuttonshoulduseit">重搜電影</button>
     <!-- <p>電影名稱: {{ searchResults }}</p> -->
 
     <div class="moviePosterAll">
@@ -528,14 +533,14 @@ fetch('http://localhost:8080/movie/art/create', {
         <div class="card-body" style="height: 10rem;">
           <h5 class="card-title">{{ movie.title }}</h5>
           <div class="GoShowText">
-          <a href="#Second" class="btn btn-primary">前往展示區</a>
+          <a href="#Second" class="btn btn-primary goforarea">前往展示區</a>
         </div>
         </div>
       </div>
     </div>
     <!-- Learn More 按钮 -->
-    <button v-if="visibleFilteredMovies.length < filteredMovies.length" @click="showMoreCards" class="LearnMore">Learn More</button>
-    <a href="#" class="btn btn-primary" style="">回頂部</a>
+    <button v-if="visibleFilteredMovies.length < filteredMovies.length" @click="showMoreCards" class="btn btn-primary allbuttonshoulduseit">Learn More</button>
+    <a href="#" class="btn btn-primary allbuttonshoulduseit" style="">回頂部</a>
 </div>
     
 
@@ -643,6 +648,15 @@ fetch('http://localhost:8080/movie/art/create', {
   .searchMovie1 {
     margin-top: 280px;
   }
+  .selectionBoxGenres{
+    margin: 20px 0;
+    height: 5%;
+    width: 50%;
+    background-color: rgb(176, 182, 213);
+    border-radius: 10px;
+    border: none;
+    padding-left: 15px;
+  }
 }
 
 .First2 {
@@ -655,7 +669,7 @@ fetch('http://localhost:8080/movie/art/create', {
   .moviePosterAll {
     width: 100%;
     // height: 100%;
-    border: 1px solid black;
+    // border: 1px solid black; 修改1 不要黑框線超醜
     display: flex;
     flex-wrap: wrap;
     height: auto;
@@ -732,14 +746,23 @@ fetch('http://localhost:8080/movie/art/create', {
   }
 }
 
-    .card-title {
+    .card-title { //修改1 調整文字大小
       margin-top: 10px;
+      font-size: 1.5em;
     }
 
-    .GoShowText {
+    .GoShowText { //修改1 修整按鍵大小
       position: absolute;
       bottom: 20px;
-      left: 36%;
+      width: 80%;
+      height: 10%;
+      left: 10%;
+      .goforarea{
+        width: 80%;
+        height: 100%;
+        font-size: 1.5em;
+        padding: 10px 0 0 0;
+      }
     }
   }
 }
@@ -925,4 +948,32 @@ span {
     background-color: #d8d8d8;
   }
 }
+
+.tb{
+    width: 80%;
+    margin: 0 auto;
+  }
+  .tbc{
+    margin-left: 10%;
+  }
+.allbuttonshoulduseit{ //從這個標籤去找其他修改的地方 修改1
+  width: 30%;
+  height: 100%;
+  font-size: 1.5em;
+  margin-right:28px;
+  margin-bottom: 20px;
+  background-color: #7e8eab;
+  border: #7e8eab;
+}
+.allbuttonshoulduseit2{
+  width: 30%;
+  height: 7%;
+  font-size: 1.5em;
+  margin-right:28px;
+  margin-bottom: 20px;
+  background-color: #7e8eab;
+  border: #7e8eab;
+}
+// 待修改，將輸入進來的電影種類改成中文
+
 </style>

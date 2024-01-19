@@ -132,6 +132,7 @@ export default {
       .then(response => response.json())
       .then(data => { // 處理返回的數據
         console.log(data);
+        back()
       })
       .catch(error => {
         console.error('Error fetching data:', error);

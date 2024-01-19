@@ -24,6 +24,7 @@ export default {
   },
   components: {
     RouterLink,
+    Popper,
   },
   methods:{
     ...mapActions(auth,["login","logout"]),
@@ -33,35 +34,39 @@ export default {
         localStorage.setItem("setacc",this.account)
         localStorage.setItem("setpas",this.password)
       }
-      fetch('http://localhost:8080/movie/user/login', {
-          method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            account:this.account,
-            password:this.password,
-          })
-      })
-      .then(response => response.json())
-      .then(data => {
-      // 處理返回的數據
-          console.log(data)
-          console.log(data.code)
-          if(data.code == 200){
-            Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
-            Cookies.set('account', this.account, { expires: 7, path: '/' });
-            this.login(this.account)
-            console.log("A")
-            this.$router.push("/")
-          }
-          if(data.rtnCode == "Account not verify"){
-            this.b = "帳號沒有驗證，請去註冊驗證"
-          }
-      })
-      .catch(error => {
-          console.error('Error fetching data:', error);
-      });
+      if(this.account !="" && this.password !=""){
+        fetch('http://localhost:8080/movie/user/login', {
+            method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              account:this.account,
+              password:this.password,
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+        // 處理返回的數據
+            console.log(data)
+            console.log(data.code)
+            if(data.code == 200){
+              Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
+              Cookies.set('account', this.account, { expires: 7, path: '/' });
+              this.login(this.account)
+              console.log("A")
+              this.$router.push("/")
+            }
+            if(data.rtnCode == "Account not verify"){
+              this.b = "帳號沒有驗證，請去註冊驗證"
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+      } else{
+        this.b = "請輸入帳號密碼"
+      }
     },
     clickC(){
       let e = document.getElementsByName("eye")
@@ -111,11 +116,10 @@ export default {
             <div class="checkbox">
                 <input class="leftC" type="checkbox" name="" id="cBox" v-model="cBox">
                 <p class="textC">保留我的登入資訊</p>
-                <p style="color: rgb(255, 20, 20);margin-left: 10%;background-color: white;border-radius: 5px;">{{ this.b }}</p>
             </div>
             <div class="logbox">
-                <button type="button" class="button bc" @click="register">註冊帳號</button>
-                <Popper arrow placement="top" class="root button" :content="this.b">
+                <button type="button" class="button" @click="register">註冊帳號</button>
+                <Popper arrow placement="top" class="root" style="margin-top: 0%;" :content="this.b">
                   <button type="button" class="buttonA" @click="log()">登入</button>
                 </Popper>
             </div>
@@ -196,13 +200,14 @@ export default {
     width: 80%;
     justify-content: space-between;
     .button{
-      width: 35%;
-      height: 55%;
-      border: none;
-      background-color: rgb(176, 182, 213);
-      border-radius: 10px;
-      font-size: 1.5em;
-      color: rgb(0, 0, 0);
+        width: 9.2vw;
+        height: 5.9vh;
+        border: none;
+        background-color: rgb(176, 182, 213);
+        border-radius: 10px;
+        font-size: 1.5em;
+        font-family:'jf-openhuninn-2.0';
+        margin-top: 2.5%;
     }
   }
 }
@@ -217,14 +222,15 @@ export default {
     --popper-theme-border-radius: 6px;
     --popper-theme-padding: 32px;
     --popper-theme-box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
+    margin: 0;
     .buttonA{
-      width: 100%;
-      height: 100%;
-      border: none;
-      background-color: rgb(176, 182, 213);
-      border-radius: 10px;
-      font-size: 1em;
-      color: rgb(0, 0, 0);
+        width: 9.2vw;
+        height: 5.9vh;
+        border: none;
+        background-color: rgb(176, 182, 213);
+        border-radius: 10px;
+        font-size: 1.5em;
+        font-family:'jf-openhuninn-2.0';
     }
   }
 </style>

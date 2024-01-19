@@ -46,6 +46,8 @@ export default {
       baoleiButton: false, //暴雷按鈕
       blurredArea: true, //模糊區域
       userLoggedIn:false,
+      language:["en-US","zh-TW"],
+      target:""
     };
   },
   computed: {
@@ -198,8 +200,60 @@ export default {
           Cookies.set('account', a, { expires: 7, path: '/' });
         }
       console.log(this.userLoggedIn)
-    }
+    },
+    async getMovieName() { //上映中
+      const options = {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
+        },
+      };
+
+      let page = 1;
+      let count = 30; //要抓的電影數
+      let playingMovies = [];
+
+      try {
+        const nowDate = new Date();
+        const twoMonth = new Date();
+        while (playingMovies.length < count) {
+          const api = `'https://api.themoviedb.org/3/search/movie?query=${target}&include_adult=false&language=${language[0]}&page=${page}'`;
+          const response = await fetch(api, options);
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await response.json();
+          const moviesOnPage = data.results.filter((movie) => {
+            // 檢查poster_path是否存在
+            if (!movie.poster_path) {
+              return false;
+            }
+            return true;
+          });
+          // 移除已存在的電影，避免重複
+          for (const movie of moviesOnPage) {
+              if (!playingMovies.some((existingMovie) => existingMovie.title === movie.title)) {
+                  playingMovies.push(movie);
+              }
+          }
+            if (page < data.total_pages) {
+                page++;
+        } else {
+        break;
+          }
+        }
+        // 過濾掉沒有 poster_path 的電影
+        const playMovies = playingMovies.filter((movie) => movie.poster_path).slice(0, count).sort((a, b) => new Date(a.release_date) - new Date(b.release_date));
+        this.objPlayMovies = playMovies;
+        console.log('上映中 PlayMovies:', this.objPlayMovies);
+      } catch (error) {
+        console.error(error);
+      }
   },
+},
   async mounted() {
     // this.movieInfo = this.$route.query;
     // console.log("Movie Details:", this.movieInfo);
@@ -259,7 +313,7 @@ export default {
           <div class="movieDataRight1">
             <div class="movieDataRight22">
               <div class="type">
-                <h3 class="textHeader" v-if="this.userLoggedIn">類型：</h3>
+                <h3 class="textHeader">類型：</h3>
                 <span class="textall" style="line-height: 50px;" v-for="(item,index) in this.movieType" :key="index">{{ item }}<span v-if="index < this.movieType.length - 1" class="textall" style="font-size: 1em;">、</span></span><br>
               </div>
               <div class="director">

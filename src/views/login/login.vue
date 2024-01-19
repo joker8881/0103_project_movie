@@ -3,6 +3,8 @@ import { mapState,mapActions } from 'pinia'
 import { ref } from 'vue';
 import { RouterLink } from "vue-router";
 import Cookies from 'js-cookie'
+import auth from '../../store/auth';
+import Popper from "vue3-popper";
 export default {
   data() {
     return{
@@ -14,14 +16,17 @@ export default {
       accall:[],
       show:0,
       cat:{},
+      b:"", //修改彈跳視窗
     }
   },
   computed:{
+    ...mapState(auth, ["getAuth","getuser"])
   },
   components: {
     RouterLink,
   },
   methods:{
+    ...mapActions(auth,["login","logout"]),
     log(){
       if(this.cBox == true){
         localStorage.setItem("keep","keep")
@@ -46,9 +51,13 @@ export default {
           if(data.code == 200){
             Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
             Cookies.set('account', this.account, { expires: 7, path: '/' });
+            this.login(this.account)
             console.log("A")
+            this.$router.push("/")
           }
-          this.$router.push("/")
+          if(data.rtnCode == "Account not verify"){
+            this.b = "帳號沒有驗證，請去註冊驗證"
+          }
       })
       .catch(error => {
           console.error('Error fetching data:', error);
@@ -73,8 +82,8 @@ export default {
   },
   mounted(){
     if(localStorage.getItem("keep") == "keep"){
-      this.setacc =localStorage.getItem("setacc")
-      this.setacc =localStorage.getItem("setpas")
+      this.account =localStorage.getItem("setacc")
+      this.password =localStorage.getItem("setpas")
     localStorage.removeItem("keep")
     localStorage.removeItem("setacc")
     localStorage.removeItem("setpas")
@@ -102,10 +111,13 @@ export default {
             <div class="checkbox">
                 <input class="leftC" type="checkbox" name="" id="cBox" v-model="cBox">
                 <p class="textC">保留我的登入資訊</p>
+                <p style="color: rgb(255, 20, 20);margin-left: 10%;background-color: white;border-radius: 5px;">{{ this.b }}</p>
             </div>
             <div class="logbox">
                 <button type="button" class="button bc" @click="register">註冊帳號</button>
-                <button type="button" class="button" @click="log()">登入</button>
+                <Popper arrow placement="top" class="root button" :content="this.b">
+                  <button type="button" class="buttonA" @click="log()">登入</button>
+                </Popper>
             </div>
         </div>
     </div>
@@ -118,6 +130,9 @@ export default {
   text-align: center;
   display: flex;
   justify-content: center;
+  background-image: url(../../picture/Movie.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
   .box{
   height: 80%;
   width: 40%;
@@ -192,4 +207,24 @@ export default {
   }
 }
 }
+
+.root {
+    --popper-theme-background-color: #333333;
+    --popper-theme-background-color-hover: #333333;
+    --popper-theme-text-color: #ffffff;
+    --popper-theme-border-width: 0px;
+    --popper-theme-border-style: solid;
+    --popper-theme-border-radius: 6px;
+    --popper-theme-padding: 32px;
+    --popper-theme-box-shadow: 0 6px 30px -6px rgba(0, 0, 0, 0.25);
+    .buttonA{
+      width: 100%;
+      height: 100%;
+      border: none;
+      background-color: rgb(176, 182, 213);
+      border-radius: 10px;
+      font-size: 1em;
+      color: rgb(0, 0, 0);
+    }
+  }
 </style>

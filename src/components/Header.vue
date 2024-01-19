@@ -2,6 +2,7 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { mapState,mapActions } from 'pinia';
 import Cookies from 'js-cookie'
+import auth from '../store/auth';
 export default{
     data(){
         return{
@@ -10,10 +11,14 @@ export default{
             userLoggedIn:false
         }
     },
+    computed:{
+        ...mapState(auth, ["getAuth","getuser"])
+    },
     components:{
         RouterLink,
     },
     methods:{
+        ...mapActions(auth,["login","logout"]),
         loga(){
             this.$router.push("/login")
         },
@@ -26,11 +31,12 @@ export default{
             }
             console.log(this.userLoggedIn)
         },
-        logout(){
+        logout1(){
             Cookies.remove('userLoggedIn');
             Cookies.remove('account');
             this.userLoggedIn =false
             this.loginAccount =""
+            this.logout()
             this.$router.push("/login")
         }
     },
@@ -51,13 +57,14 @@ export default{
             <RouterLink to="/ticket" class="a">購票</RouterLink>
             <RouterLink :to="`/mypage`" class="a">個人主頁</RouterLink>
             <RouterLink :to="`/create`" class="a">影迷創作</RouterLink>
-            <div v-if="this.userLoggedIn" class="a">
-                <p>登入帳號：{{ this.loginAccount }}</p>
+            <div v-if="this.userLoggedIn || this.getAuth" class="a">
+                <p v-if="this.userLoggedIn">登入帳號：{{ this.loginAccount }}</p>
+                <p v-if="this.getAuth">登入帳號：{{ this.getuser }}</p>
             </div>
-            <div v-if="this.userLoggedIn" class="a">
-                <p @click="logout">登出</p>
+            <div v-if="this.userLoggedIn || this.getAuth" class="a">
+                <p @click="logout1">登出</p>
             </div>
-            <div v-if="this.userLoggedIn == false" class="a" style="">
+            <div v-if="(this.getAuth !== this.userLoggedIn) == false" class="a" style="">
                 <p @click="loga">登入</p>
             </div>
         </div>

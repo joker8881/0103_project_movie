@@ -47,7 +47,9 @@ export default {
       blurredArea: true, //模糊區域
       userLoggedIn:false,
       language:["en-US","zh-TW"],
-      target:""
+      languageTarget:"",
+      target:"",
+      objPlayMovies:{}
     };
   },
   computed: {
@@ -206,20 +208,18 @@ export default {
         method: "GET",
         headers: {
           accept: "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
+          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkNTFmNDFjYjUxYWI2NmIzMjJkMGM1OGZkMDY1Y2I1YSIsInN1YiI6IjY1NThmNzFmMDgxNmM3MDBhYmJlNWQ3MCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.RtMbqdUQUCfdqaLD5SoZ18e4PlSq9Ap4ShtGhmUMm10'
         },
       };
 
       let page = 1;
       let count = 30; //要抓的電影數
       let playingMovies = [];
+      let targetA = this.target
 
       try {
-        const nowDate = new Date();
-        const twoMonth = new Date();
         while (playingMovies.length < count) {
-          const api = `'https://api.themoviedb.org/3/search/movie?query=${target}&include_adult=false&language=${language[0]}&page=${page}'`;
+          const api = `https://api.themoviedb.org/3/search/movie?query=${this.target}&include_adult=false&language=${this.languageTarget}&page=${page}`;
           const response = await fetch(api, options);
 
           if (!response.ok) {
@@ -309,6 +309,11 @@ export default {
           <h6>{{ this.movieInfo.movieOriginaltitle }}</h6>
           <h2 class="textHeader">上映日期：{{ this.movieInfo.movieReleasedate }}</h2>
           <hr />
+          <input type="text" name="" id="" v-model="this.target">
+          <select name="" id="" v-model="this.languageTarget">
+            <option  v-for="(item, index) in this.language" :key="index" value="">{{ item }}</option>
+          </select>
+          <button type="button" @click="getMovieName">AAAA</button>
           <h2>Movie Info</h2>
           <div class="movieDataRight1">
             <div class="movieDataRight22">

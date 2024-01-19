@@ -41,21 +41,39 @@ export default {
   },
   methods: {
     // 預告片
-    initYouTubePlayer() { // 影片嵌入相關
-      if (window.YT && window.YT.Player) {
-        const videoId = this.trailerLink;
-        new window.YT.Player(this.$refs.youtubePlayer, {
-          height: "630",
-          width: "1080",
-          videoId: videoId,
-          playerVars: { autoplay: 0 }, // 1 表示自动播放
-        });
-      } else {
-        // 如果 'Player' 未定义，你可能需要等待 API 加载完成
-        // 或者在其他地方处理 'onYouTubeIframeAPIReady' 事件
-        console.error("YouTube API not ready");
-      }
-    },
+    // initYouTubePlayer() { //影片嵌入相關 第一抓影片方法
+    //   if (window.YT && window.YT.Player) {
+    //     // 替换为你的 YouTube 视频 ID
+    //     const videoId = this.trailerLink;
+    //     // 创建 YouTube 播放器
+    //     new window.YT.Player(this.$refs.youtubePlayer, {
+    //     height: "630",
+    //     width: "1080",
+    //     videoId: videoId,
+    //     playerVars: { autoplay: 0 },
+    //     events: {
+    //       onError: (event) => {
+    //         console.error("YouTube Player Error:", event.data);
+    //       },
+    //     },
+    //     });
+    //   } else {
+    //     // 如果 'Player' 未定义，你可能需要等待 API 加载完成
+    //     // 或者在其他地方处理 'onYouTubeIframeAPIReady' 事件
+    //     console.error("YouTube API not ready");
+    //   }
+    // },
+
+    // embedYouTubeVideo() {  // 第二抓影片方法
+    //   const iframe = document.createElement('iframe');
+    //   iframe.width = 560;
+    //   iframe.height = 315;
+    //   iframe.src = `https://www.youtube.com/embed/${this.trailerLink}`;
+    //   iframe.frameBorder = 0;
+    //   iframe.allowFullscreen = true;
+
+    //   document.getElementById('trailer-video').appendChild(iframe);
+    // },
     // 抓電影
     getPerson() { // 電影相關 上映中 演員*5 + 導演*1
       const options = {
@@ -329,7 +347,7 @@ export default {
         console.error('Error fetching data:', error);
       });
     },
-    // commentLikeAndDislike() { // 喜歡不喜歡直接謝在上面的喜歡不喜歡按鈕裡面
+    // commentLikeAndDislike() { // 喜歡不喜歡直接寫在上面的喜歡不喜歡按鈕裡面
     //   fetch('http://localhost:8080/movie/comment/likeAndDislike', {
     //     method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
     //     headers: {
@@ -354,18 +372,18 @@ export default {
     // },
 
     // 以下待解決
-    commentTime(timestamp) { //回覆時間
-        const date = new Date(timestamp);
-        const options = {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: false,
-        };
-        return new Intl.DateTimeFormat("TW", options).format(date);
-    },
+    // commentTime(timestamp) { //回覆時間
+    //     const date = new Date(timestamp);
+    //     const options = {
+    //         year: "numeric",
+    //         month: "2-digit",
+    //         day: "2-digit",
+    //         hour: "2-digit",
+    //         minute: "2-digit",
+    //         hour12: false,
+    //     };
+    //     return new Intl.DateTimeFormat("TW", options).format(date);
+    // },
     addReply(comment) {
       if (this.replyText.trim() !== "") {
         this.commentReplies.push({
@@ -420,13 +438,14 @@ export default {
   mounted() {
     this.movieInfo = this.$route.query;
     console.log("Movie Details:", this.movieInfo);
-    this.getPerson();
-    this.getTrailer();
-    this.initYouTubePlayer();
-    this.getMovieType();
     setTimeout(() => {
       $(".loader").hide();
     }, 500);
+    this.getTrailer();
+    // this.embedYouTubeVideo(); // 第二抓影片方法
+    // this.initYouTubePlayer(); // 第一抓影片方法
+    this.getPerson();
+    this.getMovieType();
     this.commentSearch();
   },
 };
@@ -489,7 +508,10 @@ export default {
     <!-- 預告片 -->
     <div class="middle">
       <h1>預告片</h1>
-      <div ref="youtubePlayer"></div>
+      <!-- <div ref="youtubePlayer"></div> -->
+      <!-- <div id="trailer-video"></div> -->
+      <!-- 報告再開啟下面的註解 -->
+      <!-- <iframe width="1120" height="630" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen></iframe> -->
     </div>
     <hr />
     <!-- 討論區 -->

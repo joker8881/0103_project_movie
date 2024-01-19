@@ -28,6 +28,9 @@ export default defineComponent({
       name: "Kass123",
       artName:"遊戲",
 
+      //用于存储当前选定电影的图像URL
+      carouselImages: [],
+
       //畫板相關
       canvasWidth: 763, // 畫板的寬度
       canvasHeight: 450, // 畫板的高度
@@ -343,14 +346,14 @@ fetch('http://localhost:8080/movie/art/create', {
       };
 
       let page = 1;
-      let count = 900; //要抓的電影數
+      let count = 5000; //要抓的電影數
       let playingMovies = [];//上映中的電影
 
       try {
         // 循環遞增頁數，直到達到指定的電影數量
         while (playingMovies.length < count) {
           // 組成 API 請求的 URL
-          const api = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=zh-TW&page=${page}`;
+          const api = `https://api.themoviedb.org/3/search/movie?query=%E6%88%91&include_adult=true&language=zh-tw&page=${page}`;
           // 發送 API 請求
           const response = await fetch(api, options);
 
@@ -453,7 +456,7 @@ fetch('http://localhost:8080/movie/art/create', {
       this.maxVisibleCards += 4; // 或其他你希望增加的数量
     },
 
-    //點選電影海報 (需要抓他的電影名稱)
+    //點選電影海報的展示區 (需要抓他的電影名稱，去展示所有這部電影的作品)
     selectMovie(movie) {
       this.selectedMovie = movie;
 
@@ -468,22 +471,15 @@ fetch('http://localhost:8080/movie/art/create', {
       artname: this.artName,
     })
   })
-  .then(response => response.blob())  // 使用 blob() 來處理二進位資料
-  .then(blobData => {
-    // 將 Blob 資料轉換成 URL
-    const imageUrl = URL.createObjectURL(blobData);
-
-    // 在這裡你可以將 imageUrl 存放在適當的數據結構中，以供輪播使用
-    // 可以將 imageUrl 加入到 movie 物件中，或是在 data 中建立一個陣列存放所有的圖片 URL
-
-    // 然後觸發輪播更新或直接修改 visibleFilteredMovies 中相應的 movie 物件
-  })
-  .catch(error => {
-    console.error('Error fetching data:', error);
-  });
+  .then(response => response.json()) 
+  .then(img =>{
+    console.log(img.artList[0].artLocation);
+    this.carouselImages =img.artList[0].artLocation
+    this.carouselImages =img.artList[1].artLocation
+    this.carouselImages =img.artList[2].artLocation
+    this.carouselImages =img.artList[3].artLocation
+    ;})
 },
-
-
 
   },
 
@@ -525,7 +521,7 @@ fetch('http://localhost:8080/movie/art/create', {
 
     <div class="moviePosterAll">
       <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id" class="card" style="width: 18rem; height: 34.8rem; margin-right:2%; margin-top:2%; margin-bottom:2%;">
-        <div class="box" @click="selectMovie(movie)">
+        <div class="box" >
       <div class="box1"></div><a href="#bord" class="btn btn-primary" style="">
         <img class="card-img-top" :src="getMoviePosterPath(movie.poster_path)" alt="Card image cap" style="height: 27rem;">
         </a>
@@ -533,7 +529,7 @@ fetch('http://localhost:8080/movie/art/create', {
         <div class="card-body" style="height: 10rem;">
           <h5 class="card-title">{{ movie.title }}</h5>
           <div class="GoShowText">
-          <a href="#Second" class="btn btn-primary goforarea">前往展示區</a>
+          <a href="#Second" class="btn btn-primary goforarea" @click="selectMovie(movie)">前往展示區</a>
         </div>
         </div>
       </div>
@@ -614,7 +610,6 @@ fetch('http://localhost:8080/movie/art/create', {
   </li>
  </ul>
 </div>
-
   <div class="Second" v-show="abc" id="Second">
     <p>電影名稱: {{ searchResults }}</p>
     <div class="ShowPoster">
@@ -624,16 +619,17 @@ fetch('http://localhost:8080/movie/art/create', {
   mousewheel
   style="width: 54%; height: 68.4%"
 >
-  <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id">
+  <!-- <div v-for="(movie, index) in carouselImages" :key="index"> -->
     <div>
-    <!-- <img
-      class="carousel-img"
-      :src="movie.imageUrl"
-    /> -->
-    <img class="carousel-img" src="../picture/circle.png" />
-    <h5>{{ movie.title }}</h5>
+      <img class="carousel-img" :src="carouselImages" />
     </div>
-  </div>
+
+    <!-- 測試本地圖片用 -->
+    <!-- <div v-for="(image, index) in carouselImages" :key="index">
+        <div>
+          <img class="carousel-img" :src="image" />
+        </div> -->
+  <!-- </div> -->
 </n-carousel>
 </div>
 </div>
@@ -791,8 +787,8 @@ fetch('http://localhost:8080/movie/art/create', {
     }
 
     .carousel-img {
-      width: 20%;
-      height: 20%;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
 

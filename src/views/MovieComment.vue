@@ -9,8 +9,8 @@ export default {
       directors: {},
       casts: {},
       trailerLink: null,
-      type: [],
-      movieType: [],
+      type: [], // 所有類型19個
+      movieType: [], // 此電影類型
       //評論區相關
       sortOrder: "sort",
       baoleiButton: false, // 暴雷按鈕
@@ -40,40 +40,6 @@ export default {
     },
   },
   methods: {
-    // 預告片
-    // initYouTubePlayer() { //影片嵌入相關 第一抓影片方法
-    //   if (window.YT && window.YT.Player) {
-    //     // 替换为你的 YouTube 视频 ID
-    //     const videoId = this.trailerLink;
-    //     // 创建 YouTube 播放器
-    //     new window.YT.Player(this.$refs.youtubePlayer, {
-    //     height: "630",
-    //     width: "1080",
-    //     videoId: videoId,
-    //     playerVars: { autoplay: 0 },
-    //     events: {
-    //       onError: (event) => {
-    //         console.error("YouTube Player Error:", event.data);
-    //       },
-    //     },
-    //     });
-    //   } else {
-    //     // 如果 'Player' 未定义，你可能需要等待 API 加载完成
-    //     // 或者在其他地方处理 'onYouTubeIframeAPIReady' 事件
-    //     console.error("YouTube API not ready");
-    //   }
-    // },
-
-    // embedYouTubeVideo() {  // 第二抓影片方法
-    //   const iframe = document.createElement('iframe');
-    //   iframe.width = 560;
-    //   iframe.height = 315;
-    //   iframe.src = `https://www.youtube.com/embed/${this.trailerLink}`;
-    //   iframe.frameBorder = 0;
-    //   iframe.allowFullscreen = true;
-
-    //   document.getElementById('trailer-video').appendChild(iframe);
-    // },
     // 抓電影
     getPerson() { // 電影相關 上映中 演員*5 + 導演*1
       const options = {
@@ -167,7 +133,7 @@ export default {
     resetBlur() { //暴雷背景模糊
       this.blurredArea = false;
     },
-    commentTimeDif(commentTime) { // 留言時間到現在時間差
+    commentTimeDif(commentTime) { // 留言時間時間差
       if (commentTime.includes('T')) {
         commentTime = Date.parse(commentTime);
       } else {
@@ -203,7 +169,7 @@ export default {
       comment.replying = false;
       this.replyText = null;
     },
-    likeButton(comment, index, indexOrder) { // 喜歡按鈕
+    likeButton(comment, index, indexOrder) { // 喜歡
       console.log('回覆按鈕被點擊，主要留言的位置：', index);
       console.log('indexOrder：', indexOrder);
       this.commentIndex = index;
@@ -230,7 +196,7 @@ export default {
         console.error('Error fetching data:', error);
       });
     },
-    dislikeButton(comment, index, indexOrder ) { // 不喜歡按鈕
+    dislikeButton(comment, index, indexOrder ) { // 不喜歡
       console.log('回覆按鈕被點擊，主要留言的位置：', index);
       console.log('indexOrder：', indexOrder);
       this.commentIndex = index;
@@ -347,43 +313,8 @@ export default {
         console.error('Error fetching data:', error);
       });
     },
-    // commentLikeAndDislike() { // 喜歡不喜歡直接寫在上面的喜歡不喜歡按鈕裡面
-    //   fetch('http://localhost:8080/movie/comment/likeAndDislike', {
-    //     method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
-    //     headers: {
-    //       'Content-Type': 'application/json'
-    //       },
-    //     body: JSON.stringify({
-    //       commentIndex: this.commentIndex,
-    //       commentIndexOrder: this.commentIndexOrder,
-    //       movie: this.movieInfo.movieTitle,
-    //       movieID: this.movieInfo.movieId,
-    //       commentText: this.replyText,
-    //       account: this.getuser,
-    //     })
-    //   })
-    //   .then(response => response.json())
-    //   .then(data => { // 處理返回的數據
-    //     console.log(data);
-    //   })
-    //   .catch(error => {
-    //     console.error('Error fetching data:', error);
-    //   });
-    // },
 
     // 以下待解決
-    // commentTime(timestamp) { //回覆時間
-    //     const date = new Date(timestamp);
-    //     const options = {
-    //         year: "numeric",
-    //         month: "2-digit",
-    //         day: "2-digit",
-    //         hour: "2-digit",
-    //         minute: "2-digit",
-    //         hour12: false,
-    //     };
-    //     return new Intl.DateTimeFormat("TW", options).format(date);
-    // },
     addReply(comment) {
       if (this.replyText.trim() !== "") {
         this.commentReplies.push({
@@ -434,39 +365,107 @@ export default {
         this.commentText = "";
       }
     },
+    // (以下為已經用不到了)
+    // commentLikeAndDislike() { // 已經直接寫在喜歡不喜歡按鈕裡面
+    //   fetch('http://localhost:8080/movie/comment/likeAndDislike', {
+    //     method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+    //     headers: {
+    //       'Content-Type': 'application/json'
+    //       },
+    //     body: JSON.stringify({
+    //       commentIndex: this.commentIndex,
+    //       commentIndexOrder: this.commentIndexOrder,
+    //       movie: this.movieInfo.movieTitle,
+    //       movieID: this.movieInfo.movieId,
+    //       commentText: this.replyText,
+    //       account: this.getuser,
+    //     })
+    //   })
+    //   .then(response => response.json())
+    //   .then(data => { // 處理返回的數據
+    //     console.log(data);
+    //   })
+    //   .catch(error => {
+    //     console.error('Error fetching data:', error);
+    //   });
+    // },
+    // initYouTubePlayer() { // 第一抓影片方法
+    //   if (window.YT && window.YT.Player) {
+    //     // 替换为你的 YouTube 视频 ID
+    //     const videoId = this.trailerLink;
+    //     // 创建 YouTube 播放器
+    //     new window.YT.Player(this.$refs.youtubePlayer, {
+    //     height: "630",
+    //     width: "1080",
+    //     videoId: videoId,
+    //     playerVars: { autoplay: 0 },
+    //     events: {
+    //       onError: (event) => {
+    //         console.error("YouTube Player Error:", event.data);
+    //       },
+    //     },
+    //     });
+    //   } else {
+    //     // 如果 'Player' 未定义，你可能需要等待 API 加载完成
+    //     // 或者在其他地方处理 'onYouTubeIframeAPIReady' 事件
+    //     console.error("YouTube API not ready");
+    //   }
+    // },
+    // embedYouTubeVideo() {  // 第二抓影片方法
+    //   const iframe = document.createElement('iframe');
+    //   iframe.width = 560;
+    //   iframe.height = 315;
+    //   iframe.src = `https://www.youtube.com/embed/${this.trailerLink}`;
+    //   iframe.frameBorder = 0;
+    //   iframe.allowFullscreen = true;
+
+    //   document.getElementById('trailer-video').appendChild(iframe);
+    // },
+    // commentTime(timestamp) { // 回覆時間
+    //     const date = new Date(timestamp);
+    //     const options = {
+    //         year: "numeric",
+    //         month: "2-digit",
+    //         day: "2-digit",
+    //         hour: "2-digit",
+    //         minute: "2-digit",
+    //         hour12: false,
+    //     };
+    //     return new Intl.DateTimeFormat("TW", options).format(date);
+    // },
+    
   },
   mounted() {
     this.movieInfo = this.$route.query;
     console.log("Movie Details:", this.movieInfo);
     setTimeout(() => {
       $(".loader").hide();
-    }, 500);
+    }, 200);
     this.getTrailer();
-    // this.embedYouTubeVideo(); // 第二抓影片方法
-    // this.initYouTubePlayer(); // 第一抓影片方法
     this.getPerson();
     this.getMovieType();
     this.commentSearch();
+    // this.embedYouTubeVideo(); // 第二抓影片方法
+    // this.initYouTubePlayer(); // 第一抓影片方法
   },
 };
 </script>
 
 <template>
   <!-- 讀取資料過場 -->
-  <!-- <div class="loader">
+  <div class="loader">
     <div class="loadingio-spinner-rolling-3hvvs6i9c3b">
       <div class="ldio-b9el9z8mymt">
         <h1>請稍後......</h1>
         <div></div>
       </div>
     </div>
-  </div> -->
+  </div>
 
   <div class="body">
     <!-- 電影資料 -->
     <div class="header">
       <div class="movieData">
-        <!-- <img :src="'https://image.tmdb.org/t/p/w342' + this.movieInfo.movieBack " alt="" style="width: 100vw; height: 100vh; opacity: 0.2; position: fixed; top: 0; left: 0;"><br> -->
         <div class="movieDataLeft">
           <img :src="'https://image.tmdb.org/t/p/w500' + this.movieInfo.moviePoster" alt=""/>
         </div>
@@ -508,8 +507,6 @@ export default {
     <!-- 預告片 -->
     <div class="middle">
       <h1>預告片</h1>
-      <!-- <div ref="youtubePlayer"></div> -->
-      <!-- <div id="trailer-video"></div> -->
       <!-- 報告再開啟下面的註解 -->
       <!-- <iframe width="1120" height="630" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen></iframe> -->
     </div>
@@ -570,10 +567,10 @@ export default {
                 <button v-if="comment.editing" @click="saveEdit(comment)" class="btn btn-link" style="text-decoration: none">儲存</button>
                 
                 <!-- 顯示回覆的區域 -->
-                <div v-if="commentReplies.length > 0" class="mt-2">
-                  <div v-for="item in commentReplies" :key="item.commentIndex" class="card mb-2">
-                    <div class="card-body">
-                      <div v-if="item.commentIndex">
+                <div v-if="commentReplies.length > 0" class="mt-2" style="border: 0;">
+                  <div v-for="item in commentReplies" :key="item.commentIndex" class="card mb-2" style="border: 0;">
+                    <div class="card-body" v-if="item.commentIndex === comment.commentIndex">
+                      <div>
                         <span>{{ "@" + item.account }}</span>
                         <small class="text-muted">{{ this.commentTimeDif(item.commentTime) }}</small>
                         <button @click="editComment(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>

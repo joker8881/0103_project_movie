@@ -25,9 +25,9 @@ export default {
     };
   },
   computed: {
-    ...mapState(auth,["getAuth","getuser"]), //帳號密碼
-    sortComments() {
-      //篩選留言
+    ...mapState(auth,["getAuth","getuser"]), // 帳號密碼
+    sortComments() { // 篩選留言
+      // console.log(this.comments);
       const sorted = this.comments.slice();
       switch (this.sortOrder) {
         case "latest":
@@ -130,7 +130,7 @@ export default {
     toggleBaolei() { // 暴雷按鈕
       this.baoleiButton = !this.baoleiButton;
     },
-    resetBlur() { //暴雷背景模糊
+    resetBlur() { // 暴雷背景模糊
       this.blurredArea = false;
     },
     commentTimeDif(commentTime) { // 留言時間時間差
@@ -161,18 +161,32 @@ export default {
         return "1年前";
       }
     },
-    chooseComment(comment, index) { // 回傳點擊回覆留言的編號
-      console.log('回覆按鈕被點擊，主要留言的位置：', index);
+    chooseComment(comment, index) { // 顯示點擊回覆留言的編號
+      // console.log('回覆按鈕被點擊，主要留言的位置：', index);
       this.commentIndex = index;
       comment.replying = true;
+    },
+    addReply(comment) { // 回覆留言且顯示於畫面
+      console.log(this.replyText);
+      if (this.replyText.trim() !== "") {
+        this.commentReplies.push({
+          account: this.getuser,
+          commentText: this.replyText,
+          commentTime: Date.now(),
+          commentIndex: this.commentIndex,
+        });
+        console.log(this.commentReplies);
+        comment.replyText = "";
+        comment.replying = false;
+      }
     },
     cancelReply(comment) { // 取消回覆
       comment.replying = false;
       this.replyText = null;
     },
     likeButton(comment, index, indexOrder) { // 喜歡
-      console.log('回覆按鈕被點擊，主要留言的位置：', index);
-      console.log('indexOrder：', indexOrder);
+      // console.log('回覆按鈕被點擊，主要留言的位置：', index);
+      // console.log('indexOrder：', indexOrder);
       this.commentIndex = index;
       this.commentIndexOrder = indexOrder;
       comment.favorite++;
@@ -197,9 +211,9 @@ export default {
         console.error('Error fetching data:', error);
       });
     },
-    dislikeButton(comment, index, indexOrder ) { // 不喜歡
-      console.log('回覆按鈕被點擊，主要留言的位置：', index);
-      console.log('indexOrder：', indexOrder);
+    dislikeButton(comment, index, indexOrder) { // 不喜歡
+      // console.log('回覆按鈕被點擊，主要留言的位置：', index);
+      // console.log('indexOrder：', indexOrder);
       this.commentIndex = index;
       this.commentIndexOrder = indexOrder;
       comment.dislike++;
@@ -225,7 +239,7 @@ export default {
       });
     },
     // 後端api
-    commentCreate() { //留言
+    commentCreate() { // 留言
       fetch('http://localhost:8080/movie/comment/create', {
         method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
@@ -254,12 +268,13 @@ export default {
           });
           this.commentText = "";
         }
+        this.sortComments;
       })
       .catch(error => {
         console.error('Error fetching data:', error);
       });
     },
-    commentSearch() { //資料庫抓電影所有留言
+    commentSearch() { // 資料庫抓電影所有留言
       fetch('http://localhost:8080/movie/comment/search', {
         method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
@@ -286,7 +301,7 @@ export default {
             console.error('Error fetching data:', error);
         });
     },
-    commentCreateChild() { //回覆留言
+    commentCreateChild() { // 傳送回覆留言
       fetch('http://localhost:8080/movie/comment/createchild', {
         method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
@@ -308,25 +323,41 @@ export default {
         console.error('Error fetching data:', error);
       });
     },
-    // 以下待解決
-    addReply(comment) {
-      if (this.replyText.trim() !== "") {
-        this.commentReplies.push({
-          text: this.replyText,
-          timestamp: Date.now(),
-        });
-        console.log(this.commentReplies);
-        comment.replyText = "";
-        comment.replying = false;
-      }
+    commentDeleteComment(comment, index, indexOrder) { // 刪除留言
+      this.commentIndex = index;
+      this.commentIndexOrder = indexOrder;
+      const index11 = this.comments.indexOf(comment);
+        if (index11 !== -1) {
+          this.comments.splice(index11, 1);
+        }
+      fetch('http://localhost:8080/movie/comment/delete', {
+        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+        headers: {
+          'Content-Type': 'application/json'
+          },
+        body: JSON.stringify({
+          commentIndex: this.commentIndex,
+          commentIndexOrder: this.commentIndexOrder,
+          movieID: this.movieInfo.movieId,
+        })
+      })
+      .then(response => response.json())
+      .then(data => { // 處理返回的數據
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
     },
+    // 以下待解決
+    
     deleteReply(reply) {
       const replyIndex = this.commentReplies.findIndex(r => r.id === reply.id);
       if (replyIndex !== -1) {
         this.commentReplies.splice(replyIndex, 1);
       }
     },
-    addComment() { //新增留言
+    addComment() { // 新增留言
       if (this.commentText.trim() !== "") {
         this.comments.push({
           id: this.comments.length + 1,
@@ -452,9 +483,9 @@ export default {
             <div class="mb-3">
               <span>{{ this.comments.length + "件留言" }}</span>
               <select v-model="sortOrder" id="sortSelect">
-                <option value="sort">排序方式</option>
-                <option value="latest">最新</option>
-                <option value="likes">喜歡數</option>
+                <option value="sort">排序</option>
+                <option value="latest">最新留言</option>
+                <option value="likes">最多喜歡</option>
               </select>
             </div>
             <!-- 新增留言 -->
@@ -476,7 +507,7 @@ export default {
                 <small class="text-muted">{{ this.commentTimeDif(comment.commentTime) }}</small>
                 <button v-if="this.getAuth" @click="editComment(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
                 <button v-if="comment.editing" @click="saveEdit(comment)" class="btn btn-link" style="text-decoration: none">儲存</button>
-                <button v-if="this.getAuth" @click="deleteComment(comment)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                <button v-if="this.getAuth" @click="commentDeleteComment(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
                 <span>{{ comment.commentText }}</span><br>
                 <button @click="likeButton(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-outline-primary" style="border: 0">
                   <i class="fa-regular fa-thumbs-up"></i>{{ comment.favorite }}
@@ -506,7 +537,7 @@ export default {
                         <small class="text-muted">{{ this.commentTimeDif(item.commentTime) }}</small>
                         <button v-if="this.getAuth" @click="editComment(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
                         <button v-if="item.editing" @click="saveEdit(item)" class="btn btn-link" style="text-decoration: none">儲存</button>
-                        <button v-if="this.getAuth" @click="deleteReply(item.commentText)" class="btn btn-link" style="text-decoration: none">刪除</button><br/>
+                        <button v-if="this.getAuth" @click="commentDeleteComment(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br/>
                         <span>{{ item.commentText }}</span><br>
                         <button @click="likeButton(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-outline-primary" style="border: 0">
                           <i class="fa-regular fa-thumbs-up"></i>{{ item.favorite }}

@@ -36,7 +36,6 @@ export default {
     },
     typePerPage() {
       const cutArray = [];
-
       for (let i = 0; i < this.objtype.length; i += this.itemTypePerSize) {
         cutArray.push(this.objtype.slice(i, i + this.itemTypePerSize));
       }

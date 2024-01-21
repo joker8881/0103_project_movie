@@ -19,6 +19,16 @@ const router = createRouter({
       component: () => import('../views/Mypage.vue')
     },
     {
+      path: '/mypageB',
+      name: 'mypageB',
+      component: () => import('../views/mypage/MypageB.vue')
+    },
+    {
+      path: '/mypageShow',
+      name: 'mypageShow',
+      component: () => import('../views/mypage/Mypagehow.vue')
+    },
+    {
       path: '/create',
       name: 'create',
       component: () => import('../views/Create.vue')

@@ -49,7 +49,9 @@ export default {
       language:["en-US","zh-TW"],
       languageTarget:"",
       target:"",
-      objPlayMovies:{}
+      objPlayMovies:{},
+      moviecomment:"",
+      pages:[]
     };
   },
   computed: {
@@ -102,7 +104,7 @@ export default {
         console.error("YouTube API not ready");
       }
     },
-    getPerson() { //電影相關 上映中 演員*5 + 導演*1
+    async getPerson() { //電影相關 上映中 演員*5 + 導演*1
       const options = {
         method: "GET",
         headers: {
@@ -111,7 +113,7 @@ export default {
             "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
         },
       };
-      fetch(
+      await fetch(
         `https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}/credits?language=en-US`,
         options
       )
@@ -158,7 +160,7 @@ export default {
         return null; // 或者返回其他适当的值，视情况而定
       }
     },
-    getMovieType() { //電影類型 
+    async getMovieType() { //電影類型 
         const options = {
         method: 'GET',
         headers: {
@@ -253,19 +255,61 @@ export default {
         console.error(error);
       }
   },
+  goback(){
+    this.$router.push("/mypageB")
+  },
+  getrandonpage(){
+    fetch('http://localhost:8080/movie/mypage/searchA', {
+        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+        headers: {
+          'Content-Type': 'application/json'
+          },
+        body: JSON.stringify({
+        })
+      })
+      .then(response => response.json())
+      .then(data => { // 處理返回的數據
+        console.log(data);
+        if(data.code == 200){
+          const randomIndex = Math.floor(Math.random() * data.pageList.length);
+          console.log(randomIndex)
+          this.movieInfo = JSON.parse(data.pageList[randomIndex].favorit)
+          this.mymovie = JSON.parse(data.pageList[randomIndex].accountMovieList)
+          this.moviecomment = data.pageList[randomIndex].favoritComment
+          console.log(this.movieInfo)
+          console.log(this.mymovie)
+          console.log(this.moviecomment)
+          }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }
 },
   async mounted() {
+    this.getrandonpage()
     // this.movieInfo = this.$route.query;
     // console.log("Movie Details:", this.movieInfo);
     // setTimeout(() => {
     //   $(".loader").hide();
     // }, 2000);
-    this.getPerson();
-    await this.getTrailer();
-    await this.initYouTubePlayer();
-    await this.getMovieType();
-    
-        this.splitMovies();
+    setTimeout(() => {
+      this.getMovieType();
+      this.getPerson();
+      this.getTrailer();
+      // this.initYouTubePlayer();
+    }, 500);
+    setTimeout(() => {
+      // this.getTrailer();
+      this.initYouTubePlayer();
+    }, 1000);
+    // this.getMovieType();
+    // this.getPerson();
+    // this.getTrailer();
+    // this.initYouTubePlayer();
+    setTimeout(() => {
+      this.splitMovies();
+    }, 500);
     this.$nextTick(() => {
           var swiper = new Swiper(this.$refs.mySwiper, {
             slidesPerView: 3,
@@ -299,6 +343,7 @@ export default {
   <div class="body">
     <!-- 電影資料 -->
     <div class="header">
+      <button type="button" @click="goback">去後台</button>
       <div class="movieData">
         <!-- <img :src="'https://image.tmdb.org/t/p/w342' + this.movieInfo.movieBack " alt="" style="width: 100vw; height: 100vh; opacity: 0.2; position: fixed; top: 0; left: 0;"><br> -->
         <div class="movieDataLeft">
@@ -354,23 +399,7 @@ export default {
     <hr />
     <!-- 討論區 -->
     <h1 class="textTilte">個人影評</h1>
-    <p class="text">我的電影清單（可以以電影海報的方式排列，像
-      是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
-      電影清單裡面的資料一樣會影響到＂為你推薦＂功能）我的電影清單（可以以電影海報的方式排列，像
-      是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
-      電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
-      我的電影清單（可以以電影海報的方式排列，像
-      是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
-      電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
-      我的電影清單（可以以電影海報的方式排列，像
-      是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
-      電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
-      我的電影清單（可以以電影海報的方式排列，像
-      是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
-      電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
-      我的電影清單（可以以電影海報的方式排列，像
-      是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
-      電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
+    <p class="text">{{ this.moviecomment }}
   </p>
     <div class="footer" ref="scheduleSwipers">
       <swiper :options="swiperOption" ref="mySwiper">

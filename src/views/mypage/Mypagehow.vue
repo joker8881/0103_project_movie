@@ -1,4 +1,7 @@
 <script>
+  import { Swiper, SwiperSlide } from 'swiper/vue';
+  import 'swiper/css';
+  import Cookies from 'js-cookie'
 export default {
   data() {
     return {
@@ -14,26 +17,77 @@ export default {
       trailerLink: null,
       type: [],
       movieType: [],
+      //評論區相關
+      mymovie:[
+        { title:"0",imgUrl:"/r5kvFAqfyDBFZzDY5XTJYxDidsZ.jpg"},
+        { title:"1",imgUrl:"/pHUCVSUCma3LHmb0WUBei1QGUtD.jpg"},
+        { title:"2",imgUrl:"/eHBBg8juDeKWj34b5oKru5JkNqt.jpg"},
+        { title:"3",imgUrl:"/eHBBg8juDeKWj34b5oKru5JkNqt.jpg"},
+        { title:"4",imgUrl:"/r5kvFAqfyDBFZzDY5XTJYxDidsZ.jpg"},
+        { title:"5",imgUrl:"/pHUCVSUCma3LHmb0WUBei1QGUtD.jpg"},
+        { title:"6",imgUrl:"/eHBBg8juDeKWj34b5oKru5JkNqt.jpg"},
+        { title:"7",imgUrl:"/eHBBg8juDeKWj34b5oKru5JkNqt.jpg"},
+        { title:"8",imgUrl:"/r5kvFAqfyDBFZzDY5XTJYxDidsZ.jpg"},
+        { title:"9",imgUrl:"/pHUCVSUCma3LHmb0WUBei1QGUtD.jpg"},
+        { title:"10",imgUrl:"/eHBBg8juDeKWj34b5oKru5JkNqt.jpg"},
+        { title:"11",imgUrl:"/eHBBg8juDeKWj34b5oKru5JkNqt.jpg"},
+        { title:"12",imgUrl:"/r5kvFAqfyDBFZzDY5XTJYxDidsZ.jpg"},
+        { title:"13",imgUrl:"/pHUCVSUCma3LHmb0WUBei1QGUtD.jpg"},
+        { title:"14",imgUrl:"/eHBBg8juDeKWj34b5oKru5JkNqt.jpg"},
+        { title:"15",imgUrl:"/eHBBg8juDeKWj34b5oKru5JkNqt.jpg"},
+      ],
+      swiperdata:[],
+      swiperdata2:[],
+      swiperdata3:[],
+      swiperdata4:[],
       name: "John123456",
       commentText: "",
       sortOrder: "sort",
+      baoleiButton: false, //暴雷按鈕
+      blurredArea: true, //模糊區域
       userLoggedIn:false,
+      language:["en-US","zh-TW"],
+      languageTarget:"",
+      target:"",
+      objPlayMovies:{},
+      movielove:[],
+      moviewall:[],
+      commentTitle:"",
+      account:"",
     };
   },
   computed: {
-    sortedComments() {
-      //篩選留言
-      const sorted = this.comments.slice();
-      switch (this.sortOrder) {
-        case "latest":
-          return sorted.sort((a, b) => b.timestamp - a.timestamp);
-        case "likes":
-          return sorted.sort((a, b) => b.likes - a.likes);
-        default:
-          return sorted.sort();
-      }
-    },
+    scheduleListThree: function () {
+    let index = 0;
+    let count = 3;
+    let arrThree = [];
+    let data = this.moviewall;
+    for (let i = 0; i < this.moviewall.length; i++) {
+      index = parseInt(i / count);
+      if (arrThree.length <= index) {
+        arrThree.push([]);
+    }
+    arrThree[index].push(data[i])
+    }
+    return arrThree
+  }
   },
+  components: {
+      Swiper,
+      SwiperSlide,
+    },
+    setup() {
+      const onSwiper = (swiper) => {
+        console.log(swiper);
+      };
+      const onSlideChange = () => {
+        console.log('slide change');
+      };
+      return {
+        onSwiper,
+        onSlideChange,
+      };
+    },
   methods: {
     initYouTubePlayer() { //影片嵌入相關
       if (window.YT && window.YT.Player) {
@@ -62,7 +116,7 @@ export default {
         },
       };
       fetch(
-        `https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}/credits?language=en-US`,
+        `https://api.themoviedb.org/3/movie/${this.movielove.movieId}/credits?language=en-US`,
         options
       )
         .then((response) => response.json())
@@ -93,7 +147,7 @@ export default {
       };
       try {
         const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}/videos?language=en-US`,
+          `https://api.themoviedb.org/3/movie/${this.movielove.movieId}/videos?language=en-US`,
           options
         );
         if (!response.ok) {
@@ -121,15 +175,15 @@ export default {
         .then((response) => {
           this.type = response.genres,
           console.log(this.type)
-          console.log(this.movieInfo.movieGenreid)
-          console.log(this.movieInfo.movieGenreid.length)
+          console.log(this.movielove.movieGenreid)
+          console.log(this.movielove.movieGenreid.length)
           console.log(this.type.length)
-          console.log(this.movieInfo.movieGenreid[0])
+          console.log(this.movielove.movieGenreid[0])
           console.log(this.type[6].id)
-          console.log(parseInt(this.movieInfo.movieGenreid[0])===this.type[6].id ? 1:2)
-          for(let i=0;i<this.movieInfo.movieGenreid.length;i++){
+          console.log(parseInt(this.movielove.movieGenreid[0])===this.type[6].id ? 1:2)
+          for(let i=0;i<this.movielove.movieGenreid.length;i++){
             for(let j=0;j<this.type.length;j++)
-            if(parseInt(this.movieInfo.movieGenreid[i])===this.type[j].id){
+            if(parseInt(this.movielove.movieGenreid[i])===this.type[j].id){
               this.movieType.push(this.type[j].name)
             }
           }
@@ -137,32 +191,93 @@ export default {
         })
         .catch(err => console.error(err));
     },
-    login(){
-      const cookiesArray = document.cookie.split(';');
-      console.log(cookiesArray)
-      console.log("AAAAA")
-      for (const cookie of cookiesArray) {
-        const [name, value] = cookie.trim().split('=');
-        if (name === 'userLoggedIn' && value === 'true') {
-          this.userLoggedIn = true;
-          break;
-        }
+    splitMovies() {
+      const pageSize = 9;
+      this.pages = [];
+      for (let i = 0; i < this.moviewall.length; i += pageSize) {
+        this.pages.push(this.moviewall.slice(i, i + pageSize));
       }
+    },
+    logincheck(){
+        this.userLoggedIn = Cookies.get('userLoggedIn')
+        this.account = Cookies.get('account')
+        if (userLoggedIn) {
+          let a = Cookies.get('account')
+          Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
+          Cookies.set('account', a, { expires: 7, path: '/' });
+        }
       console.log(this.userLoggedIn)
-    }
+    },
+  goback(){
+    this.$router.push("/mypageB")
   },
+  getposter(){
+    this.$router.push("/mypageB")
+  },
+  gosend(){
+    console.log(this.account)
+    console.log(this.movielove)
+    console.log(this.moviewall)
+
+    const requestBody = {
+    account: this.account,
+    favorit: JSON.stringify(this.movielove),
+    watchList: JSON.stringify(this.moviewall),
+    accountMovieList: JSON.stringify(this.moviewall),
+    favoritComment: this.commentText,
+    };
+
+    fetch('http://localhost:8080/movie/mypage/create', {
+        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+        headers: {
+          'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestBody),
+      })
+      .then(response => response.json())
+      .then(data => { // 處理返回的數據
+        if(data.code == 200){
+          Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
+          Cookies.set('account', this.account, { expires: 7, path: '/' });
+          this.$router.push("/mypage")
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }
+},
   async mounted() {
-    // this.movieInfo = this.$route.query;
+    this.movielove = JSON.parse(this.$route.query.love);
+    this.movielove = this.movielove[0]
+    this.moviewall = JSON.parse(this.$route.query.moviewall);
+    console.log(this.movielove)
+    console.log(this.movielove.movieGenreid)
+    console.log(this.moviewall)
     // console.log("Movie Details:", this.movieInfo);
-    // setTimeout(() => {
-    //   $(".loader").hide();
-    // }, 2000);
     this.getPerson();
     await this.getTrailer();
     await this.initYouTubePlayer();
     await this.getMovieType();
-    this.login()
-  },
+    
+        this.splitMovies();
+    this.$nextTick(() => {
+          var swiper = new Swiper(this.$refs.mySwiper, {
+            slidesPerView: 3,
+            slidesPerColumn: 3,
+            spaceBetween:10,
+            autoplay: {
+              delay: 3000,
+              disableOnInteraction: false,
+              stopOnLastSlide: false,
+            },
+            loop: false,
+            observer: true,
+            observeParents: true,
+          });
+        })
+    this.logincheck()
+    },
 };
 </script>
 
@@ -179,15 +294,16 @@ export default {
   <div class="body">
     <!-- 電影資料 -->
     <div class="header">
+      <button type="button" @click="goback">回去後台</button>
       <div class="movieData">
         <!-- <img :src="'https://image.tmdb.org/t/p/w342' + this.movieInfo.movieBack " alt="" style="width: 100vw; height: 100vh; opacity: 0.2; position: fixed; top: 0; left: 0;"><br> -->
         <div class="movieDataLeft">
-          <img :src="'https://image.tmdb.org/t/p/w500' + this.movieInfo.moviePoster" alt=""/>
+          <img :src="'https://image.tmdb.org/t/p/w500' + this.movielove.moviePoster" alt=""/>
         </div>
         <div class="movieDataRight">
-          <h1>{{ this.movieInfo.movieTitle }}</h1>
-          <h6>{{ this.movieInfo.movieOriginaltitle }}</h6>
-          <h2 class="textHeader">上映日期：{{ this.movieInfo.movieReleasedate }}</h2>
+          <h1>{{ this.movielove.movieTitle }}</h1>
+          <h6>{{ this.movielove.movieOriginaltitle }}</h6>
+          <h2 class="textHeader">上映日期：{{ this.movielove.movieReleasedate }}</h2>
           <hr />
           <h2>Movie Info</h2>
           <div class="movieDataRight1">
@@ -206,11 +322,11 @@ export default {
               </div>
               <div class="voteAvg">
                 <h3 class="textHeader">評分：</h3>
-                <h2 class="textall" style="line-height: 50px;">{{ this.movieInfo.movieVoteavg }}</h2>
+                <h2 class="textall" style="line-height: 50px;">{{ this.movielove.movieVoteavg }}</h2>
               </div>
               <div class="movieOverview">
                 <h3 class="textHeader" style="width: 90px; height: 50px;">簡介：</h3>
-                <p class="textall" v-if="this.movieInfo.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movieInfo.movieOverview }}</p>
+                <p class="textall" v-if="this.movielove.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movielove.movieOverview }}</p>
                 <p class="textall" v-else>此電影無簡介</p>
               </div>
             </div>
@@ -229,7 +345,10 @@ export default {
     <hr />
     <!-- 討論區 -->
     <h1 class="textTilte">個人影評</h1>
-    <p class="text">我的電影清單（可以以電影海報的方式排列，像
+    <div class="comment">
+      <textarea class="text" v-model="this.commentText" name="" id="" cols="30" rows="10" style="resize: none;height: 300px;width: 80%; margin-bottom: 10px;" placeholder="這裡可撰寫你自己對這部電影的想法心得"></textarea>
+    </div>
+    <!-- <p class="text">我的電影清單（可以以電影海報的方式排列，像
       是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
       電影清單裡面的資料一樣會影響到＂為你推薦＂功能）我的電影清單（可以以電影海報的方式排列，像
       是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
@@ -246,7 +365,20 @@ export default {
       我的電影清單（可以以電影海報的方式排列，像
       是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
       電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
-  </p>
+  </p> -->
+  <button type="button" @click="gosend()">gosend</button>
+    <div class="footer" ref="scheduleSwipers">
+      <swiper :options="swiperOption" ref="mySwiper">
+        <swiper-slide v-for="(page, index) in pages" :key="index">
+          <div class="grid-container">
+            <div class="grid-item" v-for="(movie, i) in page" :key="i">
+              <img :src="'https://image.tmdb.org/t/p/w500' + movie.imgUrl" alt="">
+              <div class="caption">{{ movie.title }}</div>
+            </div>
+          </div>
+        </swiper-slide>
+      </swiper>
+    </div>
   </div>
 </template>
 
@@ -434,13 +566,10 @@ span, button {
     height: 72vh;
     margin: 0 auto;
   }
-  .commentArea {
-    width: 95vw;
-    height: 30vh;
-    margin: 0 auto;
-  }
   .footer{
-
+    width: 95vw;
+    height: 60vh;
+    margin: 0 auto;
   }
 }
 
@@ -464,5 +593,18 @@ span, button {
   font-family:'jf-openhuninn-2.0';
   font-size: 2em;
   margin: 0;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+}
+
+.grid-item {
+  /* Add your custom styles for each grid item here */
+}
+.comment{
+  
 }
 </style>

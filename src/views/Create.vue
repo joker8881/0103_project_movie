@@ -532,7 +532,7 @@ fetch('http://localhost:8080/movie/art/create', {
         <div class="form-floating mb-3">
           <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="searchText">
           <label class="tbc" for="floatingInput" v-if="!searchText.trim()">搜尋電影...</label>
-          <label class="tbc" for="floatingInput" v-else-if="noResultsModal">無相關電影</label>
+          <!-- <label class="tbc" for="floatingInput" v-else-if="noResultsModal">無相關電影</label> -->
         </div>
         <!-- <input class="searchMovie1" type="text" v-model="searchText"  placeholder="搜尋電影..."> -->
         <button @click="getPlayMovie()" class="btn btn-primary allbuttonshoulduseit2">進入區域</button>

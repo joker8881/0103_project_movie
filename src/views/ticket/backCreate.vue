@@ -11,9 +11,11 @@
             </div>
             <div class="onDate">
                 <p>撥放日期:</p>
-                <input type="date" name="" id="" v-model="this.onDate">
+                <input type="date" name="" id="" v-model="this.startDate">
+                <p style="margin-left: 35px;">到</p>
+                <input type="date" name="" id="" v-model="this.endDate">
             </div>
-            <button class="search" type="submit" @click="search()">搜尋</button>
+            <button class="search" type="button" @click="search()">搜尋</button>
         </div>
         <div class="icon">
             <button type="button" @click="create()"><i class="fa-solid fa-plus"></i></button>
@@ -28,35 +30,88 @@
                     <th>撥放日期</th>
                     <th>修改</th>
                 </tr>
-                <tr v-for="(item, index) in quizList" :key="index">
-                    <td><input type="checkbox" v-model="num" :value="item.num" /></td>
-                    <td>{{ item.num }}</td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.published }}</td>
-                    <td>{{ item.startDate }}</td>
-                    <td>{{ item.endDate }}</td>
-                    <td>{{ this.view }}</td>
+                <tr v-for="(movie, index) in displayedMovies" :key="index">
+                    <td>{{ movie.movie }}</td>
+                    <td>{{ movie.cinema }}</td>
+                    <td>{{ movie.area }}</td>
+                    <td>{{ movie.price }}</td>
+                    <td>{{ movie.onDate }}</td>
                 </tr>
             </thead>
         </table>
+        <div class="pagination">
+            <button @click="prevPage()" :disabled="currentPage === 1">上一页</button>
+            <button @click="nextPage()" :disabled="currentPage === Math.ceil(movieList.length / pageSize)">下一页</button>
+        </div>
     </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     data() {
         return {
+            movieList: [],
             movieName: "",
             cinema: "",
-            onDate: ""
+            area: "",
+            price: "",
+            onDate: "",
+            startDate: "",
+            endDate: "",
+            currentPage: 1,
+            pageSize: 10,
         }
     },
     methods: {
+        search() {
+            axios({
+                url: 'http://localhost:8080/movie/movieinfo/search',
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                data: {
+                    movie: this.movieName,
+                    cinema: this.cinema,
+                    on_date: this.onDate,
+                    startDate: this.startDate,
+                    endDate: this.endDate
+                },
+            }).then(res => {
+                console.log(res);
+                console.log(res.data.movieInfoList);
+                this.movieList = res.data.movieInfoList
+            }
+            )
+            this.movieName = ""
+            this.cinema = ""
+            this.startDate = ""
+            this.endDate = ""
+        },
         create() {
             this.$router.push('/backSearch')
-        }
+        },
+        nextPage() {
+            if (this.currentPage < Math.ceil(this.movieList.length / this.pageSize)) {
+                this.currentPage++;
+            }
+        },
+        prevPage() {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+            }
+        },
     },
     mounted() {
+        this.search()
+    },
+    computed: {
+        displayedMovies() {
+            const startIndex = (this.currentPage - 1) * this.pageSize;
+            const endIndex = startIndex + this.pageSize;
+            return this.movieList.slice(startIndex, endIndex);
+        }
     },
 }
 </script>
@@ -78,7 +133,7 @@ export default {
             width: 8%;
             height: 5vh;
             margin-left: 16px;
-            margin-top: 30px;
+            margin-top: 35px;
             color: white;
             background-color: salmon;
         }
@@ -99,7 +154,7 @@ export default {
         }
 
         .cinema {
-            width: 40%;
+            width: 30%;
             display: flex;
             justify-content: start;
             align-items: center;
@@ -108,14 +163,14 @@ export default {
 
             input {
                 height: 5vh;
-                width: 50%;
+                width: 60%;
                 margin-left: 3vw;
                 font-size: 16pt;
             }
         }
 
         .onDate {
-            width: 40%;
+            width: 50%;
             display: flex;
             justify-content: start;
             align-items: center;
@@ -123,7 +178,7 @@ export default {
 
             input {
                 height: 5vh;
-                width: 50%;
+                width: 30%;
                 margin-left: 3vw;
                 font-size: 16pt;
             }
@@ -171,5 +226,16 @@ export default {
         }
     }
 
+    .pagination {
+        width: 80vw;
+        justify-content: center;
+        align-items: center;
+
+        button {
+            color: salmon;
+            background-color: white;
+            font-size: 18pt;
+        }
+    }
 }
 </style>

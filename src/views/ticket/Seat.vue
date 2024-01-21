@@ -32,44 +32,64 @@
                 </div>
             </div>
         </div>
-        {{ this.selectedSeats }}
         <div class="ticketInfo">
-            <h1>{{ this.movieInfo.movieTitle }}</h1>
+            <h1>{{ this.movieInfo.movieName }}</h1>
+
             <ul>
-                <li>影院:{{ }}</li>
-                <li>影廳:</li>
-                <li>票價:</li>
-                <li>場次:</li>
-                <li>座位:</li>
+                <li>影院:{{ this.movieInfo.cinema }}</li>
+                <li>影廳:{{ this.movieInfo.area }}</li>
+                <li>票價:{{ this.movieInfo.price }}</li>
+                <li>撥放日期:{{ this.movieInfo.playDate }}</li>
+                <li>撥放時間:{{ this.movieInfo.playTime }}</li>
+                <li>座位:{{ this.formattedSelectedSeatsString }}</li>
             </ul>
             <hr class="separator">
             <h2>總共價格</h2>
+            <h3>{{ this.totalPrice }}</h3>
             <button type="button" @click="gointroduce()">返回</button>
-            <button type="button">立即購票</button>
+            <button type="button" @click="buyTicket()">立即購票</button>
         </div>
-
     </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
     data() {
         return {
-
             row: 5,
             col: 8,
             selectedSeats: [],
-            movieInfo:{},
+            movieInfo: {},
+            account: "林裕峰",
             lockedSeats: [
                 // { row: 2, col: 3 },
                 // { row: 4, col: 6 },
                 // { row: 3, col: 2 }
             ] // 鎖定的座位
         };
+    }, computed: {
+        formattedSelectedSeatsString() {
+            return this.selectedSeats.map(seat => {
+                const rowChar = String.fromCharCode(65 + seat.row - 1); // 将行数转换为字母
+                const colNum = seat.col; // 列数保持不变
+                return `${rowChar}${colNum}`;
+            }).join(', '); // 使用逗号和空格连接座位信息字符串
+        },
+        totalPrice() {
+            const basePrice = parseFloat(this.movieInfo.price); // 电影票基础价格，确保是数字类型
+            const numberOfSeats = this.selectedSeats.length; // 选中座位的数量
+            const totalPrice = basePrice * numberOfSeats; // 计算总价
+            return totalPrice; // 返回保留两位小数的字符串形式
+        },
     },
     methods: {
         isSeatLocked(row, col) {
-            return this.lockedSeats.some(seat => seat.row === row && seat.col === col);
+            // 将座位信息转换为字母和数字的形式
+            const seat = `${String.fromCharCode(65 + row - 1)}${col}`;
+
+            // 检查座位是否在已购买的座位列表中，如果在就锁定
+            return this.lockedSeats.includes(seat);
         },
         getCheckboxImage(row, col) {
             // 根据座位是否锁定和是否被选中返回不同的图像路径
@@ -82,19 +102,78 @@ export default {
             }
         },
         gointroduce() {
-            this.$router.push('/introduce')
-        },
+            this.$router.push({
+                name: 'introduce',
+                
+            })
+            },
+                buyTicket() {
+                axios({
+                    url: 'http://localhost:8080/movie/buyinfo/create',
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                },
+                    data: {
+                        account: this.account,
+                movie: this.movieInfo.movieName,
+                movieId: this.movieInfo.movieId,
+                cinema: this.movieInfo.cinema,
+                area: this.movieInfo.area,
+                price: this.totalPrice,
+                onDate: this.movieInfo.playDate,
+                onTime: this.movieInfo.playTime,
+                seat: this.formattedSelectedSeatsString
+            },
+            }).then(res => {
+                console.log(res);
+                console.log(res.data.rtnCode);
+                if (res.data.rtnCode == "Successful!") {
+                    alert("恭喜購票成功")
+                    this.$router.push("/Ticket")
+                }
+            }
+            )
+
     },
+    ticketSearch() {
+        axios({
+            url: 'http://localhost:8080/movie/buyinfo/searchseat',
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            data: {
+                movieId: this.movieInfo.movieId,
+                cinema: this.movieInfo.cinema,
+                area: this.movieInfo.area,
+                onDate: this.movieInfo.playDate,
+                onTime: this.movieInfo.playTime,
+            },
+        }).then(res => {
+            const seats = res.data.buyInfoList.map(item => item.seat);
+            console.log(seats); // 这里是包含所有座位的数组
+
+            // 如果座位信息是以逗号分隔的，你可以使用 split 方法进行拆分
+            const splitSeats = seats.flatMap(seat => seat.split(','));
+
+            console.log(splitSeats); // 这里是包含所有座位的数组（每个座位分开）
+            this.lockedSeats = splitSeats
+        }
+        )
+    }
+},
     async mounted() {
-        this.movieInfo = this.$route.query;
-        console.log("Movie Details:", this.movieInfo);
+    this.movieInfo = this.$route.query;
+    console.log("Movie Details:", this.movieInfo);
+    this.ticketSearch()
+},
+watch: {
+    selectedSeats() {
+        // 当 selectedSeats 数组发生变化时，强制组件重新渲染
+        this.$forceUpdate();
     },
-    watch: {
-        selectedSeats() {
-            // 当 selectedSeats 数组发生变化时，强制组件重新渲染
-            this.$forceUpdate();
-        },
-    },
+},
 }
 </script>
 
@@ -166,6 +245,7 @@ export default {
                     margin-bottom: 30px;
                 }
             }
+
             .choseSeat {
                 margin-right: 70px;
 
@@ -225,8 +305,10 @@ export default {
             margin-bottom: 50px;
             /* 調整分隔線上下的邊距，根據需要更改 */
         }
-        button{
+
+        button {
             margin-top: 80px;
         }
     }
-}</style>
+}
+</style>

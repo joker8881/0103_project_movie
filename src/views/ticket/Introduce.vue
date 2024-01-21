@@ -40,15 +40,19 @@
             選取影城
         </div>
         <div class="selectButton">
-            <button type="button" @click="show()">紹仁戲院</button>
-            <button type="button" @click="show()">裕峰影城</button>
-            <button type="button" @click="show()">梓宏影院</button>
-            <button type="button" @click="show()">暐衡劇院</button>
+            <button type="button" @click="cinemaSearch('紹仁戲院')">紹仁戲院</button>
+            <button type="button" @click="cinemaSearch('裕峰影城')">裕峰影城</button>
+            <button type="button" @click="cinemaSearch('梓宏影院')">梓宏影院</button>
+            <button type="button" @click="cinemaSearch('暐衡劇院')">暐衡劇院</button>
         </div>
-        <div class="selectDate" v-show="isVisible" id="book">
-            <h1>影院幾廳</h1>
-            <h1>時段</h1>
-            <button type="button" @click="gotoSeat(movieInfo)">選取位置</button>
+        <div class="selectDate" v-for="(movie, index) in objPlayingMovie">
+            <h6>{{ movie.onDate }}</h6>
+            <h5>{{ movie.area }}</h5>
+            <select v-model="this.selectedTime">
+                <option value="">選擇時間</option>
+                <option v-for="(time, timeIndex) in JSON.parse(movie.onTime)" :key="timeIndex" >{{ time }}</option>
+            </select>
+            <button type="button" @click="gotoSeat(movie)">選取位置</button>
         </div>
     </div>
     <div class="back" @click="scrollToTop()">
@@ -62,11 +66,10 @@ export default {
     data() {
         return {
             movieInfo: {},
-            video: [],
             objPlayingMovie: [],
-            isVisible: false,
+            video: [],
             videoKey: "", // 將影片的鏈接（key）替換為實際的值
-            videoId: "",
+            selectedTime: ""
         }
     },
     computed: {
@@ -75,26 +78,24 @@ export default {
         },
     },
     methods: {
-        show() {
-            this.isVisible = true
-        },
-        goSeat() {
-            this.$router.push('/seat')
-        },
-        gotoSeat(movieInfo) {
-            console.log(movieInfo)
+        gotoSeat(movie) {
+            if (!this.selectedTime) {
+                // 如果沒有選擇時間，可以進行相應的處理，例如顯示提示訊息
+                alert('請選擇時間');
+                return;
+            }
+
+            // 在這裡可以進行相應的處理，比如導航到座位選擇頁面
             this.$router.push({
                 name: 'seat',
                 query: {
-                    movieGenreid: movieInfo.movieGenreid,
-                    movieId: movieInfo.movieId,
-                    movieOriginaltitle: movieInfo.movieOriginaltitle,
-                    movieTitle: movieInfo.movieTitle,
-                    movieOverview: movieInfo.movieOverview,
-                    moviePoster: movieInfo.moviePoster,
-                    movieBack: movieInfo.movieBack,
-                    movieReleasedate:movieInfo.movieReleasedate,
-                    movieVoteavg: movieInfo.movieVoteavg,
+                    movieId: this.movieInfo.movieId,
+                    movieName: this.movieInfo.movieTitle,
+                    cinema: movie.cinema,  // 假設影院資訊存儲在 movie 物件中
+                    area:movie.area,
+                    price: movie.price,  // 假設票價資訊存儲在 movie 物件中
+                    playDate: movie.onDate,  // 假設撥放日期資訊存儲在 movie 物件中
+                    playTime: this.selectedTime,  // 已經從下拉選單中選擇的時間
                 }
             });
         },
@@ -139,6 +140,28 @@ export default {
                 console.log(this.videoKey);
             });
         },
+        cinemaSearch(selectedCinema) {
+            const movieId = this.movieInfo.movieId;
+            const movieName = selectedCinema;
+            axios({
+                url: 'http://localhost:8080/movie/movieinfo/search',
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                data: {
+                    movieId: movieId,
+                    cinema: movieName
+
+                },
+            }).then(res => {
+                console.log(res);
+                console.log(res.data.movieInfoList);
+                this.objPlayingMovie = res.data.movieInfoList
+
+            }
+            )
+        }
     },
     async mounted() {
         this.movieInfo = this.$route.query;

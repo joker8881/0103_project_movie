@@ -24,6 +24,13 @@ const router = createRouter({
       component: () => import('../views/Create.vue')
     },
     {
+      path: '/moviecomment',
+      name: 'moviecomment',
+      component: () => import('../views/MovieComment.vue')
+    },
+    
+    
+    {
       path: '/introduce',
       name: 'introduce',
       component: () => import('../views/ticket/Introduce.vue')
@@ -32,11 +39,6 @@ const router = createRouter({
       path: '/seat',
       name: 'seat',
       component: () => import('../views/ticket/Seat.vue')
-    },
-    {
-      path: '/test',
-      name: 'test',
-      component: () => import('../views/ticket/test.vue')
     },
     {
       path: '/test',

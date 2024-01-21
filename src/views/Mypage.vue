@@ -51,7 +51,8 @@ export default {
       target:"",
       objPlayMovies:{},
       moviecomment:"",
-      pages:[]
+      pages:[],
+      searchaccount:"",
     };
   },
   computed: {
@@ -284,32 +285,61 @@ export default {
       .catch(error => {
         console.error('Error fetching data:', error);
       });
-  }
+  },
+  searchmypageaccount(){
+    fetch('http://localhost:8080/movie/mypage/search'+ '?' + "account=" + this.searchaccount, {
+        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+        headers: {
+          'Content-Type': 'application/json'
+          },
+        body: JSON.stringify({
+        })
+      })
+      .then(response => response.json())
+      .then(data => { // 處理返回的數據
+        console.log(data);
+        if(data.code == 200){
+          this.movieInfo = JSON.parse(data.mypageList.favorit)
+          this.mymovie = JSON.parse(data.mypageList.accountMovieList)
+          this.moviecomment = data.mypageList.favoritComment
+          console.log(this.movieInfo)
+          console.log(this.mymovie)
+          console.log(this.moviecomment)
+          }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  },
+  chooseMovie(item){
+    this.$router.push({
+        name: 'moviecomment',
+        query: { 
+          movieGenreid: item.movieGenreid,
+          movieId: item.movieId,
+          movieOriginaltitle: item.movieOriginaltitle, 
+          movieTitle: item.movieTitle, 
+          movieOverview: item.movieOverview, 
+          moviePoster: item.moviePoster, 
+          movieBack: "", 
+          movieReleasedate: item.movieReleasedate, 
+          movieVoteavg: item.movieVoteavg, 
+        }
+      });
+  },
 },
   async mounted() {
     this.getrandonpage()
-    // this.movieInfo = this.$route.query;
-    // console.log("Movie Details:", this.movieInfo);
-    // setTimeout(() => {
-    //   $(".loader").hide();
-    // }, 2000);
     setTimeout(() => {
       this.getMovieType();
       this.getPerson();
-      
-      // this.initYouTubePlayer();
     }, 500);
     setTimeout(() => {
       this.getTrailer();
-      // this.initYouTubePlayer();
     }, 1000);
-    // this.getMovieType();
-    // this.getPerson();
-    // this.getTrailer();
-    // this.initYouTubePlayer();
     setTimeout(() => {
       this.splitMovies();
-    }, 500);
+    }, 1000);
     this.$nextTick(() => {
           var swiper = new Swiper(this.$refs.mySwiper, {
             slidesPerView: 3,
@@ -347,12 +377,18 @@ export default {
       <div class="movieData">
         <!-- <img :src="'https://image.tmdb.org/t/p/w342' + this.movieInfo.movieBack " alt="" style="width: 100vw; height: 100vh; opacity: 0.2; position: fixed; top: 0; left: 0;"><br> -->
         <div class="movieDataLeft">
-          <img :src="'https://image.tmdb.org/t/p/w500' + this.movieInfo.moviePoster" alt=""/>
+          <a @click="chooseMovie(this.movieInfo)">
+            <img :src="'https://image.tmdb.org/t/p/w500' + this.movieInfo.moviePoster" alt=""/>
+          </a>
         </div>
         <div class="movieDataRight">
-          <h1>{{ this.movieInfo.movieTitle }}</h1>
-          <h6>{{ this.movieInfo.movieOriginaltitle }}</h6>
+          <h1 class="textHeader">{{ this.movieInfo.movieTitle }}</h1>
+          <h6 class="textall">{{ this.movieInfo.movieOriginaltitle }}</h6>
           <h2 class="textHeader">上映日期：{{ this.movieInfo.movieReleasedate }}</h2>
+          <!-- <div class="searchaccount">
+            <input type="text" name="" id="" v-model="this.searchaccount">
+            <button type="button" @click="searchmypageaccount()" >搜尋特地帳號</button>
+          </div> -->
           <hr />
           <h2>Movie Info</h2>
           <div class="movieDataRight1">
@@ -375,7 +411,7 @@ export default {
               </div>
               <div class="movieOverview">
                 <h3 class="textHeader" style="width: 90px; height: 50px;">簡介：</h3>
-                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movieInfo.movieOverview }}</p>
+                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 85%;line-height: 50px;">{{ this.movieInfo.movieOverview }}</p>
                 <p class="textall" v-else>此電影無簡介</p>
               </div>
             </div>
@@ -386,17 +422,16 @@ export default {
     <hr />
     <!-- 預告片 -->
     <h1 class="textTilte">個人影評</h1>
-    <p class="text">{{ this.moviecomment }}
+    <p class="text">{{ this.moviecomment }}</p>
     <div class="middle">
       <!-- <h1>預告片</h1> -->
       <!-- <video :src="this.trailerLink" controls></video> -->
       <!-- <iframe :src="this.trailerLink" controls></iframe>-->
       <!-- <div ref="youtubePlayer"></div> -->
-      <iframe width="1200" height="630" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen style="margin-right: 32%;"></iframe>
+      <iframe width="1100" height="630" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen></iframe>
     </div>
-    
     <!-- 討論區 -->
-  </p>
+
   <hr />
     <div class="footer" ref="scheduleSwipers">
       <h1 class="textTilte">我的推薦電影</h1>
@@ -404,8 +439,10 @@ export default {
         <swiper-slide v-for="(page, index) in pages" :key="index">
           <div class="grid-container">
             <div class="grid-item" v-for="(movie, i) in page" :key="i">
-              <img :src="'https://image.tmdb.org/t/p/w500' + movie.imgUrl" alt="">
-              <div class="caption">{{ movie.title }}</div>
+              <a @click="chooseMovie(movie)">
+                <img :src="'https://image.tmdb.org/t/p/w500' + movie.moviePoster" alt="" @click="">
+                <div class="textallx">{{ movie.movieTitle }}</div>
+              </a>
             </div>
           </div>
         </swiper-slide>
@@ -538,7 +575,7 @@ span, button {
     width: 100vw;
     height: 90vh;
     margin: 0 auto;
-    height: 800px;
+    height: 850px;
     // padding-top: 20px;
     .movieData {
       display: flex;
@@ -639,7 +676,7 @@ span, button {
   font-size: 1.5em;
   margin: 0;
   overflow: auto;  /* 或者使用 overflow: scroll; */
-  max-height: 300px;  /* 设置最大高度，超出部分会产生滚动条 */
+  max-height: 250px;  /* 设置最大高度，超出部分会产生滚动条 */
   // white-space: nowrap;  /* 防止文本换行 */
 }
 

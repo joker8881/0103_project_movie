@@ -32,11 +32,12 @@ export default{
     computed: {
     //計算總頁數
       totalPages() {
-        return Math.ceil(this.searchResult.length / this.itemsPerPage);
+        return Math.ceil(this.objPlayMovies.length / this.itemsPerPage);
       },
     },
     methods:{
       async getMovieName() { //上映中
+        this.currentPage = 1
         let index = this.language.indexOf(this.languageTarget)
         let value = this.language[index - 1];  // 因為每個語言對應兩個值，所以取 index - 1 的值
         console.log(value);
@@ -88,17 +89,18 @@ export default{
         console.error(error);
       }
     },
-            changePage(newPage) {
-              this.pageC = ""
-              this.currentIndexToDelete = 0
-              if (newPage >= 1 && newPage <= this.totalPages) {
-                this.currentPage = newPage;
-              } else if(newPage > this.totalPages) {
-                this.pageC = "資料沒有那麼多"
-              } else if(this.currentPage == 1) {
-                this.pageC = "你已經到第一頁了"
-              } 
-      },
+    changePage(newPage) {
+      this.pageC = ""
+      this.currentIndexToDelete = 0
+      if (newPage >= 1 && newPage <= this.totalPages) {
+      this.currentPage = newPage;
+      console.log(this.currentPage)
+      } else if(newPage > this.totalPages) {
+        this.pageC = "資料沒有那麼多"
+      } else if(this.currentPage == 1) {
+        this.pageC = "你已經到第一頁了"
+      } 
+    },
       getLocalDate() {
           const now = new Date();
           // 西元年-月-日格式
@@ -139,15 +141,20 @@ export default{
       this.love.push(cc)
       console.log(this.love)
     },
-    savetomoviewall(id,titlex,path){
+    savetomoviewall(id,Gid,titlex,overview,path,Originaltitle,Releasedate,Voteavg){
         // 檢查 moviewall 陣列中是否已經存在具有相同 movieid 的物件
         const existingMovie = this.moviewall.find(movie => movie.movieid === id);
         if (!existingMovie) {
           // 如果不存在，則將 id 加入 moviewall
           let cc = {
-            movieid:id,
-            title:titlex,
-            imgUrl:path
+            movieId:id,
+            movieGenreid:Gid,
+            movieTitle:titlex,
+            movieOverview:overview,
+            moviePoster:path,
+            movieOriginaltitle:Originaltitle,
+            movieReleasedate:Releasedate,
+            movieVoteavg:Voteavg,
           }
           this.moviewall.push(cc);
           console.log(this.moviewall);
@@ -213,7 +220,7 @@ export default{
                     <div class="font start">{{ item.overview }}</div>
                     <div class="save">
                       <button type="button" class="font result" @click="savetolove(item.id,item.genre_ids,item.title,item.overview,item.poster_path,item.original_title,item.release_date,item.vote_average)">儲存進最愛</button>
-                      <button type="button" class="font result" @click="savetomoviewall(item.id,item.title,item.poster_path)">儲存進電影牆</button>
+                      <button type="button" class="font result" @click="savetomoviewall(item.id,item.genre_ids,item.title,item.overview,item.poster_path,item.original_title,item.release_date,item.vote_average)">儲存進電影牆</button>
                     </div>
                     <!-- <p class="font result" @click="searchForRespond">查看</p> -->
               </div> 

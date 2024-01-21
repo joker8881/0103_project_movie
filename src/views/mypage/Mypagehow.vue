@@ -255,12 +255,20 @@ export default {
     console.log(this.movielove.movieGenreid)
     console.log(this.moviewall)
     // console.log("Movie Details:", this.movieInfo);
-    this.getPerson();
-    await this.getTrailer();
-    await this.initYouTubePlayer();
-    await this.getMovieType();
-    
-        this.splitMovies();
+    // this.getPerson();
+    // await this.getTrailer();
+    // await this.getMovieType();
+    setTimeout(() => {
+      this.getMovieType();
+      this.getPerson();
+    }, 500);
+    setTimeout(() => {
+      this.getTrailer();
+    }, 1000);
+    setTimeout(() => {
+      this.splitMovies();
+    }, 500);
+        // this.splitMovies();
     this.$nextTick(() => {
           var swiper = new Swiper(this.$refs.mySwiper, {
             slidesPerView: 3,
@@ -326,7 +334,7 @@ export default {
               </div>
               <div class="movieOverview">
                 <h3 class="textHeader" style="width: 90px; height: 50px;">簡介：</h3>
-                <p class="textall" v-if="this.movielove.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movielove.movieOverview }}</p>
+                <p class="textallx" v-if="this.movielove.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movielove.movieOverview }}</p>
                 <p class="textall" v-else>此電影無簡介</p>
               </div>
             </div>
@@ -340,7 +348,7 @@ export default {
       <!-- <h1>預告片</h1> -->
       <!-- <video :src="this.trailerLink" controls></video> -->
       <!-- <iframe :src="this.trailerLink" controls></iframe>-->
-      <div ref="youtubePlayer"></div>
+      <iframe width="1100" height="630" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen></iframe>
     </div>
     <hr />
     <!-- 討論區 -->
@@ -372,8 +380,8 @@ export default {
         <swiper-slide v-for="(page, index) in pages" :key="index">
           <div class="grid-container">
             <div class="grid-item" v-for="(movie, i) in page" :key="i">
-              <img :src="'https://image.tmdb.org/t/p/w500' + movie.imgUrl" alt="">
-              <div class="caption">{{ movie.title }}</div>
+              <img :src="'https://image.tmdb.org/t/p/w500' + movie.moviePoster" alt="">
+              <div class="caption">{{ movie.movieTitle }}</div>
             </div>
           </div>
         </swiper-slide>
@@ -503,10 +511,11 @@ span, button {
   height: 260vh;
 
   .header {
-    width: 95vw;
+    width: 100vw;
     height: 90vh;
     margin: 0 auto;
-    padding-top: 20px;
+    height: 850px;
+    // padding-top: 20px;
     .movieData {
       display: flex;
       .movieDataLeft {
@@ -562,9 +571,9 @@ span, button {
     }
   }
   .middle {
-    width: 95vw;
-    height: 72vh;
-    margin: 0 auto;
+    width: 100vw;
+    height: 90vh;
+    // margin: 0 auto;
   }
   .footer{
     width: 95vw;
@@ -606,5 +615,14 @@ span, button {
 }
 .comment{
   
+}
+
+.textallx{
+  font-family:'jf-openhuninn-2.0';
+  font-size: 1.5em;
+  margin: 0;
+  overflow: auto;  /* 或者使用 overflow: scroll; */
+  max-height: 250px;  /* 设置最大高度，超出部分会产生滚动条 */
+  // white-space: nowrap;  /* 防止文本换行 */
 }
 </style>

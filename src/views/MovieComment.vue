@@ -491,7 +491,7 @@ export default {
               </div>
               <div class="movieOverview">
                 <h3 class="textHeader" style="width: 105px; height: 50px;">簡介：</h3>
-                <p class="textall" v-if="this.movieInfo.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movieInfo.movieOverview }}</p>
+                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movieInfo.movieOverview }}</p>
                 <p class="textall" v-else>此電影無簡介</p>
               </div>
             </div>
@@ -501,10 +501,10 @@ export default {
     </div>
     <hr />
     <!-- 預告片 -->
-    <div class="middle">
+    <div class="middlex">
       <h1>預告片</h1>
       <!-- 報告再開啟下面的註解 -->
-      <!-- <iframe width="1120" height="630" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen></iframe> -->
+      <iframe width="1120" height="630" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen></iframe>
     </div>
     <hr />
     <div class="middle">
@@ -740,7 +740,7 @@ span, button {
 
   .header {
     width: 95vw;
-    height: 110vh;
+    height: 120vh;
     margin: 0 auto;
     padding-top: 20px;
     .movieData {
@@ -797,6 +797,11 @@ span, button {
       }
     }
   }
+  .middlex {
+    width: 95vw;
+    height: 100vh;
+    margin: 0 auto;
+  }
   .middle {
     width: 95vw;
     height: 80vh;
@@ -834,7 +839,7 @@ span, button {
         margin-bottom: 1em;
     }
 .selectButton {
-    width: 100vw;
+    width: 97vw;
     border-bottom: 3px solid rgb(238, 238, 238);
 
     button {
@@ -843,5 +848,18 @@ span, button {
         padding: 5px;
     }
 }
-
+.textallx{
+  font-family:'jf-openhuninn-2.0';
+  font-size: 1.5em;
+  margin: 0;
+  overflow: auto;  /* 或者使用 overflow: scroll; */
+  max-height: 250px;  /* 设置最大高度，超出部分会产生滚动条 */
+  // white-space: nowrap;  /* 防止文本换行 */
+}
+.footer{
+  width: 100vw;
+  .row{
+    width: 100%;
+  }
+}
 </style>

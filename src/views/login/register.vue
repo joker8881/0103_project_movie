@@ -16,7 +16,9 @@ export default {
       show2:0,
       aa:"",
       b:"", //修改彈跳視窗
-      verify:""
+      verify:"",
+      emailboxA:["@gmail.com","@yahoo.com.tw"],
+      emailboxTarget:""
     }
   },
   components: {
@@ -50,7 +52,7 @@ export default {
                 account:this.account,
                 password:this.password,
                 name:this.name,
-                email:this.email,
+                email:(this.email + this.emailboxTarget),
                 phone:this.phone
               })
             })
@@ -59,7 +61,7 @@ export default {
             // 處理返回的數據
               console.log(kk)
               if(kk.code =200){
-                this.$router.push("/")
+                this.$router.push("/login")
               }
             })
             .catch(error => {
@@ -132,7 +134,7 @@ export default {
       .then(response => response.json())
       .then(data => { // 處理返回的數據
         console.log(data);
-        back()
+        this.$router.push("/login")
       })
       .catch(error => {
         console.error('Error fetching data:', error);
@@ -168,14 +170,19 @@ export default {
             <label class="tbc" for="floatingInput">再確認一次密碼</label>
             </div>
             <p class="textL">Email</p>
-            <div class="form-floating mb-3">
-              <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="this.email">
-              <label class="tbc" for="floatingInput">請在這裡輸入Email</label>
+            <div class="emailbox">
+              <div class="form-floating mb-3 tbq">
+                <input type="text" class="form-control" id="floatingInput" placeholder="name@example.com" v-model="this.email">
+                <label class="tbcq" for="floatingInput">請在這裡輸入Email</label>
+              </div>
+              <select name="" id="" v-model="this.emailboxTarget" class="selectmailbox">
+                <option  v-for="(item, index) in this.emailboxA" :key="index" :value="item">{{ item }}</option>
+              </select>
             </div>
             <p class="textL">手機</p>
             <div class="form-floating mb-3">
               <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="this.phone" onkeyup="value=value.replace(/[^\d]/g,'') ">
-              <label class="tbc" for="floatingInput">請在這裡輸入手機(純數字)</label>
+              <label class="tbc" for="floatingInput">請在這裡輸入手機(10個純數字)</label>
             </div>
             <p class="textL">名字/暱稱</p>
             <div class="form-floating mb-3">
@@ -218,7 +225,7 @@ export default {
 <style scoped lang="scss">
 .cBox{
   width: 100vw;
-  height: 120vh;
+  height: 146vh;
   text-align: center;
   display: flex;
   justify-content: center;
@@ -226,7 +233,7 @@ export default {
   background-repeat: no-repeat;
   background-size: cover;
 .box{
-  height: 92%;
+  height: 95%;
   width: 40%;
   // margin-top: 2%;
   align-self: center;
@@ -250,8 +257,16 @@ export default {
     width: 80%;
     margin: 0 auto;
   }
+  .tbq{
+    width: 80%;
+    // margin: 0 auto;
+    margin-right: 5%;
+  }
   .tbc{
     margin-left: 10%;
+  }
+  .tbcq{
+    margin-left: 0%;
   }
   .tbp{
     width: 80%;
@@ -316,7 +331,7 @@ export default {
         border-radius: 10px;
         font-size: 1.5em;
         font-family:'jf-openhuninn-2.0';
-        margin-top: 6%;
+        margin-top: 4%;
         margin-right: 2%;
 }
 .root {
@@ -345,5 +360,14 @@ export default {
   font-family:'jf-openhuninn-2.0';
   font-size: 2em;
   margin: 0;
+}
+.emailbox{
+  display: flex;
+  width: 80%;
+  margin: 0 auto;
+}
+.selectmailbox{
+  // height: 200%;
+  margin-bottom: 4%;
 }
 </style>

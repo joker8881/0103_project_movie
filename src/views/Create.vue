@@ -26,8 +26,10 @@ export default defineComponent({
 
       languageTarget:"zh-TW",
       
-      //假資料
-      name: "Kass123",
+      // 帳號相關
+      account:"",
+      password:"",
+      userLoggedIn:false,
       artName:"遊戲",
 
       //用于存储当前选定电影的图像URL
@@ -109,6 +111,16 @@ export default defineComponent({
   },
 
   methods: {
+
+    logincheck(){
+        this.userLoggedIn = Cookies.get('userLoggedIn')
+        if (this.userLoggedIn) {
+          this.account = Cookies.get('account')
+          Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
+          Cookies.set('account', this.account, { expires: 7, path: '/' });
+        }
+      console.log(this.userLoggedIn)
+    },
 
     PerformSearch() {
       // 執行搜尋邏輯
@@ -478,8 +490,7 @@ fetch('http://localhost:8080/movie/art/create', {
       this.maxVisibleCards += 4; // 或其他你希望增加的数量
     },
 
-    //點選電影海報的展示區 (需要抓他的電影名稱，去展示所有這部電影的作品)
-    selectMovie(movie) {
+    searchMovie(movie){
       this.selectedMovie = movie;
 
       fetch('http://localhost:8080/movie/art/search', {
@@ -495,6 +506,7 @@ fetch('http://localhost:8080/movie/art/create', {
   })
   .then(response => response.json()) 
   .then(img =>{
+    console.log(img)
     console.log(img.artList[0].artLocation);
     
     this.carouselImages = img.artList.map(art => art.artLocation);
@@ -503,6 +515,14 @@ fetch('http://localhost:8080/movie/art/create', {
     // this.carouselImages =img.artList[2].artLocation
     // this.carouselImages =img.artList[3].artLocation
     ;})
+    },
+
+    
+    //點選電影海報的展示區 (需要抓他的電影名稱，去展示所有這部電影的作品)
+    selectMovie(movie) {
+      if(this.userLoggedIn == true)
+      this.selectedMovie = movie;
+
 },
 
   },
@@ -516,6 +536,7 @@ fetch('http://localhost:8080/movie/art/create', {
     this.setWindowEvent()
     await this.getPlayMovie();
     await this.getMovieType();
+    this.logincheck();
   },
 
 });
@@ -524,10 +545,10 @@ fetch('http://localhost:8080/movie/art/create', {
 <template lang="">
 <!-- Search First -->
       <div class="First" v-if="searchMode === 'original'">
-        <select v-model="selectedGenre" @change="enterGenreArea" class="selectionBoxGenres">
-          <option value="">All genres</option> <!-- 新增這行 -->
-          <option v-for="genre in movieGenres" :key="genre.id" :value="genre">{{ genre.name }}</option>
-        </select>
+        <!-- <select v-model="selectedGenre" @change="enterGenreArea" class="selectionBoxGenres">
+          <option value="">All genres</option>  -->
+          <!-- <option v-for="genre in movieGenres" :key="genre.id" :value="genre">{{ genre.name }}</option>
+        </select> -->
         <div class="form-floating mb-3">
           <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="searchText">
           <label class="tbc" for="floatingInput" v-if="!searchText.trim()">搜尋電影...</label>
@@ -555,7 +576,7 @@ fetch('http://localhost:8080/movie/art/create', {
         <div class="card-body" style="height: 10rem;">
           <h5 class="card-title">{{ movie.title }}</h5>
           <div class="GoShowText">
-          <a href="#Second" class="btn btn-primary goforarea" @click="selectMovie(movie)">前往展示區</a>
+          <a href="#Second" class="btn btn-primary goforarea" @click="searchMovie(movie)">前往展示區</a>
         </div>
         </div>
       </div>
@@ -566,8 +587,8 @@ fetch('http://localhost:8080/movie/art/create', {
 </div>
     
 
-    <div class="bord" id="bord">
-      <div v-if="selectedMovie">
+    <div  class="bord" id="bord">
+      <div v-if="this.selectedMovie">
         <p>電影名稱: {{ selectedMovie.title }}</p>
         <p>電影id: {{ selectedMovie.id }}</p>
 

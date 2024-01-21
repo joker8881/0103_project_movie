@@ -48,6 +48,38 @@ const router = createRouter({
       name: 'register',
       component: () => import('../views/login/register.vue')
     },
+    
+    
+    {
+      path: '/introduce',
+      name: 'introduce',
+      component: () => import('../views/ticket/Introduce.vue')
+    },
+    {
+      path: '/seat',
+      name: 'seat',
+      component: () => import('../views/ticket/Seat.vue')
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import('../views/ticket/test.vue')
+    },
+    {
+    path: '/backCreate',
+      name: 'backCreate',
+      component: () => import('../views/ticket/backCreate.vue')
+    },
+    {
+      path: '/backSearch',
+        name: 'backSearch',
+        component: () => import('../views/ticket/backSearch.vue')
+      },
+      {
+      path: '/backAdd',
+        name: 'backAdd',
+        component: () => import('../views/ticket/backAdd.vue')
+      }
   ]
 })
 

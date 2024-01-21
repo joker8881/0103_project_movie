@@ -428,7 +428,7 @@ export default {
   mounted() {
     this.movieInfo = this.$route.query;
     console.log("Movie Details:", this.movieInfo);
-    this.logincheck()
+    this.logincheck();
     setTimeout(() => {
       $(".loader").hide();
     }, 300);
@@ -509,12 +509,11 @@ export default {
           <div class="mb-3">
             <div class="form-check form-switch">
               <input v-model="baoleiButton" @input="toggleBaolei" class="form-check-input" type="checkbox" id="baoleiSwitch"/>
-              <!-- <label class="form-check-label" for="baoleiSwitch">{{ baoleiButton ? '關閉' : '開啟' }}</label> -->
               <label class="form-label">暴雷按鈕</label>
             </div>
           </div>
           <!-- 留言區 -->
-          <!-- <div :style="{ filter: blurredArea && !baoleiButton ? 'blur(5px)' : 'none', }"> -->
+          <div :style="{ filter: blurredArea && !baoleiButton ? 'blur(5px)' : 'none', }">
             <!-- 排序下拉框 -->
             <div class="mb-3">
               <span>{{ this.comments.length + "件留言" }}</span>
@@ -526,7 +525,7 @@ export default {
             </div>
             <!-- 新增留言 -->
             <form class="mt-4" @click.prevent="">
-              <div class="mb-3">
+              <div class="mb-3" v-if="this.userLoggedIn">
                 <label for="commentInput" class="form-label"><span>新增留言</span></label>
                 <textarea rows="1" v-model="commentText" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                 <div style="text-align: end;">
@@ -540,9 +539,9 @@ export default {
               <div class="card-body">
                 <span>{{ "@"+comment.account }}</span>
                 <small class="text-muted">{{ this.commentTimeDif(comment.commentTime) }}</small>
-                <button @click="editComment(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+                <button v-if="this.userLoggedIn" @click="editComment(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
                 <button v-if="comment.editing" @click="saveEdit(comment)" class="btn btn-link" style="text-decoration: none">儲存</button>
-                <button @click="commentDeleteFather(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                <button v-if="this.userLoggedIn" @click="commentDeleteFather(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
                 <span>{{ comment.commentText }}</span><br>
                 <button @click="likeButton(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-outline-primary" style="border: 0">
                   <i class="fa-regular fa-thumbs-up"></i>{{ comment.favorite }}
@@ -550,7 +549,7 @@ export default {
                 <button @click="dislikeButton(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-outline-danger" style="border: 0">
                   <i class="fa-regular fa-thumbs-down"></i>{{ comment.dislike }}
                 </button>
-                <button @click="chooseComment(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none; margin-left: 5px">回覆</button>
+                <button v-if="this.userLoggedIn" @click="chooseComment(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none; margin-left: 5px">回覆</button>
                 <button v-if="comment.editing" @click="saveEdit(comment)" class="btn btn-link" style="text-decoration: none">儲存</button>
                 
                 <!-- 回覆留言的表單 -->
@@ -559,7 +558,7 @@ export default {
                     <label for="replyInput" class="form-label">回覆留言</label>
                     <textarea v-model="replyText" class="form-control" id="replyInput" rows="2" required style="resize: none"></textarea>
                   </div>
-                  <button type="submit" @click="commentCreateChild()">回覆</button>
+                  <button v-if="this.userLoggedIn" type="submit" @click="commentCreateChild()">回覆</button>
                   <button type="button" @click="cancelReply(comment)">取消</button>
                 </form>
 
@@ -570,9 +569,9 @@ export default {
                       <div>
                         <span>{{ "@" + item.account }}</span>
                         <small class="text-muted">{{ this.commentTimeDif(item.commentTime) }}</small>
-                        <button @click="editComment(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+                        <button v-if="this.userLoggedIn" @click="editComment(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
                         <button v-if="item.editing" @click="saveEdit(item)" class="btn btn-link" style="text-decoration: none">儲存</button>
-                        <button @click="commentDeleteChild(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br/>
+                        <button v-if="this.userLoggedIn" @click="commentDeleteChild(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br/>
                         <span>{{ item.commentText }}</span><br>
                         <button @click="likeButton(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-outline-primary" style="border: 0">
                           <i class="fa-regular fa-thumbs-up"></i>{{ item.favorite }}
@@ -590,7 +589,7 @@ export default {
         </div>
       </div>
     </div>
-  <!-- </div> -->
+  </div>
 </template>
 
 <style scoped lang="scss">

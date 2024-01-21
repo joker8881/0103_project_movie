@@ -1,13 +1,10 @@
 <script>
-import { mapState, mapActions } from 'pinia';
-import auth from '../store/auth';
 import axios from 'axios';
 import Cookies from 'js-cookie'
 export default {
   data() {
     return {
-      //電影相關
-      objPlayingMovie: [],
+      // 電影相關
       movieInfo: {},
       directors: {},
       casts: {},
@@ -29,9 +26,8 @@ export default {
       commentIndex: null,
       commentIndexOrder: null,
       replyText: "",
+      objPlayingMovie:[],
       selectedTime: "",
-      userLoggedIn: false,
-      account: "",
     };
   },
   computed: {
@@ -116,7 +112,7 @@ export default {
       }
     },
     getMovieType() { // 電影類型 
-      const options = {
+        const options = {
         method: 'GET',
         headers: {
           accept: 'application/json',
@@ -127,18 +123,18 @@ export default {
         .then((response) => response.json())
         .then((response) => {
           this.type = response.genres,
-            // console.log("所有類型", this.type)
-            console.log("此電影類型", this.movieInfo.movieGenreid)
+          // console.log("所有類型", this.type)
+          console.log("此電影類型", this.movieInfo.movieGenreid)
           // console.log(this.movieInfo.movieGenreid.length)
           // console.log(this.type.length)
           // console.log(this.movieInfo.movieGenreid[0])
           // console.log(this.type[6].id)
           // console.log(parseInt(this.movieInfo.movieGenreid[0])===this.type[6].id ? 1:2)
-          for (let i = 0; i < this.movieInfo.movieGenreid.length; i++) {
-            for (let j = 0; j < this.type.length; j++)
-              if (parseInt(this.movieInfo.movieGenreid[i]) === this.type[j].id) {
-                this.movieType.push(this.type[j].name)
-              }
+          for(let i=0;i<this.movieInfo.movieGenreid.length;i++){
+            for(let j=0;j<this.type.length;j++)
+            if(parseInt(this.movieInfo.movieGenreid[i])===this.type[j].id){
+              this.movieType.push(this.type[j].name)
+            }
           }
           console.log(this.movieType)
         })
@@ -154,9 +150,9 @@ export default {
     commentTimeDif(commentTime) { // 留言時間時間差
       let time = null;
       if (typeof commentTime === 'string' && commentTime.includes('T')) {
-        time = Date.parse(commentTime);
+          time = Date.parse(commentTime);
       } else {
-        time = parseInt(commentTime);
+          time = parseInt(commentTime);
       }
       const now = Date.now(); // 毫秒數
       const timeDif = now - time; // 抓過來為2024/01/16 10:52轉毫秒數
@@ -213,7 +209,7 @@ export default {
         method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
           'Content-Type': 'application/json'
-        },
+          },
         body: JSON.stringify({
           commentIndex: this.commentIndex,
           commentIndexOrder: this.commentIndexOrder,
@@ -222,13 +218,13 @@ export default {
           dislike: 0,
         })
       })
-        .then(response => response.json())
-        .then(data => { // 處理返回的數據
-          console.log(data);
-        })
-        .catch(error => {
-          console.error('Error fetching data:', error);
-        });
+      .then(response => response.json())
+      .then(data => { // 處理返回的數據
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
     },
     dislikeButton(comment, index, indexOrder) { // 不喜歡
       // console.log('回覆按鈕被點擊，主要留言的位置：', index);
@@ -240,7 +236,7 @@ export default {
         method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
           'Content-Type': 'application/json'
-        },
+          },
         body: JSON.stringify({
           commentIndex: this.commentIndex,
           commentIndexOrder: this.commentIndexOrder,
@@ -249,13 +245,13 @@ export default {
           dislike: 1,
         })
       })
-        .then(response => response.json())
-        .then(data => { // 處理返回的數據
-          console.log(data);
-        })
-        .catch(error => {
-          console.error('Error fetching data:', error);
-        });
+      .then(response => response.json())
+      .then(data => { // 處理返回的數據
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
     },
     // 後端api
     commentCreate() { // 留言
@@ -263,7 +259,7 @@ export default {
         method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
           'Content-Type': 'application/json'
-        },
+          },
         body: JSON.stringify({
           movieID:this.movieInfo.movieId,
           commentText:this.commentText,
@@ -298,26 +294,26 @@ export default {
         method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          movieID: this.movieInfo.movieId,
-        })
-      })
-        .then(response => response.json())
-        .then(data => {
-          // 處理返回的數據
-          console.log(data);
-          this.comments = data.commentList;
-          for (let i = 0; i < this.comments.length; i++) {
-            if (this.comments[i].commentIndexIndex !== 0) {
-              this.commentReplies.push(this.comments[i]);
-              this.comments.splice(i, 1);
-              i--;
+          },
+          body: JSON.stringify({
+            movieID:this.movieInfo.movieId,
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            // 處理返回的數據
+            console.log(data);
+            this.comments = data.commentList;
+            for (let i = 0; i < this.comments.length; i++) {
+              if (this.comments[i].commentIndexIndex !== 0) {
+                this.commentReplies.push(this.comments[i]);
+                this.comments.splice(i, 1);
+                i--;
+              }
             }
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching data:', error);
+          })
+          .catch(error => {
+            console.error('Error fetching data:', error);
         });
     },
     commentCreateChild() { // 傳送回覆留言
@@ -325,7 +321,7 @@ export default {
         method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
           'Content-Type': 'application/json'
-        },
+          },
         body: JSON.stringify({
           commentIndex: this.commentIndex,
           movie: this.movieInfo.movieTitle,
@@ -334,13 +330,13 @@ export default {
           account: Cookies.get('account'),
         })
       })
-        .then(response => response.json())
-        .then(data => { // 處理返回的數據
-          console.log(data);
-        })
-        .catch(error => {
-          console.error('Error fetching data:', error);
-        });
+      .then(response => response.json())
+      .then(data => { // 處理返回的數據
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
     },
     commentDeleteFather(comment, index) { // 刪除父留言
       this.commentIndex = index;
@@ -377,20 +373,20 @@ export default {
         method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
           'Content-Type': 'application/json'
-        },
+          },
         body: JSON.stringify({
           commentIndex: this.commentIndex,
           commentIndexOrder: this.commentIndexOrder,
           movieID: this.movieInfo.movieId,
         })
       })
-        .then(response => response.json())
-        .then(data => { // 處理返回的數據
-          console.log(data);
-        })
-        .catch(error => {
-          console.error('Error fetching data:', error);
-        });
+      .then(response => response.json())
+      .then(data => { // 處理返回的數據
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
     },
     // 以下待解決
     deleteReply(reply) {
@@ -473,15 +469,6 @@ export default {
         }
       });
     },
-    logincheck() {
-      this.userLoggedIn = Cookies.get('userLoggedIn')
-      if (this.userLoggedIn) {
-        this.account = Cookies.get('account')
-        Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
-        Cookies.set('account', this.account, { expires: 7, path: '/' });
-      }
-      console.log(this.userLoggedIn)
-    },
   },
   mounted() {
     this.movieInfo = this.$route.query;
@@ -494,7 +481,6 @@ export default {
     this.getPerson();
     this.getMovieType();
     this.commentSearch();
-    this.logincheck()
   },
 };
 </script>
@@ -515,7 +501,7 @@ export default {
     <div class="header">
       <div class="movieData">
         <div class="movieDataLeft">
-          <img :src="'https://image.tmdb.org/t/p/w500' + this.movieInfo.moviePoster" alt="" />
+          <img :src="'https://image.tmdb.org/t/p/w500' + this.movieInfo.moviePoster" alt=""/>
         </div>
         <div class="movieDataRight">
           <h1>{{ this.movieInfo.movieTitle }}</h1>
@@ -527,22 +513,15 @@ export default {
             <div class="movieDataRight22">
               <div class="type">
                 <h3 class="textHeader">類型：</h3>
-                <span class="textall" style="line-height: 50px;" v-for="(item, index) in this.movieType" :key="index">{{
-                  item }}<span v-if="index < this.movieType.length - 1" class="textall"
-                    style="font-size: 1em;">、</span></span><br>
+                <span class="textall" style="line-height: 50px;" v-for="(item,index) in this.movieType" :key="index">{{ item }}<span v-if="index < this.movieType.length - 1" class="textall" style="font-size: 1em;">、</span></span><br>
               </div>
               <div class="director">
                 <h3 class="textHeader">導演：</h3>
-                <span class="textall" style="line-height: 50px;" v-for="(item, index) in this.directors" :key="index">{{
-                  item.original_name }}<span v-if="index < this.directors.length - 1">,</span></span><br>
+                <span class="textall" style="line-height: 50px;" v-for="(item, index) in this.directors" :key="index">{{ item.original_name }}<span v-if="index < this.directors.length - 1">,</span></span><br>
               </div>
               <div class="casts">
                 <h3 class="textHeader" style="width: 105px; height: 50px;">演員：</h3>
-                <div style="width: 90%;display: flex;">
-                  <p class="textall" style="line-height: 50px;" v-for="(item, index) in this.casts" :key="index">{{
-                    item.original_name }}<span v-if="index < this.casts.length - 1" class="textall"
-                      style="font-size: 1em;">、</span></p><br>
-                </div>
+                <div style="width: 90%;display: flex;"><p class="textall" style="line-height: 50px;" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em;">、</span></p><br></div>
               </div>
               <div class="voteAvg">
                 <h3 class="textHeader">評分：</h3>
@@ -550,7 +529,7 @@ export default {
               </div>
               <div class="movieOverview">
                 <h3 class="textHeader" style="width: 105px; height: 50px;">簡介：</h3>
-                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movieInfo.movieOverview }}</p>
+                <p class="textall" v-if="this.movieInfo.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movieInfo.movieOverview }}</p>
                 <p class="textall" v-else>此電影無簡介</p>
               </div>
             </div>
@@ -558,14 +537,25 @@ export default {
         </div>
       </div>
     </div>
-    <!-- 預告片 -->
-    <div class="middlex">
-      <h1>預告片</h1>
-      <!-- 報告再開啟下面的註解 -->
-      <iframe width="1120" height="630" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen></iframe>
-    </div>
     <hr />
-    <div class="middle">
+    <!-- 預告片 -->
+    <div class="middleInfo">
+      <div class="middle">
+        <div class="mid">
+          電影預告
+        </div>
+      </div>
+      <div class="trailer">
+        <iframe width="80%" height="500" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0"
+          allowfullscreen></iframe>
+      </div>
+      <div class="down">
+        <div class="turn">
+          線上訂票
+        </div>
+      </div>
+    </div>
+    <div class="middle1" v-if="this.userLoggedIn">
       <div class="selectTheater">
         選取影城
       </div>
@@ -826,7 +816,7 @@ button {
 
   .header {
     width: 95vw;
-    height: 120vh;
+    height: 110vh;
     margin: 0 auto;
     padding-top: 20px;
 
@@ -894,16 +884,114 @@ button {
       }
     }
   }
-  .middlex {
-    width: 95vw;
-    height: 100vh;
-    margin: 0 auto;
+
+  .middleInfo {
+    .middle {
+      display: flex;
+      justify-content: start;
+      width: 100vw;
+      height: 4em;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 2px solid rgb(230, 230, 230);
+
+      .mid {
+        font-weight: 300;
+        letter-spacing: 0.5em;
+        color: rgb(51, 51, 51);
+        height: 100%;
+        margin-left: 5vw;
+        font-size: 1.5em;
+        padding: 0px 2em;
+        display: flex;
+        align-items: center;
+        border-left: 1px solid rgb(230, 230, 230);
+        border-right: 1px solid rgb(230, 230, 230);
+        background: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.067), rgba(0, 0, 0, 0.067) 2px, rgba(0, 0, 0, 0) 2px, rgba(0, 0, 0, 0) 4px);
+      }
+    }
+
+    .trailer {
+      width: 100vw;
+      height: 500px;
+      background-color: black;
+    }
+
+    .down {
+      display: flex;
+      justify-content: start;
+      width: 100vw;
+      height: 4em;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid rgb(230, 230, 230);
+
+      .turn {
+        font-weight: 300;
+        letter-spacing: 0.5em;
+        color: rgb(51, 51, 51);
+        height: 100%;
+        margin-left: 5vw;
+        font-size: 1.5em;
+        padding: 0px 2em;
+        display: flex;
+        align-items: center;
+        border-left: 1px solid rgb(230, 230, 230);
+        border-right: 1px solid rgb(230, 230, 230);
+        background: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.067), rgba(0, 0, 0, 0.067) 2px, rgba(0, 0, 0, 0) 2px, rgba(0, 0, 0, 0) 4px);
+      }
+    }
+
   }
-  .middle {
-    width: 95vw;
-    height: 80vh;
-    margin: 0 auto;
+
+  .middle1 {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    padding: 15px;
+    width: 100%;
+    // height: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1.8em;
+    letter-spacing: 0.2em;
+    font-weight: 300;
+
+    .selectTheater {
+      margin-bottom: 1em;
+
+    }
+
+    .selectButton {
+      width: 100vw;
+      border-bottom: 3px solid rgb(238, 238, 238);
+
+      button {
+        width: 10vw;
+        height: 6vh;
+        margin-right: 1em;
+        margin-bottom: 0.6em;
+        padding: 5px;
+      }
+    }
+
+    .selectDate {
+      width: 100vw;
+      display: flex;
+      padding: 1em 0px;
+      justify-content: space-around;
+      align-items: center;
+      border-bottom: 3px solid rgb(238, 238, 238);
+      font-weight: 300;
+    }
   }
+
   .commentArea {
     width: 95vw;
     height: 30vh;
@@ -941,27 +1029,13 @@ button {
 }
 
 .selectButton {
-    width: 97vw;
-    border-bottom: 3px solid rgb(238, 238, 238);
+  width: 100vw;
+  border-bottom: 3px solid rgb(238, 238, 238);
 
   button {
     margin-right: 1em;
     margin-bottom: 0.6em;
     padding: 5px;
-  }
-}
-.textallx{
-  font-family:'jf-openhuninn-2.0';
-  font-size: 1.5em;
-  margin: 0;
-  overflow: auto;  /* 或者使用 overflow: scroll; */
-  max-height: 250px;  /* 设置最大高度，超出部分会产生滚动条 */
-  // white-space: nowrap;  /* 防止文本换行 */
-}
-.footer{
-  width: 100vw;
-  .row{
-    width: 100%;
   }
 }
 </style>

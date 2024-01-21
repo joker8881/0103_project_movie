@@ -1,21 +1,24 @@
 <script>
-import { mapState,mapActions } from 'pinia';
-import auth from '../store/auth';
+import Cookies from 'js-cookie'
 export default {
   data() {
     return {
-      //電影相關
+      // 電影相關
       movieInfo: {},
       directors: {},
       casts: {},
       trailerLink: null,
       type: [], // 所有類型19個
       movieType: [], // 此電影類型
-      //評論區相關
+      // 帳號相關
+      account:"",
+      password:"",
+      name: "snsdarea1209", // 帳號
+      userLoggedIn:false,
+      // 評論區相關
       sortOrder: "sort",
       baoleiButton: false, // 暴雷按鈕
       blurredArea: true, // 模糊區域
-      name: "snsdarea1209", // 帳號
       commentText: "",
       comments: [],
       commentReplies: [],  // 子留言資料
@@ -25,7 +28,6 @@ export default {
     };
   },
   computed: {
-    ...mapState(auth,["getAuth","getuser"]), // 帳號密碼
     sortComments() { // 篩選留言
       // console.log(this.comments);
       const sorted = this.comments.slice();
@@ -40,6 +42,15 @@ export default {
     },
   },
   methods: {
+    logincheck(){
+        this.userLoggedIn = Cookies.get('userLoggedIn')
+        if (this.userLoggedIn) {
+          let a = Cookies.get('account')
+          Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
+          Cookies.set('account', a, { expires: 7, path: '/' });
+        }
+      // console.log(this.userLoggedIn)
+    },
     // 抓電影
     getPerson() { // 電影相關 上映中 演員*5 + 導演*1
       const options = {
@@ -170,7 +181,7 @@ export default {
       console.log(this.replyText);
       if (this.replyText.trim() !== "") {
         this.commentReplies.push({
-          account: this.getuser,
+          account: Cookies.get('account'),
           commentText: this.replyText,
           commentTime: Date.now(),
           commentIndex: this.commentIndex,
@@ -178,6 +189,7 @@ export default {
         console.log(this.commentReplies);
         comment.replyText = "";
         comment.replying = false;
+        this.replyText = "";
       }
     },
     cancelReply(comment) { // 取消回覆
@@ -249,7 +261,7 @@ export default {
           movieID:this.movieInfo.movieId,
           commentText:this.commentText,
           movie:this.movieInfo.movieTitle,
-          account: this.getuser,
+          account: Cookies.get('account'),
         })
       })
       .then(response => response.json())
@@ -257,7 +269,7 @@ export default {
         console.log(data);
         if (this.commentText.trim() !== "" && data.code===200) {
           this.comments.push({
-          account: this.getuser,
+            account: Cookies.get('account'),
             commentText: this.commentText,
             favorite: 0,
             dislike: 0,
@@ -312,7 +324,7 @@ export default {
           movie: this.movieInfo.movieTitle,
           movieID: this.movieInfo.movieId,
           commentText: this.replyText,
-          account: this.getuser,
+          account: Cookies.get('account'),
         })
       })
       .then(response => response.json())
@@ -323,14 +335,38 @@ export default {
         console.error('Error fetching data:', error);
       });
     },
-    commentDeleteComment(comment, index, indexOrder) { // 刪除留言
+    commentDeleteFather(comment, index) { // 刪除父留言
       this.commentIndex = index;
-      this.commentIndexOrder = indexOrder;
       const index11 = this.comments.indexOf(comment);
         if (index11 !== -1) {
           this.comments.splice(index11, 1);
         }
-      fetch('http://localhost:8080/movie/comment/delete', {
+      fetch('http://localhost:8080/movie/comment/deleteF', {
+        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+        headers: {
+          'Content-Type': 'application/json'
+          },
+        body: JSON.stringify({
+          commentIndex: this.commentIndex,
+          movieID: this.movieInfo.movieId,
+        })
+      })
+      .then(response => response.json())
+      .then(data => { // 處理返回的數據
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+    },
+    commentDeleteChild(comment, index, indexOrder) { // 刪除子留言
+      this.commentIndex = index;
+      this.commentIndexOrder = indexOrder;
+      const index11 = this.commentReplies.indexOf(comment);
+        if (index11 !== -1) {
+          this.commentReplies.splice(index11, 1);
+        }
+      fetch('http://localhost:8080/movie/comment/deleteC', {
         method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
           'Content-Type': 'application/json'
@@ -350,7 +386,6 @@ export default {
       });
     },
     // 以下待解決
-    
     deleteReply(reply) {
       const replyIndex = this.commentReplies.findIndex(r => r.id === reply.id);
       if (replyIndex !== -1) {
@@ -436,9 +471,10 @@ export default {
   mounted() {
     this.movieInfo = this.$route.query;
     console.log("Movie Details:", this.movieInfo);
+    this.logincheck();
     setTimeout(() => {
       $(".loader").hide();
-    }, 200);
+    }, 300);
     this.getTrailer();
     this.getPerson();
     this.getMovieType();
@@ -537,12 +573,11 @@ export default {
           <div class="mb-3">
             <div class="form-check form-switch">
               <input v-model="baoleiButton" @input="toggleBaolei" class="form-check-input" type="checkbox" id="baoleiSwitch"/>
-              <!-- <label class="form-check-label" for="baoleiSwitch">{{ baoleiButton ? '關閉' : '開啟' }}</label> -->
               <label class="form-label">暴雷按鈕</label>
             </div>
           </div>
           <!-- 留言區 -->
-          <!-- <div :style="{ filter: blurredArea && !baoleiButton ? 'blur(5px)' : 'none', }"> -->
+          <div :style="{ filter: blurredArea && !baoleiButton ? 'blur(5px)' : 'none', }">
             <!-- 排序下拉框 -->
             <div class="mb-3">
               <span>{{ this.comments.length + "件留言" }}</span>
@@ -554,12 +589,11 @@ export default {
             </div>
             <!-- 新增留言 -->
             <form class="mt-4" @click.prevent="">
-              <div class="mb-3">
-              <!-- <div class="mb-3" v-if="this.getAuth"> -->
+              <div class="mb-3" v-if="this.userLoggedIn">
                 <label for="commentInput" class="form-label"><span>新增留言</span></label>
                 <textarea rows="1" v-model="commentText" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                 <div style="text-align: end;">
-                  <button type="submit" class="btn btn-outline-dark" required @click="commentCreate" v-if="this.getAuth">留言</button>
+                  <button type="submit" class="btn btn-outline-dark" required @click="commentCreate">留言</button>
                 </div>
               </div>
             </form>
@@ -569,9 +603,9 @@ export default {
               <div class="card-body">
                 <span>{{ "@"+comment.account }}</span>
                 <small class="text-muted">{{ this.commentTimeDif(comment.commentTime) }}</small>
-                <button v-if="this.getAuth" @click="editComment(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+                <button v-if="this.userLoggedIn" @click="editComment(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
                 <button v-if="comment.editing" @click="saveEdit(comment)" class="btn btn-link" style="text-decoration: none">儲存</button>
-                <button v-if="this.getAuth" @click="commentDeleteComment(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                <button v-if="this.userLoggedIn" @click="commentDeleteFather(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
                 <span>{{ comment.commentText }}</span><br>
                 <button @click="likeButton(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-outline-primary" style="border: 0">
                   <i class="fa-regular fa-thumbs-up"></i>{{ comment.favorite }}
@@ -579,7 +613,7 @@ export default {
                 <button @click="dislikeButton(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-outline-danger" style="border: 0">
                   <i class="fa-regular fa-thumbs-down"></i>{{ comment.dislike }}
                 </button>
-                <button v-if="this.getAuth" @click="chooseComment(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none; margin-left: 5px">回覆</button>
+                <button v-if="this.userLoggedIn" @click="chooseComment(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none; margin-left: 5px">回覆</button>
                 <button v-if="comment.editing" @click="saveEdit(comment)" class="btn btn-link" style="text-decoration: none">儲存</button>
                 
                 <!-- 回覆留言的表單 -->
@@ -588,7 +622,7 @@ export default {
                     <label for="replyInput" class="form-label">回覆留言</label>
                     <textarea v-model="replyText" class="form-control" id="replyInput" rows="2" required style="resize: none"></textarea>
                   </div>
-                  <button type="submit" @click="commentCreateChild()">回覆</button>
+                  <button v-if="this.userLoggedIn" type="submit" @click="commentCreateChild()">回覆</button>
                   <button type="button" @click="cancelReply(comment)">取消</button>
                 </form>
 
@@ -599,9 +633,9 @@ export default {
                       <div>
                         <span>{{ "@" + item.account }}</span>
                         <small class="text-muted">{{ this.commentTimeDif(item.commentTime) }}</small>
-                        <button v-if="this.getAuth" @click="editComment(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+                        <button v-if="this.userLoggedIn" @click="editComment(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
                         <button v-if="item.editing" @click="saveEdit(item)" class="btn btn-link" style="text-decoration: none">儲存</button>
-                        <button v-if="this.getAuth" @click="commentDeleteComment(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br/>
+                        <button v-if="this.userLoggedIn" @click="commentDeleteChild(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br/>
                         <span>{{ item.commentText }}</span><br>
                         <button @click="likeButton(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-outline-primary" style="border: 0">
                           <i class="fa-regular fa-thumbs-up"></i>{{ item.favorite }}
@@ -619,7 +653,7 @@ export default {
         </div>
       </div>
     </div>
-  <!-- </div> -->
+  </div>
 </template>
 
 <style scoped lang="scss">

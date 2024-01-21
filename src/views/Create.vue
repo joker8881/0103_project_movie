@@ -30,6 +30,8 @@ export default defineComponent({
       account:"",
       password:"",
       userLoggedIn:false,
+
+      name:"kass",
       artName:"遊戲",
 
       //用于存储当前选定电影的图像URL

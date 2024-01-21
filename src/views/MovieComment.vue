@@ -529,7 +529,7 @@ export default {
               </div>
               <div class="movieOverview">
                 <h3 class="textHeader" style="width: 105px; height: 50px;">簡介：</h3>
-                <p class="textall" v-if="this.movieInfo.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movieInfo.movieOverview }}</p>
+                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movieInfo.movieOverview }}</p>
                 <p class="textall" v-else>此電影無簡介</p>
               </div>
             </div>
@@ -1037,5 +1037,13 @@ button {
     margin-bottom: 0.6em;
     padding: 5px;
   }
+}
+.textallx{
+  font-family:'jf-openhuninn-2.0';
+  font-size: 1.5em;
+  margin: 0;
+  overflow: auto;  /* 或者使用 overflow: scroll; */
+  max-height: 250px;  /* 设置最大高度，超出部分会产生滚动条 */
+  // white-space: nowrap;  /* 防止文本换行 */
 }
 </style>

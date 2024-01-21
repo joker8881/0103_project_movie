@@ -343,7 +343,7 @@ export default {
   <div class="body">
     <!-- 電影資料 -->
     <div class="header">
-      <button type="button" @click="goback">去後台</button>
+      <!-- <button type="button" @click="goback">去後台</button> -->
       <div class="movieData">
         <!-- <img :src="'https://image.tmdb.org/t/p/w342' + this.movieInfo.movieBack " alt="" style="width: 100vw; height: 100vh; opacity: 0.2; position: fixed; top: 0; left: 0;"><br> -->
         <div class="movieDataLeft">
@@ -354,11 +354,6 @@ export default {
           <h6>{{ this.movieInfo.movieOriginaltitle }}</h6>
           <h2 class="textHeader">上映日期：{{ this.movieInfo.movieReleasedate }}</h2>
           <hr />
-          <input type="text" name="" id="" v-model="this.target">
-          <select name="" id="" v-model="this.languageTarget">
-            <option  v-for="(item, index) in this.language" :key="index" value="">{{ item }}</option>
-          </select>
-          <button type="button" @click="getMovieName">AAAA</button>
           <h2>Movie Info</h2>
           <div class="movieDataRight1">
             <div class="movieDataRight22">
@@ -371,7 +366,7 @@ export default {
                 <span class="textall" style="line-height: 50px;" v-for="(item, index) in this.directors" :key="index">{{ item.original_name }}<span v-if="index < this.directors.length - 1">,</span></span><br>
               </div>
               <div class="casts">
-                <h3 class="textHeader" style="width: 90px; height: 50px;">演員：</h3>
+                <h3 class="textHeader" style="width: 100px; height: 50px;">演員：</h3>
                 <div style="width: 90%;display: flex;"><p class="textall" style="line-height: 50px;" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em;">、</span></p><br></div>
               </div>
               <div class="voteAvg">
@@ -380,7 +375,7 @@ export default {
               </div>
               <div class="movieOverview">
                 <h3 class="textHeader" style="width: 90px; height: 50px;">簡介：</h3>
-                <p class="textall" v-if="this.movieInfo.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movieInfo.movieOverview }}</p>
+                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movieInfo.movieOverview }}</p>
                 <p class="textall" v-else>此電影無簡介</p>
               </div>
             </div>
@@ -390,6 +385,8 @@ export default {
     </div>
     <hr />
     <!-- 預告片 -->
+    <h1 class="textTilte">個人影評</h1>
+    <p class="text">{{ this.moviecomment }}
     <div class="middle">
       <!-- <h1>預告片</h1> -->
       <!-- <video :src="this.trailerLink" controls></video> -->
@@ -398,8 +395,6 @@ export default {
     </div>
     <hr />
     <!-- 討論區 -->
-    <h1 class="textTilte">個人影評</h1>
-    <p class="text">{{ this.moviecomment }}
   </p>
     <div class="footer" ref="scheduleSwipers">
       <swiper :options="swiperOption" ref="mySwiper">
@@ -537,22 +532,25 @@ span, button {
   height: 260vh;
 
   .header {
-    width: 95vw;
+    width: 100vw;
     height: 90vh;
     margin: 0 auto;
-    padding-top: 20px;
+    height: 800px;
+    // padding-top: 20px;
     .movieData {
       display: flex;
       .movieDataLeft {
-        width: 35%;
+        width: 47%;
         height: 90vh;
-        text-align: end;
-        align-items: end;
-        margin-right: 50px;
+        height: 758px;
+        // text-align: end;
+        // align-items: end;
+        // margin-right: 50px;
       }
       .movieDataRight {
         width: 65%;
         height: 90vh;
+        height: 758px;
         text-align: start;
         align-items: start;
         .movieDataRight1{
@@ -628,11 +626,26 @@ span, button {
   font-size: 1.5em;
   margin: 0;
 }
+.textallcast{
+  font-family:'jf-openhuninn-2.0';
+  font-size: 1em;
+  margin: 0;
+}
+.textallx{
+  font-family:'jf-openhuninn-2.0';
+  font-size: 1.5em;
+  margin: 0;
+  overflow: auto;  /* 或者使用 overflow: scroll; */
+  max-height: 300px;  /* 设置最大高度，超出部分会产生滚动条 */
+  // white-space: nowrap;  /* 防止文本换行 */
+}
+
 .textHeader{
   font-family:'jf-openhuninn-2.0';
   font-size: 2em;
   margin: 0;
 }
+
 
 .grid-container {
   display: grid;

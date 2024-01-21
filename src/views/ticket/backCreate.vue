@@ -40,8 +40,8 @@
             </thead>
         </table>
         <div class="pagination">
-            <button @click="prevPage()" :disabled="currentPage === 1">上一页</button>
-            <button @click="nextPage()" :disabled="currentPage === Math.ceil(movieList.length / pageSize)">下一页</button>
+            <button @click="prevPage()" :disabled="currentPage === 1">上一頁</button>
+            <button @click="nextPage()" :disabled="currentPage === Math.ceil(movieList.length / pageSize)">下一頁</button>
         </div>
     </div>
 </template>

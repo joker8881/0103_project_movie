@@ -4,7 +4,7 @@
       正在熱映
     </button>
     <span>/</span>
-    <button type="button" value="2" :class="{ active: selectedTab === '即將上映' }" @click="selectTab('即將上映')">
+    <button type="button" value="2" :class="{ active: selectedTab === '即將上映' }" @click="selectTab('即將上映'); upComing()">
       即將上映
     </button>
   </div>
@@ -56,8 +56,8 @@
     </thead>
   </table>
   <div class="pagination">
-    <button @click="prevPage()" :disabled="currentPage === 1">上一页</button>
-    <button @click="nextPage()" :disabled="currentPage === Math.ceil(objPlayingMovie.length / pageSize)">下一页</button>
+    <button @click="prevPage()" :disabled="currentPage === 1">上一頁</button>
+    <button @click="nextPage()" :disabled="currentPage === Math.ceil(objPlayingMovie.length / pageSize)">下一頁</button>
   </div>
 </template>
 
@@ -78,11 +78,13 @@ export default {
     nextPage() {
       if (this.currentPage < Math.ceil(this.objPlayingMovie.length / this.pageSize)) {
         this.currentPage++;
+        window.scrollTo(0, 0, "instant");
       }
     },
     prevPage() {
       if (this.currentPage > 1) {
         this.currentPage--;
+        window.scrollTo(0, 0, "instant");
       }
     },
     selectTab(tab) {
@@ -178,9 +180,6 @@ export default {
             if (!movie.poster_path) {
               return false;
             }
-            // if (!movie.overview) {
-            //   return false;
-            // }
             return true;
           });
           // 移除已存在的電影，避免重複
@@ -203,10 +202,68 @@ export default {
         console.error(error);
       }
     },
+    async upComing() { //即將上映
+      const options = {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
+        },
+      };
+
+      let page = 1;
+      let count = 100; //要抓的電影數
+      let comingMovies = [];
+
+      try {
+        const nowDate = new Date();
+        const oneMonth = new Date();
+        oneMonth.setMonth(nowDate.getMonth() + 1);
+
+        while (comingMovies.length < count) {
+          const api = `https://api.themoviedb.org/3/movie/upcoming?language=zh-TW&page=${page}`;
+          const response = await fetch(api, options);
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await response.json();
+          const moviesOnPage = data.results.filter((movie) => {
+            const releaseDate = new Date(movie.release_date);
+             // 檢查發佈日期是否在指定範圍內
+            if (!(releaseDate >= nowDate && releaseDate <= oneMonth)) {
+                return false;
+            }
+            // 檢查poster_path是否存在
+            if (!movie.poster_path) {
+                return false;
+            }
+            return true;
+        });
+        // 移除已存在的電影，避免重複
+        for (const movie of moviesOnPage) {
+            if (!comingMovies.some((existingMovie) => existingMovie.title === movie.title)) {
+              comingMovies.push(movie);
+            }
+          }
+          if (page < data.total_pages) {
+              page++;
+          } else {
+          break;
+            }
+          }
+          // 截取前 count 筆資料
+          const comeMovies = comingMovies.filter((movie) => movie.poster_path && movie.overview).slice(0, count).sort((a, b) => new Date(a.release_date) - new Date(b.release_date));
+          this.objUpComing = comeMovies;
+          console.log('即將上映 ComeMovies:', this.objUpComing);
+        } catch (error) {
+        console.error(error);
+      }
+    },
   },
   mounted() {
     this.nowPlaying()
-    this.upComing()
   },
   computed: {
     displayedMovies() {

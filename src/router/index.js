@@ -10,7 +10,7 @@ const router = createRouter({
     },
     {
       path: '/ticket',
-      name: 'shop',
+      name: 'ticket',
       component: () => import('../views/Ticket.vue')
     },
     {

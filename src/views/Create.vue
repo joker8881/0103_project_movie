@@ -13,7 +13,7 @@ export default defineComponent({
       searchMode: 'original',   // 搜尋模式：original（原始）或 result（結果）
       searchText: '',           // 搜尋文字
       searchResults: '',         // 搜尋結果
-      abc: false,
+      convasIsCloss: false,
       //電影相關
       objPlayMovies: [], //"篩選"過後所剩下的所有電影 (應該是這樣)
       type: [],
@@ -23,10 +23,15 @@ export default defineComponent({
       noResultsModal: false, // 控制無匹配電影時的模板框顯示
       //點選電影海報後，才出現的電影資料
       selectedMovie: null,
+
+      languageTarget:"zh-TW",
       
       //假資料
       name: "Kass123",
       artName:"遊戲",
+
+      //用于存储当前选定电影的图像URL
+      carouselImages: [],
 
       //畫板相關
       canvasWidth: 763, // 畫板的寬度
@@ -109,7 +114,7 @@ export default defineComponent({
       // 執行搜尋邏輯
       this.searchResults = this.searchText;
       this.searchMode = 'result';
-      this.abc = true;
+      this.convasIsCloss = true;
       this.checkCanEnterArea(); // 每次搜索后检查是否可以进入区域
 
       if (this.selectedGenre && this.selectedGenre.value === '') {
@@ -147,7 +152,7 @@ export default defineComponent({
       this.maxVisibleCards = 8; // 重置显示卡片数量
       this.noResultsModal = false; // 確保這行存在並將 noResultsModal 設為 false
       this.searchMode = 'original';
-      this.abc = false;
+      this.convasIsCloss = false;
       this.canEnterArea = true; // 重置为可以进入区域
     },
 
@@ -331,7 +336,10 @@ fetch('http://localhost:8080/movie/art/create', {
       window.history.forward()
     },
 
+    
+
     async getPlayMovie() { //上映中
+
       const options = {
         method: "GET",
         headers: {
@@ -342,14 +350,14 @@ fetch('http://localhost:8080/movie/art/create', {
       };
 
       let page = 1;
-      let count = 900; //要抓的電影數
+      let count = 500; //要抓的電影數
       let playingMovies = [];//上映中的電影
 
       try {
         // 循環遞增頁數，直到達到指定的電影數量
         while (playingMovies.length < count) {
           // 組成 API 請求的 URL
-          const api = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=zh-TW&page=${page}`;
+          const api = `https://api.themoviedb.org/3/search/movie?query=${this.searchText}&include_adult=false&language=${this.languageTarget}&page=${page}`;
           // 發送 API 請求
           const response = await fetch(api, options);
 
@@ -402,10 +410,28 @@ fetch('http://localhost:8080/movie/art/create', {
 
         console.log('After slicing:', this.objPlayMovies.length);
         console.log('上映中 PlayMovies:', this.objPlayMovies);
+
+      this.searchResults = this.searchText;
+      this.searchMode = 'result';
+      this.convasIsCloss = true;
+      this.checkCanEnterArea(); // 每次搜索后检查是否可以进入区域
+
+      // 检查是否有搜索结果
+      if (this.filteredMovies.length === 0) {
+          // 显示无匹配电影的模态框
+          this.noResultsModal = false;
+          // 切回原始模式
+          this.searchMode = 'original';
+          this.convasIsCloss = false;
+          return; // 结束方法，不再继续执行
+        }
       } catch (error) {
         // 處理錯誤
         console.error(error);
       }
+
+      
+
     },
 
     getMovieType() { //電影類型 
@@ -435,7 +461,7 @@ fetch('http://localhost:8080/movie/art/create', {
 
     enterGenreArea() { //下拉選單的方法，選擇電影類型
       // this.searchMode = 'result'; //這行註解掉的原因是，不管有沒有搜到電影 他都會跳進下一頁
-      //this.abc = true;
+      //this.convasIsCloss = true;
       // 在这里执行进入区域的逻辑
       console.log('進入區域，選擇的電影類型是：', this.selectedGenre);
       // 可以根据选中的电影类型执行相应的操作
@@ -452,7 +478,7 @@ fetch('http://localhost:8080/movie/art/create', {
       this.maxVisibleCards += 4; // 或其他你希望增加的数量
     },
 
-    //點選電影海報 (需要抓他的電影名稱)
+    //點選電影海報的展示區 (需要抓他的電影名稱，去展示所有這部電影的作品)
     selectMovie(movie) {
       this.selectedMovie = movie;
 
@@ -467,27 +493,24 @@ fetch('http://localhost:8080/movie/art/create', {
       artname: this.artName,
     })
   })
-  .then(response => response.blob())  // 使用 blob() 來處理二進位資料
-  .then(blobData => {
-    // 將 Blob 資料轉換成 URL
-    const imageUrl = URL.createObjectURL(blobData);
-
-    // 在這裡你可以將 imageUrl 存放在適當的數據結構中，以供輪播使用
-    // 可以將 imageUrl 加入到 movie 物件中，或是在 data 中建立一個陣列存放所有的圖片 URL
-
-    // 然後觸發輪播更新或直接修改 visibleFilteredMovies 中相應的 movie 物件
-  })
-  .catch(error => {
-    console.error('Error fetching data:', error);
-  });
+  .then(response => response.json()) 
+  .then(img =>{
+    console.log(img.artList[0].artLocation);
+    
+    this.carouselImages = img.artList.map(art => art.artLocation);
+    console.log(this.carouselImages);
+    // this.carouselImages =img.artList[1].artLocation
+    // this.carouselImages =img.artList[2].artLocation
+    // this.carouselImages =img.artList[3].artLocation
+    ;})
 },
-
-
 
   },
 
 
   async mounted() {
+    this.searchResults = this.searchText;
+      this.searchMode = 'original';
     this.setCanvas()
     this.currentColor = this.colors[0]
     this.setWindowEvent()
@@ -508,10 +531,10 @@ fetch('http://localhost:8080/movie/art/create', {
         <div class="form-floating mb-3">
           <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="searchText">
           <label class="tbc" for="floatingInput" v-if="!searchText.trim()">搜尋電影...</label>
-          <label class="tbc" for="floatingInput" v-else-if="noResultsModal">無相關電影</label>
+          <!-- <label class="tbc" for="floatingInput" v-else-if="noResultsModal">無相關電影</label> -->
         </div>
         <!-- <input class="searchMovie1" type="text" v-model="searchText"  placeholder="搜尋電影..."> -->
-        <button @click="PerformSearch" class="btn btn-primary allbuttonshoulduseit2">進入區域</button>
+        <button @click="getPlayMovie()" class="btn btn-primary allbuttonshoulduseit2">進入區域</button>
         <!-- 提示信息 -->
   <!-- <p v-if="!searchText.trim()">請輸入搜索條件</p> //修改1 整合功能510行
   <p v-else-if="noResultsModal">無相關電影</p> -->
@@ -524,15 +547,15 @@ fetch('http://localhost:8080/movie/art/create', {
 
     <div class="moviePosterAll">
       <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id" class="card" style="width: 18rem; height: 34.8rem; margin-right:2%; margin-top:2%; margin-bottom:2%;">
-        <div class="box" @click="selectMovie(movie)">
-      <div class="box1"></div><a href="#bord" class="btn btn-primary" style="">
+        <div class="box" >
+      <div class="box1"></div><a href="#bord" class="btn btn-primary goforarea" @click="selectMovie(movie)" style="">
         <img class="card-img-top" :src="getMoviePosterPath(movie.poster_path)" alt="Card image cap" style="height: 27rem;">
         </a>
       </div>
         <div class="card-body" style="height: 10rem;">
           <h5 class="card-title">{{ movie.title }}</h5>
           <div class="GoShowText">
-          <a href="#Second" class="btn btn-primary goforarea">前往展示區</a>
+          <a href="#Second" class="btn btn-primary goforarea" @click="selectMovie(movie)">前往展示區</a>
         </div>
         </div>
       </div>
@@ -613,26 +636,19 @@ fetch('http://localhost:8080/movie/art/create', {
   </li>
  </ul>
 </div>
-
-  <div class="Second" v-show="abc" id="Second">
+  <div class="Second" v-show="convasIsCloss" id="Second">
     <p>電影名稱: {{ searchResults }}</p>
     <div class="ShowPoster">
-      <n-carousel
+ <n-carousel
   direction="vertical"
   dot-placement="right"
   mousewheel
   style="width: 54%; height: 68.4%"
 >
-  <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id">
-    <div>
-    <!-- <img
-      class="carousel-img"
-      :src="movie.imageUrl"
-    /> -->
-    <img class="carousel-img" src="../picture/circle.png" />
-    <h5>{{ movie.title }}</h5>
-    </div>
+<div v-for="(image, index) in carouselImages" :key="index">
+    <img class="carousel-img" :src="image" />
   </div>
+
 </n-carousel>
 </div>
 </div>
@@ -688,7 +704,7 @@ fetch('http://localhost:8080/movie/art/create', {
       width: 100%;
       height: 100%;
       transition: all 0.2s;
-      cursor: pointer; //變手指選擇
+      // cursor: pointer; //變手指選擇
     }
 
     .box1 {
@@ -790,8 +806,8 @@ fetch('http://localhost:8080/movie/art/create', {
     }
 
     .carousel-img {
-      width: 20%;
-      height: 20%;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
 

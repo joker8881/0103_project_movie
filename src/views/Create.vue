@@ -13,7 +13,7 @@ export default defineComponent({
       searchMode: 'original',   // 搜尋模式：original（原始）或 result（結果）
       searchText: '',           // 搜尋文字
       searchResults: '',         // 搜尋結果
-      abc: false,
+      convasIsCloss: false,
       //電影相關
       objPlayMovies: [], //"篩選"過後所剩下的所有電影 (應該是這樣)
       type: [],
@@ -23,6 +23,8 @@ export default defineComponent({
       noResultsModal: false, // 控制無匹配電影時的模板框顯示
       //點選電影海報後，才出現的電影資料
       selectedMovie: null,
+
+      languageTarget:"zh-TW",
       
       //假資料
       name: "Kass123",
@@ -113,7 +115,7 @@ export default defineComponent({
       // 執行搜尋邏輯
       this.searchResults = this.searchText;
       this.searchMode = 'result';
-      this.abc = true;
+      this.convasIsCloss = true;
       this.checkCanEnterArea(); // 每次搜索后检查是否可以进入区域
 
       if (this.selectedGenre && this.selectedGenre.value === '') {
@@ -151,7 +153,7 @@ export default defineComponent({
       this.maxVisibleCards = 8; // 重置显示卡片数量
       this.noResultsModal = false; // 確保這行存在並將 noResultsModal 設為 false
       this.searchMode = 'original';
-      this.abc = false;
+      this.convasIsCloss = false;
       this.canEnterArea = true; // 重置为可以进入区域
     },
 
@@ -335,7 +337,10 @@ fetch('http://localhost:8080/movie/art/create', {
       window.history.forward()
     },
 
+    
+
     async getPlayMovie() { //上映中
+
       const options = {
         method: "GET",
         headers: {
@@ -346,14 +351,14 @@ fetch('http://localhost:8080/movie/art/create', {
       };
 
       let page = 1;
-      let count = 5000; //要抓的電影數
+      let count = 500; //要抓的電影數
       let playingMovies = [];//上映中的電影
 
       try {
         // 循環遞增頁數，直到達到指定的電影數量
         while (playingMovies.length < count) {
           // 組成 API 請求的 URL
-          const api = `https://api.themoviedb.org/3/search/movie?query=%E6%88%91&include_adult=true&language=zh-tw&page=${page}`;
+          const api = `https://api.themoviedb.org/3/search/movie?query=${this.searchText}&include_adult=false&language=${this.languageTarget}&page=${page}`;
           // 發送 API 請求
           const response = await fetch(api, options);
 
@@ -406,10 +411,28 @@ fetch('http://localhost:8080/movie/art/create', {
 
         console.log('After slicing:', this.objPlayMovies.length);
         console.log('上映中 PlayMovies:', this.objPlayMovies);
+
+      this.searchResults = this.searchText;
+      this.searchMode = 'result';
+      this.convasIsCloss = true;
+      this.checkCanEnterArea(); // 每次搜索后检查是否可以进入区域
+
+      // 检查是否有搜索结果
+      if (this.filteredMovies.length === 0) {
+          // 显示无匹配电影的模态框
+          this.noResultsModal = false;
+          // 切回原始模式
+          this.searchMode = 'original';
+          this.convasIsCloss = false;
+          return; // 结束方法，不再继续执行
+        }
       } catch (error) {
         // 處理錯誤
         console.error(error);
       }
+
+      
+
     },
 
     getMovieType() { //電影類型 
@@ -439,7 +462,7 @@ fetch('http://localhost:8080/movie/art/create', {
 
     enterGenreArea() { //下拉選單的方法，選擇電影類型
       // this.searchMode = 'result'; //這行註解掉的原因是，不管有沒有搜到電影 他都會跳進下一頁
-      //this.abc = true;
+      //this.convasIsCloss = true;
       // 在这里执行进入区域的逻辑
       console.log('進入區域，選擇的電影類型是：', this.selectedGenre);
       // 可以根据选中的电影类型执行相应的操作
@@ -474,10 +497,12 @@ fetch('http://localhost:8080/movie/art/create', {
   .then(response => response.json()) 
   .then(img =>{
     console.log(img.artList[0].artLocation);
-    this.carouselImages =img.artList[0].artLocation
-    this.carouselImages =img.artList[1].artLocation
-    this.carouselImages =img.artList[2].artLocation
-    this.carouselImages =img.artList[3].artLocation
+    
+    this.carouselImages = img.artList.map(art => art.artLocation);
+    console.log(this.carouselImages);
+    // this.carouselImages =img.artList[1].artLocation
+    // this.carouselImages =img.artList[2].artLocation
+    // this.carouselImages =img.artList[3].artLocation
     ;})
 },
 
@@ -485,6 +510,8 @@ fetch('http://localhost:8080/movie/art/create', {
 
 
   async mounted() {
+    this.searchResults = this.searchText;
+      this.searchMode = 'original';
     this.setCanvas()
     this.currentColor = this.colors[0]
     this.setWindowEvent()
@@ -508,7 +535,7 @@ fetch('http://localhost:8080/movie/art/create', {
           <label class="tbc" for="floatingInput" v-else-if="noResultsModal">無相關電影</label>
         </div>
         <!-- <input class="searchMovie1" type="text" v-model="searchText"  placeholder="搜尋電影..."> -->
-        <button @click="PerformSearch" class="btn btn-primary allbuttonshoulduseit2">進入區域</button>
+        <button @click="getPlayMovie()" class="btn btn-primary allbuttonshoulduseit2">進入區域</button>
         <!-- 提示信息 -->
   <!-- <p v-if="!searchText.trim()">請輸入搜索條件</p> //修改1 整合功能510行
   <p v-else-if="noResultsModal">無相關電影</p> -->
@@ -522,7 +549,7 @@ fetch('http://localhost:8080/movie/art/create', {
     <div class="moviePosterAll">
       <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id" class="card" style="width: 18rem; height: 34.8rem; margin-right:2%; margin-top:2%; margin-bottom:2%;">
         <div class="box" >
-      <div class="box1"></div><a href="#bord" class="btn btn-primary" style="">
+      <div class="box1"></div><a href="#bord" class="btn btn-primary goforarea" @click="selectMovie(movie)" style="">
         <img class="card-img-top" :src="getMoviePosterPath(movie.poster_path)" alt="Card image cap" style="height: 27rem;">
         </a>
       </div>
@@ -610,26 +637,19 @@ fetch('http://localhost:8080/movie/art/create', {
   </li>
  </ul>
 </div>
-  <div class="Second" v-show="abc" id="Second">
+  <div class="Second" v-show="convasIsCloss" id="Second">
     <p>電影名稱: {{ searchResults }}</p>
     <div class="ShowPoster">
-      <n-carousel
+ <n-carousel
   direction="vertical"
   dot-placement="right"
   mousewheel
   style="width: 54%; height: 68.4%"
 >
-  <!-- <div v-for="(movie, index) in carouselImages" :key="index"> -->
-    <div>
-      <img class="carousel-img" :src="carouselImages" />
-    </div>
+<div v-for="(image, index) in carouselImages" :key="index">
+    <img class="carousel-img" :src="image" />
+  </div>
 
-    <!-- 測試本地圖片用 -->
-    <!-- <div v-for="(image, index) in carouselImages" :key="index">
-        <div>
-          <img class="carousel-img" :src="image" />
-        </div> -->
-  <!-- </div> -->
 </n-carousel>
 </div>
 </div>
@@ -685,7 +705,7 @@ fetch('http://localhost:8080/movie/art/create', {
       width: 100%;
       height: 100%;
       transition: all 0.2s;
-      cursor: pointer; //變手指選擇
+      // cursor: pointer; //變手指選擇
     }
 
     .box1 {

@@ -41,12 +41,13 @@
                 <li>票價:{{ this.movieInfo.price }}</li>
                 <li>撥放日期:{{ this.movieInfo.playDate }}</li>
                 <li>撥放時間:{{ this.movieInfo.playTime }}</li>
+                <li>訂票者:{{ this.account }}</li>
                 <li>座位:{{ this.formattedSelectedSeatsString }}</li>
             </ul>
             <hr class="separator">
             <h2>總共價格</h2>
             <h3>{{ this.totalPrice }}</h3>
-            <button type="button" @click="gointroduce()">返回</button>
+            <button type="button" @click="goinTicket()">返回</button>
             <button type="button" @click="buyTicket()">立即購票</button>
         </div>
     </div>
@@ -54,6 +55,7 @@
 
 <script>
 import axios from 'axios';
+import Cookies from 'js-cookie'
 export default {
     data() {
         return {
@@ -61,7 +63,8 @@ export default {
             col: 8,
             selectedSeats: [],
             movieInfo: {},
-            account: "林裕峰",
+            userLoggedIn: false,
+            account: "",
             lockedSeats: [
                 // { row: 2, col: 3 },
                 // { row: 4, col: 6 },
@@ -101,30 +104,27 @@ export default {
                 return 'src/views/ticket/picture/沒勾選.png' // 默认图像路径
             }
         },
-        gointroduce() {
-            this.$router.push({
-                name: 'introduce',
-                
-            })
-            },
-                buyTicket() {
-                axios({
-                    url: 'http://localhost:8080/movie/buyinfo/create',
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json"
+        goinTicket() {
+            this.$router.push("/ticket")
+        },
+        buyTicket() {
+            axios({
+                url: 'http://localhost:8080/movie/buyinfo/create',
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
                 },
-                    data: {
-                        account: this.account,
-                movie: this.movieInfo.movieName,
-                movieId: this.movieInfo.movieId,
-                cinema: this.movieInfo.cinema,
-                area: this.movieInfo.area,
-                price: this.totalPrice,
-                onDate: this.movieInfo.playDate,
-                onTime: this.movieInfo.playTime,
-                seat: this.formattedSelectedSeatsString
-            },
+                data: {
+                    account: this.account,
+                    movie: this.movieInfo.movieName,
+                    movieId: this.movieInfo.movieId,
+                    cinema: this.movieInfo.cinema,
+                    area: this.movieInfo.area,
+                    price: this.totalPrice,
+                    onDate: this.movieInfo.playDate,
+                    onTime: this.movieInfo.playTime,
+                    seat: this.formattedSelectedSeatsString
+                },
             }).then(res => {
                 console.log(res);
                 console.log(res.data.rtnCode);
@@ -135,45 +135,55 @@ export default {
             }
             )
 
+        },
+        ticketSearch() {
+            axios({
+                url: 'http://localhost:8080/movie/buyinfo/searchseat',
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                data: {
+                    movieId: this.movieInfo.movieId,
+                    cinema: this.movieInfo.cinema,
+                    area: this.movieInfo.area,
+                    onDate: this.movieInfo.playDate,
+                    onTime: this.movieInfo.playTime,
+                },
+            }).then(res => {
+                const seats = res.data.buyInfoList.map(item => item.seat);
+                console.log(seats); // 这里是包含所有座位的数组
+
+                // 如果座位信息是以逗号分隔的，你可以使用 split 方法进行拆分
+                const splitSeats = seats.flatMap(seat => seat.split(','));
+
+                console.log(splitSeats); // 这里是包含所有座位的数组（每个座位分开）
+                this.lockedSeats = splitSeats
+            }
+            )
+        },
+        logincheck() {
+            this.userLoggedIn = Cookies.get('userLoggedIn')
+            if (this.userLoggedIn) {
+                this.account = Cookies.get('account')
+                Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
+                Cookies.set('account', this.account, { expires: 7, path: '/' });
+            }
+            console.log(this.userLoggedIn)
+        },
     },
-    ticketSearch() {
-        axios({
-            url: 'http://localhost:8080/movie/buyinfo/searchseat',
-            method: 'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
-            data: {
-                movieId: this.movieInfo.movieId,
-                cinema: this.movieInfo.cinema,
-                area: this.movieInfo.area,
-                onDate: this.movieInfo.playDate,
-                onTime: this.movieInfo.playTime,
-            },
-        }).then(res => {
-            const seats = res.data.buyInfoList.map(item => item.seat);
-            console.log(seats); // 这里是包含所有座位的数组
-
-            // 如果座位信息是以逗号分隔的，你可以使用 split 方法进行拆分
-            const splitSeats = seats.flatMap(seat => seat.split(','));
-
-            console.log(splitSeats); // 这里是包含所有座位的数组（每个座位分开）
-            this.lockedSeats = splitSeats
-        }
-        )
-    }
-},
     async mounted() {
-    this.movieInfo = this.$route.query;
-    console.log("Movie Details:", this.movieInfo);
-    this.ticketSearch()
-},
-watch: {
-    selectedSeats() {
-        // 当 selectedSeats 数组发生变化时，强制组件重新渲染
-        this.$forceUpdate();
+        this.movieInfo = this.$route.query;
+        console.log("Movie Details:", this.movieInfo);
+        this.ticketSearch()
+        this.logincheck()
     },
-},
+    watch: {
+        selectedSeats() {
+            // 当 selectedSeats 数组发生变化时，强制组件重新渲染
+            this.$forceUpdate();
+        },
+    },
 }
 </script>
 

@@ -29,7 +29,7 @@
                 </tr>
                 <tr v-for="(movie, index) in displayedMovies " :key="index" style="">
                     <td>{{ index + 1 }}</td>
-                    <td><img :src="'https://image.tmdb.org/t/p/w92' + movie.poster_path" alt=""></td>
+                    <td><img :src="'https://image.tmdb.org/t/p/w92' + movie.poster_path" alt="" @click="gotoSeat(movie)"></td>
                     <td>{{ movie.id }}</td>
                     <td>{{ movie.title }}</td>
                     <td>{{ movie.release_date }}</td>
@@ -39,8 +39,8 @@
             </thead>
         </table>
         <div class="pagination">
-            <button @click="prevPage" :disabled="currentPage === 1">上一页</button>
-            <button @click="nextPage" :disabled="currentPage === Math.ceil(objPlayMovies.length / pageSize)">下一页</button>
+            <button @click="prevPage" :disabled="currentPage === 1">上一頁</button>
+            <button @click="nextPage" :disabled="currentPage === Math.ceil(objPlayMovies.length / pageSize)">下一頁</button>
         </div>
     </div>
 </template>

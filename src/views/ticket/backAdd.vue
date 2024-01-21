@@ -10,7 +10,6 @@
                 <option value="梓宏影院">梓宏影院</option>
                 <option value="暐衡劇院">暐衡劇院</option>
             </select>
-            <p>{{ this.movieCinema }}</p>
             <select class="form-select form-select mb-3" v-model="this.movieArea">
                 <option selected>選擇影廳</option>
                 <option value="1號影廳">1號影廳</option>
@@ -18,7 +17,6 @@
                 <option value="3號影廳">3號影廳</option>
                 <option value="4號影廳">4號影廳</option>
             </select>
-            <p>{{ this.movieArea }}</p>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control" id="floatingPrice" placeholder="票價" v-model="this.moviePrice">
                 <label for="floatingPrice">票價</label>
@@ -39,7 +37,6 @@
                     <td>{{ play }}</td>
                 </tr>
             </div>
-            {{ movieAllTime }}
             <button v-if="movieAllTime != ''" type="button" @click="deleteSelected()">刪除</button>
             <div class="checkButton">
                 <button type="button" @click="backSearch()">返回</button>
@@ -55,8 +52,8 @@ export default {
     data() {
         return {
             movieInfo: [],
-            movieId:"",
-            movieName:"",
+            movieId: "",
+            movieName: "",
             movieCinema: "選擇影院",
             movieArea: "選擇影廳",
             moviePrice: "",
@@ -118,7 +115,7 @@ export default {
                 this.moviePrice !== "" &&
                 this.movieDate !== "" &&
                 this.movieAllTime !== "") {
-                    this.movieAllTime = JSON.stringify(this.movieAllTime)
+                this.movieAllTime = JSON.stringify(this.movieAllTime)
                 axios({
                     url: 'http://localhost:8080/movie/movieinfo/create',
                     method: 'POST',
@@ -136,24 +133,26 @@ export default {
                     },
                 }).then(res => {
                     console.log(res);
+                    this.movieId = ""
+                    this.movieName = ""
+                    this.movieCinema = ""
+                    this.movieArea = ""
+                    this.moviePrice = ""
+                    this.movieDate = ""
+                    this.movieAllTime = ""
+                    this.$router.push("/backCreate")
                 })
             } else {
                 // 顯示提示訊息或採取其他處理方式
                 alert("請填寫所有必填項目");
             }
-            this.movieId = "" 
-                this.movieName = "" 
-                this.movieCinema = "" 
-                this.movieArea = "" 
-                this.moviePrice = "" 
-                this.movieDate = "" 
-                this.movieAllTime = ""
+
         }
     },
     mounted() {
         this.movieInfo = this.$route.query;
-        this.movieName = this.movieInfo.movieTitle 
-        this.movieId = this.movieInfo.movieId 
+        this.movieName = this.movieInfo.movieTitle
+        this.movieId = this.movieInfo.movieId
         console.log("Movie Details:", this.movieInfo);
     },
 }

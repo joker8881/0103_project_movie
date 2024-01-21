@@ -129,7 +129,7 @@ export default {
     gotointroduce(movie) {
       console.log(movie)
       this.$router.push({
-        name: 'introduce',
+        name: 'moviecomment',
         query: {
           movieGenreid: movie.genre_ids,
           movieId: movie.id,

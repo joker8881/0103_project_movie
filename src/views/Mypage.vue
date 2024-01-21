@@ -154,7 +154,7 @@ export default {
         const data = await response.json();
         const firstTrailerKey = data.results?.[0]?.key;
         this.trailerLink = `${firstTrailerKey}`;
-        console.log("firstTrailerKey", this.trailerLink);
+        // console.log("firstTrailerKey", this.trailerLink);
       } catch (error) {
         console.error(error);
         return null; // 或者返回其他适当的值，视情况而定
@@ -296,12 +296,12 @@ export default {
     setTimeout(() => {
       this.getMovieType();
       this.getPerson();
-      this.getTrailer();
+      
       // this.initYouTubePlayer();
     }, 500);
     setTimeout(() => {
-      // this.getTrailer();
-      this.initYouTubePlayer();
+      this.getTrailer();
+      // this.initYouTubePlayer();
     }, 1000);
     // this.getMovieType();
     // this.getPerson();
@@ -391,12 +391,15 @@ export default {
       <!-- <h1>預告片</h1> -->
       <!-- <video :src="this.trailerLink" controls></video> -->
       <!-- <iframe :src="this.trailerLink" controls></iframe>-->
-      <div ref="youtubePlayer"></div>
+      <!-- <div ref="youtubePlayer"></div> -->
+      <iframe width="1200" height="630" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen style="margin-right: 32%;"></iframe>
     </div>
-    <hr />
+    
     <!-- 討論區 -->
   </p>
+  <hr />
     <div class="footer" ref="scheduleSwipers">
+      <h1 class="textTilte">我的推薦電影</h1>
       <swiper :options="swiperOption" ref="mySwiper">
         <swiper-slide v-for="(page, index) in pages" :key="index">
           <div class="grid-container">
@@ -594,9 +597,9 @@ span, button {
     }
   }
   .middle {
-    width: 95vw;
-    height: 72vh;
-    margin: 0 auto;
+    width: 100vw;
+    height: 90vh;
+    // margin: 0 auto;
   }
   .commentArea {
     width: 95vw;

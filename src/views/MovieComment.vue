@@ -389,6 +389,49 @@ export default {
         this.commentText = "";
       }
     },
+    cinemaSearch(selectedCinema) {
+            const movieId = this.movieInfo.movieId;
+            const movieName = selectedCinema;
+            axios({
+                url: 'http://localhost:8080/movie/movieinfo/search',
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                data: {
+                    movieId: movieId,
+                    cinema: movieName
+
+                },
+            }).then(res => {
+                console.log(res);
+                console.log(res.data.movieInfoList);
+                this.objPlayingMovie = res.data.movieInfoList
+
+            }
+            )
+        },
+        gotoSeat(movie) {
+            if (!this.selectedTime) {
+                // 如果沒有選擇時間，可以進行相應的處理，例如顯示提示訊息
+                alert('請選擇時間');
+                return;
+            }
+
+            // 在這裡可以進行相應的處理，比如導航到座位選擇頁面
+            this.$router.push({
+                name: 'seat',
+                query: {
+                    movieId: this.movieInfo.movieId,
+                    movieName: this.movieInfo.movieTitle,
+                    cinema: movie.cinema,  // 假設影院資訊存儲在 movie 物件中
+                    area:movie.area,
+                    price: movie.price,  // 假設票價資訊存儲在 movie 物件中
+                    playDate: movie.onDate,  // 假設撥放日期資訊存儲在 movie 物件中
+                    playTime: this.selectedTime,  // 已經從下拉選單中選擇的時間
+                }
+            });
+        },
   },
   mounted() {
     this.movieInfo = this.$route.query;
@@ -462,6 +505,27 @@ export default {
       <h1>預告片</h1>
       <!-- 報告再開啟下面的註解 -->
       <!-- <iframe width="1120" height="630" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen></iframe> -->
+    </div>
+    <hr />
+    <div class="middle">
+      <div class="selectTheater">
+            選取影城
+        </div>
+        <div class="selectButton">
+            <button type="button" @click="cinemaSearch('紹仁戲院')">紹仁戲院</button>
+            <button type="button" @click="cinemaSearch('裕峰影城')">裕峰影城</button>
+            <button type="button" @click="cinemaSearch('梓宏影院')">梓宏影院</button>
+            <button type="button" @click="cinemaSearch('暐衡劇院')">暐衡劇院</button>
+        </div>
+        <div class="selectDate" v-for="(movie, index) in objPlayingMovie">
+            <h6>{{ movie.onDate }}</h6>
+            <h5>{{ movie.area }}</h5>
+            <select v-model="this.selectedTime">
+                <option value="">選擇時間</option>
+                <option v-for="(time, timeIndex) in JSON.parse(movie.onTime)" :key="timeIndex" >{{ time }}</option>
+            </select>
+            <button type="button" @click="gotoSeat(movie)">選取位置</button>
+        </div>
     </div>
     <hr />
     <!-- 討論區 -->
@@ -765,4 +829,19 @@ span, button {
   font-size: 2em;
   margin: 0;
 }
+
+.selectTheater {
+        margin-bottom: 1em;
+    }
+.selectButton {
+    width: 100vw;
+    border-bottom: 3px solid rgb(238, 238, 238);
+
+    button {
+        margin-right: 1em;
+        margin-bottom: 0.6em;
+        padding: 5px;
+    }
+}
+
 </style>

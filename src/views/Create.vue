@@ -478,8 +478,7 @@ fetch('http://localhost:8080/movie/art/create', {
       this.maxVisibleCards += 4; // 或其他你希望增加的数量
     },
 
-    //點選電影海報的展示區 (需要抓他的電影名稱，去展示所有這部電影的作品)
-    selectMovie(movie) {
+    searchMovie(movie){
       this.selectedMovie = movie;
 
       fetch('http://localhost:8080/movie/art/search', {
@@ -495,6 +494,7 @@ fetch('http://localhost:8080/movie/art/create', {
   })
   .then(response => response.json()) 
   .then(img =>{
+    console.log(img)
     console.log(img.artList[0].artLocation);
     
     this.carouselImages = img.artList.map(art => art.artLocation);
@@ -503,6 +503,14 @@ fetch('http://localhost:8080/movie/art/create', {
     // this.carouselImages =img.artList[2].artLocation
     // this.carouselImages =img.artList[3].artLocation
     ;})
+    .catch(err => console.error(err));
+    },
+
+    
+    //點選電影海報的展示區 (需要抓他的電影名稱，去展示所有這部電影的作品)
+    selectMovie(movie) {
+      this.selectedMovie = movie;
+
 },
 
   },
@@ -555,7 +563,7 @@ fetch('http://localhost:8080/movie/art/create', {
         <div class="card-body" style="height: 10rem;">
           <h5 class="card-title">{{ movie.title }}</h5>
           <div class="GoShowText">
-          <a href="#Second" class="btn btn-primary goforarea" @click="selectMovie(movie)">前往展示區</a>
+          <a href="#Second" class="btn btn-primary goforarea" @click="searchMovie(movie)">前往展示區</a>
         </div>
         </div>
       </div>
@@ -566,8 +574,8 @@ fetch('http://localhost:8080/movie/art/create', {
 </div>
     
 
-    <div class="bord" id="bord">
-      <div v-if="selectedMovie">
+    <div v-if="selectedMovie" class="bord" id="bord">
+      <div>
         <p>電影名稱: {{ selectedMovie.title }}</p>
         <p>電影id: {{ selectedMovie.id }}</p>
 

@@ -546,8 +546,8 @@ export default {
         </div>
       </div>
       <div class="trailer">
-        <iframe width="80%" height="500" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0"
-          allowfullscreen></iframe>
+        <!-- <iframe width="80%" height="500" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0"
+          allowfullscreen></iframe> -->
       </div>
       <div class="down">
         <div class="turn">

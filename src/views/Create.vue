@@ -727,7 +727,7 @@ fetch('http://localhost:8080/movie/art/create', {
       width: 100%;
       height: 100%;
       transition: all 0.2s;
-      // cursor: pointer; //變手指選擇
+      // cursor: pointer; //變手指選擇123
     }
 
     .box1 {

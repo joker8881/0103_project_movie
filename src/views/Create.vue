@@ -522,7 +522,7 @@ fetch('http://localhost:8080/movie/art/create', {
     
     //點選電影海報的展示區 (需要抓他的電影名稱，去展示所有這部電影的作品)
     selectMovie(movie) {
-      if(this.userLoggedIn == true)
+      // if(this.userLoggedIn == true)
       this.selectedMovie = movie;
 
 },
@@ -727,7 +727,7 @@ fetch('http://localhost:8080/movie/art/create', {
       width: 100%;
       height: 100%;
       transition: all 0.2s;
-      // cursor: pointer; //變手指選擇123
+      // cursor: pointer; //變手指選擇
     }
 
     .box1 {

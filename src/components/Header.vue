@@ -38,6 +38,9 @@ export default{
             this.loginAccount =""
             this.logout()
             this.$router.push("/login")
+        },
+        backuser(){
+            this.$router.push("/backuser")
         }
     },
     mounted(){
@@ -57,10 +60,9 @@ export default{
             <RouterLink to="/ticket" class="a">購票</RouterLink>
             <RouterLink :to="`/mypage`" class="a">個人主頁</RouterLink>
             <RouterLink :to="`/create`" class="a">影迷創作</RouterLink>
-            <!-- <RouterLink :to="`/backCreate`" class="a">後臺管理</RouterLink> -->
             <div v-if="this.userLoggedIn || this.getAuth" class="a">
-                <p v-if="this.userLoggedIn">登入帳號：{{ this.loginAccount }}</p>
-                <p v-if="this.getAuth">登入帳號：{{ this.getuser }}</p>
+                <p v-if="this.userLoggedIn" @click="backuser()">登入帳號：{{ this.loginAccount }}</p>
+                <p v-if="this.getAuth" @click="backuser()">登入帳號：{{ this.getuser }}</p>
             </div>
             <div v-if="this.userLoggedIn || this.getAuth" class="a">
                 <p @click="logout1">登出</p>

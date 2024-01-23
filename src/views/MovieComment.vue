@@ -360,15 +360,16 @@ export default {
               if (this.comments[i].commentIndexIndex !== 0) {
                 this.commentReplies.push(this.comments[i]);
                 this.comments.splice(i, 1);
-                i--;
               }
             }
+            console.log(this.commentReplies);
+            console.log(this.comments);
           })
           .catch(error => {
             console.error('Error fetching data:', error);
         });
     },
-    commentCreateChild() { // 傳送回覆留言
+    commentCreateChild() { // 回覆留言
       fetch('http://localhost:8080/movie/comment/createchild', {
         method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
@@ -622,7 +623,7 @@ export default {
                 <label for="commentInput" class="form-label"><span>新增留言</span></label>
                 <textarea rows="1" v-model="commentText" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                 <div style="text-align: end;">
-                  <button type="submit" class="btn btn-outline-dark" required @click="commentCreate">留言</button>
+                  <button type="submit" class="btn btn-outline-dark" @click="commentCreate">留言</button>
                 </div>
               </div>
             </form>
@@ -635,9 +636,10 @@ export default {
                 <!-- 編輯按鈕 -->
                 <button v-if="userLoggedIn && !comment.editing" @click="startEditing(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
                 <!-- 保存按鈕 -->
-                <button v-if="comment.editing" @click="saveEdit(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">儲存</button>
+                <button v-if="comment.editing" type="submit" class="btn btn-link" @click="saveEdit(comment, comment.commentIndex, comment.commentIndexIndex)" style="text-decoration: none" required>儲存</button>
                 <!-- 刪除按鈕 -->
-                <button v-if="userLoggedIn" @click="deleteComment(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br /><span>{{ comment.commentText }}</span><br>
+                <button v-if="userLoggedIn" @click="commentDeleteFather(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                <span>{{ comment.commentText }}</span>
                 <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
                 <textarea v-if="comment.editing" v-model="comment.editingText" rows="1" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea><br>
                 <!-- 按讚 -->
@@ -650,16 +652,16 @@ export default {
 
                 <!-- 回覆按鈕 -->
                 <button v-if="this.userLoggedIn" @click="chooseComment(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none; margin-left: 5px">回覆</button>
-                <!-- <button v-if="comment.editing" @click="saveEdit(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">儲存</button> -->
                 <!-- 回覆留言的表單 -->
                 <form v-if="comment.replying" @submit.prevent="addReply(comment, comment.replyText)" class="mt-2">
                   <div class="mb-3">
                     <label for="replyInput" class="form-label">回覆留言</label>
-                    <textarea v-model="replyText" class="form-control" id="replyInput" rows="2" required style="resize: none"></textarea>
+                    <textarea rows="1" v-model="replyText" class="form-control" id="replyInput" style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                   </div>
-                  <button v-if="this.userLoggedIn" type="submit" @click="commentCreateChild()">回覆</button>
-                  <button type="button" @click="cancelReply(comment)">取消</button>
+                  <button v-if="this.userLoggedIn" type="submit" class="btn btn-outline-dark" @click="commentCreateChild()">回覆</button>
+                  <button type="button" class="btn btn-outline-dark" @click="cancelReply(comment)">取消</button>
                 </form>
+                
                 <!-- 顯示回覆的區域 -->
                 <div v-if="commentReplies.length > 0" class="mt-2" style="border: 0;">
                   <div v-for="item in commentReplies" :key="item.commentIndex" class="card mb-2" style="border: 0;">
@@ -672,9 +674,10 @@ export default {
                         <!-- 保存按鈕 -->
                         <button v-if="item.editing" @click="saveEdit(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">儲存</button>
                         <!-- 刪除按鈕 -->
-                        <button v-if="userLoggedIn" @click="deleteComment(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br /><span>{{ item.commentText }}</span><br>
+                        <button v-if="userLoggedIn" @click="commentDeleteChild(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                        <span>{{ item.commentText }}</span><br>
                         <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
-                        <textarea v-if="item.editing" v-model="item.editingText" rows="1" class="form-control" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea><br>
+                        <textarea v-if="item.editing" v-model="item.editingText" rows="1" class="form-control" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                         <!-- 按讚 -->
                         <button @click="likeButton(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-outline-primary" style="border: 0">
                           <i class="fa-regular fa-thumbs-up"></i>{{ item.favorite }}

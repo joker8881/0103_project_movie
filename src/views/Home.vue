@@ -4,12 +4,12 @@ import "swiper/css";
 export default {
   data() {
     return {
-      objPlayMovies: [],
-      objComeMovies: [],
-      objPopularMovies: [],
-      objtype: [],
-      objTypePopularMovies: [],
-      objSearchMovies: [],
+      objPlayMovies: [], // 熱映中電影
+      objComeMovies: [], // 即將上映電影
+      objPopularMovies: [], // 歷史熱門電影
+      objtype: [], // 電影所有類型
+      objSearchMovies: [], // 搜尋電影
+      objTypeMovies: [], // 選擇類型找電影
       itemsPerSlide: 3, // 每頁顯示的輪播項目數量
       itemsPerSlide1: 9, // 每頁顯示的輪播項目數量
       currentSlide: 0,
@@ -49,11 +49,11 @@ export default {
       const cutArray = [];
       for (
         let i = 0;
-        i < this.objTypePopularMovies.length;
+        i < this.objTypeMovies.length;
         i += this.itemsPerSlide1
       ) {
         cutArray.push(
-          this.objTypePopularMovies.slice(i, i + this.itemsPerSlide1)
+          this.objTypeMovies.slice(i, i + this.itemsPerSlide1)
         );
       }
       console.log("typePerPage:", cutArray);
@@ -276,72 +276,6 @@ export default {
         console.error(error);
       }
     },
-    async getTypeMovie(event) { // 用選單找歷史熱門電影
-      const options = {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          Authorization:
-            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
-        },
-      };
-      // 取得選單值
-      this.selectedType = event.target.value;
-      console.log(this.selectedType);
-      let genres = "";
-      for (let i = 0; i < this.objtype.length; i++) {
-        if (this.selectedType === this.objtype[i].name) {
-          genres = this.type[i].id;
-        }
-      }
-      console.log(genres);
-      let page = 1;
-      let count = 36; //要抓的電影數
-      let typeOfMovies = [];
-
-      try {
-        while (typeOfMovies.length < count) {
-          const api = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=zh-TW&page=1&sort_by=popularity.desc&with_genres=${genres}`;
-          const response = await fetch(api, options);
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const data = await response.json();
-          const moviesOnPage = data.results.filter((movie) => {
-            // 檢查poster_path是否存在
-            if (!movie.poster_path) {
-              return false;
-            }
-            return true;
-          });
-          // 移除已存在的電影，避免重複
-          for (const movie of moviesOnPage) {
-            if (
-              !typeOfMovies.some(
-                (existingMovie) => existingMovie.title === movie.title
-              )
-            ) {
-              typeOfMovies.push(movie);
-            }
-          }
-          if (page < data.total_pages) {
-            page++;
-          } else {
-            break;
-          }
-        }
-        // 截取前 count 筆資料
-        const typeOfPopularMovies = typeOfMovies
-          .filter((movie) => movie.poster_path)
-          .slice(0, count)
-          .sort((a, b) => b.vote_average - a.vote_average);
-        this.objTypePopularMovies = typeOfPopularMovies;
-        console.log("選擇類型電影:", this.objTypePopularMovies);
-        // this.splitMovies();
-      } catch (error) {
-        console.error(error);
-      }
-    },
     async searchMovie() { // 搜尋電影
       const options = {
         method: "GET",
@@ -398,6 +332,70 @@ export default {
         console.error(error);
       }
     },
+    async getTypeMovie(event) { // 選單找電影
+      const options = {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
+        },
+      };
+      // 取得選單值
+      this.selectedType = event.target.value;
+      console.log(this.selectedType);
+      let genres = "";
+      for (let i = 0; i < this.objtype.length; i++) {
+        if (this.selectedType === this.objtype[i].name) {
+          genres = this.type[i].id;
+        }
+      }
+      console.log(genres);
+      let page = 1;
+      let count = 90; //要抓的電影數
+      let typeOfMovies = [];
+
+      try {
+        while (typeOfMovies.length < count) {
+          const api = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=${genres}`;
+          const response = await fetch(api, options);
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const data = await response.json();
+          const moviesOnPage = data.results.filter((movie) => {
+            // 檢查poster_path是否存在
+            if (!movie.poster_path) {
+              return false;
+            }
+            return true;
+          });
+          // 移除已存在的電影，避免重複
+          for (const movie of moviesOnPage) {
+            if (
+              !typeOfMovies.some(
+                (typeOfMovies) => typeOfMovies.title === movie.title
+              )
+            ) {
+              typeOfMovies.push(movie);
+            }
+          }
+          if (page < data.total_pages) {
+            page++;
+          } else {
+            break;
+          }
+        }
+        // 截取前 count 筆資料
+        const typeOfSearchMovies = typeOfMovies.filter((movie) => movie.poster_path).slice(0, count).sort((a, b) => new Date(a.release_date) - new Date(b.release_date));
+        this.objTypeMovies = typeOfSearchMovies;
+        console.log("選擇類型電影:", this.objTypeMovies);
+        // this.splitMovies();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    
     getPlayPerson(movieId) { //上映中 演員*5 + 導演*1
       const options = {
         method: "GET",
@@ -543,8 +541,8 @@ export default {
     // splitMovies() {
     //   const pageSize = 9;
     //   this.pages = [];
-    //   for (let i = 0; i < this.objTypePopularMovies.length; i += pageSize) {
-    //     this.pages.push(this.objTypePopularMovies.slice(i, i + pageSize));
+    //   for (let i = 0; i < this.objTypeMovies.length; i += pageSize) {
+    //     this.pages.push(this.objTypeMovies.slice(i, i + pageSize));
     //   }
     // },
   },
@@ -573,7 +571,7 @@ export default {
     //       })
     },
   //   watch: {
-  //     objTypePopularMovies: {
+  //     objTypeMovies: {
   //       handler: 'initSwiper', // 监听数据变化，调用initSwiper方法
   //       immediate: true // 立即执行一次
   //     }

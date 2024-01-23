@@ -250,12 +250,12 @@ export default {
       }
       console.log(genres);
       let page = 1;
-      let count = 27; //要抓的電影數
+      let count = 36; //要抓的電影數
       let typeOfMovies = [];
       
       try {
         while (typeOfMovies.length < count) {
-          const api = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=${genres}`;
+          const api = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=zh-TW&page=1&sort_by=popularity.desc&with_genres=${genres}`;
           const response = await fetch(api, options);
           if (!response.ok) {
             throw new Error("Network response was not ok");
@@ -575,8 +575,9 @@ export default {
           <div class="row">
             <div v-for="(item, innerIndex) in itemsChunk" :key="innerIndex" class="col-md-4">
               <a @click="chooseMovie(item)">
-                <div class="card" style="width: 400px;">
-                  <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100 card-img-top" alt="無電影海報">
+                <div class="card">
+                  <!-- style="width: 400px;" -->
+                  <img :src="'https://image.tmdb.org/t/p/w342' + item.poster_path" class="d-block w-100 card-img-top" alt="無電影海報">
                   <div class="card-body">
                     <p class="card-text">
                       <span>{{ "名稱：" + item.title }}</span><br>

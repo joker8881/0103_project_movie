@@ -1,6 +1,4 @@
 <script>
-// import { Swiper, SwiperSlide } from "swiper/vue";
-import "swiper/css";
 export default {
   data() {
     return {
@@ -15,8 +13,6 @@ export default {
       currentSlide: 0,
       selectedType: "", // 選單選到的類型
       searchText: "", // 搜尋電影
-      // page: [],
-      // swiper: null,
     };
   },
   computed: {
@@ -72,22 +68,6 @@ export default {
       return cutArray;
     },
   },
-  // components: {
-  //   Swiper,
-  //   SwiperSlide,
-  // },
-  // setup() {
-  //   const onSwiper = (swiper) => {
-  //     console.log(swiper);
-  //   };
-  //   const onSlideChange = () => {
-  //     console.log('slide change');
-  //   };
-  //   return {
-  //     onSwiper,
-  //     onSlideChange,
-  //   };
-  // },
   methods: {
     async getPlayMovie() { // 上映中
       const options = {
@@ -395,7 +375,6 @@ export default {
         console.error(error);
       }
     },
-    
     getPlayPerson(movieId) { //上映中 演員*5 + 導演*1
       const options = {
         method: "GET",
@@ -551,31 +530,7 @@ export default {
     await this.getComeMovie();
     await this.getPopularMovie();
     this.getMovieType();
-    // setTimeout(() => {
-    //   this.splitMovies();
-    // }, 500);
-    //   this.$nextTick(() => {
-    //         var swiper = new Swiper(this.$refs.mySwiper, {
-    //           slidesPerView: 3,
-    //           slidesPerColumn: 3,
-    //           spaceBetween:10,
-    //           autoplay: {
-    //             delay: 3000,
-    //             disableOnInteraction: false,
-    //             stopOnLastSlide: false,
-    //           },
-    //           loop: false,
-    //           observer: true,
-    //           observeParents: true,
-    //         });
-    //       })
     },
-  //   watch: {
-  //     objTypeMovies: {
-  //       handler: 'initSwiper', // 监听数据变化，调用initSwiper方法
-  //       immediate: true // 立即执行一次
-  //     }
-  // },
 };
 </script>
 

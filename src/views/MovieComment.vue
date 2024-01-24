@@ -15,10 +15,9 @@ export default {
       hours: "",
       minutes: "",
       // 帳號相關
-      account: "",
-      password: "",
       name: "snsdarea1209", // 帳號
       userLoggedIn: false,
+      loginAccount: "",
       // 評論區相關
       sortOrder: "sort",
       baoleiButton: false, // 暴雷按鈕
@@ -51,13 +50,13 @@ export default {
   methods: {
     // cookie
     logincheck() {
-      this.userLoggedIn = Cookies.get("userLoggedIn");
+      this.userLoggedIn = Cookies.get('userLoggedIn') === 'true'
       if (this.userLoggedIn) {
-        let a = Cookies.get("account");
-        Cookies.set("userLoggedIn", true, { expires: 7, path: "/" });
-        Cookies.set("account", a, { expires: 7, path: "/" });
+        this.loginAccount = Cookies.get('account')
+        Cookies.set('account', this.loginAccount, { expires: 7, path: '/' });
       }
       // console.log(this.userLoggedIn)
+      // console.log(this.loginAccount)
     },
     // 抓電影
     getPerson() { // 電影相關 上映中 演員*5 + 導演*1
@@ -178,11 +177,9 @@ export default {
       this.baoleiButton = !this.baoleiButton;
     },
     resetBlur() { // 暴雷背景模糊
-      
       this.blurredArea = false;
     },
     commentTimeDif(commentTime) { // 留言時間時間差
-      
       let time = null;
       if (typeof commentTime === "string" && commentTime.includes("T")) {
         time = Date.parse(commentTime);
@@ -235,7 +232,7 @@ export default {
         this.replyText = "";
       }
     },
-    cancelReply(comment) { // 取消回覆 comment.replying = false;
+    cancelReply() { // 取消回覆 comment.replying = false;
       this.replyText = null;
     },
     likeButton(comment, index, indexOrder) { // 喜歡
@@ -552,7 +549,7 @@ export default {
               </div>
               <div class="director">
                 <h3 class="textHeader">片長：</h3>
-                <span class="textallx" style="line-height: 50px">{{ this.hours + "h" }} {{ this.minutes + "m" }}</span><br />
+                <span class="textallx" style="line-height: 50px">{{ this.hours == 0 && this.minutes == 0 ? "未知" : this.hours + "h" + this.minutes + "m" }}</span><br />
               </div>
               <div class="casts">
                 <h3 class="textHeader" style="width: 105px; height: 50px">演員：</h3>
@@ -575,6 +572,7 @@ export default {
       </div>
     </div>
     <hr />
+
     <!-- 預告片 -->
     <div class="middleInfo">
       <div class="middle">
@@ -624,7 +622,7 @@ export default {
             </div>
           </div>
           <!-- 留言區 -->
-          <div :style="{ filter: blurredArea && !baoleiButton ? 'blur(5px)' : 'none', }">
+          <!-- <div :style="{ filter: blurredArea && !baoleiButton ? 'blur(5px)' : 'none', }"> -->
           <!-- 排序下拉框 -->
           <div class="mb-3">
             <span>{{ this.comments.length + "件留言" }}</span>
@@ -651,11 +649,11 @@ export default {
               <span>{{ "@" + comment.account }}</span>
               <small class="text-muted">{{ this.commentTimeDif(comment.commentTime) }}</small>
               <!-- 編輯按鈕 -->
-              <button v-if="userLoggedIn && !comment.editing" @click="startEditing(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+              <button v-if="userLoggedIn && !comment.editing && this.loginAccount==comment.account" @click="startEditing(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
               <!-- 保存按鈕 -->
               <button v-if="comment.editing" type="submit" class="btn btn-link" @click="saveEdit( comment, comment.commentIndex, comment.commentIndexIndex ) " style="text-decoration: none" required>儲存</button>
               <!-- 刪除按鈕 -->
-              <button v-if="userLoggedIn" @click="commentDeleteFather(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+              <button v-if="userLoggedIn && !comment.editing && this.loginAccount==comment.account" @click="commentDeleteFather(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
               <span>{{ comment.commentText }}</span>
               <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
               <textarea v-if="comment.editing" v-model="comment.editingText" rows="1" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea><br />
@@ -689,11 +687,11 @@ export default {
                       <span>{{ "@" + item.account }}</span>
                       <small class="text-muted">{{ this.commentTimeDif(item.commentTime) }}</small>
                       <!-- 編輯按鈕 -->
-                      <button v-if="userLoggedIn && !item.editing" @click="startEditing(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+                      <button v-if="userLoggedIn && this.loginAccount==comment.account" @click="startEditing(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
                       <!-- 保存按鈕 -->
                       <button v-if="item.editing" @click="saveEdit( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">儲存</button>
                       <!-- 刪除按鈕 -->
-                      <button v-if="userLoggedIn" @click="commentDeleteChild( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                      <button v-if="userLoggedIn && this.loginAccount==comment.account" @click="commentDeleteChild( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">刪除</button><br />
                       <span>{{ item.commentText }}</span><br />
                       <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
                       <textarea v-if="item.editing" v-model="item.editingText" rows="1" class="form-control" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
@@ -716,7 +714,7 @@ export default {
       </div>
     </div>
   </div>
-  </div>
+  <!-- </div> -->
 </template>
 
 <style scoped lang="scss">

@@ -1,6 +1,5 @@
 <script>
 import { mapState,mapActions } from 'pinia'
-import { ref } from 'vue';
 import { RouterLink } from "vue-router";
 import Cookies from 'js-cookie'
 import auth from '../../store/auth';
@@ -50,11 +49,21 @@ export default {
         // 處理返回的數據
             console.log(data)
             console.log(data.code)
+            if(data.code == 201){
+              Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
+              Cookies.set('account', this.account, { expires: 7, path: '/' });
+              // Cookies.set('admin', true, { expires: 7, path: '/' });
+              this.login(this.account)
+              this.$router.push("/")
+            }
             if(data.code == 200){
               Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
               Cookies.set('account', this.account, { expires: 7, path: '/' });
               this.login(this.account)
-              console.log("A")
+              // console.log(this.account)
+              console.log(Cookies.get('account'))
+              console.log(this.getAuth)
+              console.log(this.getuser)
               this.$router.push("/")
             }
             if(data.rtnCode == "Account not verify"){

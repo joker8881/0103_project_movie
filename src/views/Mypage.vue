@@ -88,23 +88,23 @@ export default {
       };
     },
   methods: {
-    initYouTubePlayer() { //影片嵌入相關
-      if (window.YT && window.YT.Player) {
-        // 替换为你的 YouTube 视频 ID
-        const videoId = this.trailerLink;
-        // 创建 YouTube 播放器
-        new window.YT.Player(this.$refs.youtubePlayer, {
-          height: "630",
-          width: "1080",
-          videoId: videoId,
-          playerVars: { autoplay: 0 }, // 1 表示自动播放
-        });
-      } else {
-        // 如果 'Player' 未定义，你可能需要等待 API 加载完成
-        // 或者在其他地方处理 'onYouTubeIframeAPIReady' 事件
-        console.error("YouTube API not ready");
-      }
-    },
+    // initYouTubePlayer() { //影片嵌入相關
+    //   if (window.YT && window.YT.Player) {
+    //     // 替换为你的 YouTube 视频 ID
+    //     const videoId = this.trailerLink;
+    //     // 创建 YouTube 播放器
+    //     new window.YT.Player(this.$refs.youtubePlayer, {
+    //       height: "630",
+    //       width: "1080",
+    //       videoId: videoId,
+    //       playerVars: { autoplay: 0 }, // 1 表示自动播放
+    //     });
+    //   } else {
+    //     // 如果 'Player' 未定义，你可能需要等待 API 加载完成
+    //     // 或者在其他地方处理 'onYouTubeIframeAPIReady' 事件
+    //     console.error("YouTube API not ready");
+    //   }
+    // },
     async getPerson() { //電影相關 上映中 演員*5 + 導演*1
       const options = {
         method: "GET",

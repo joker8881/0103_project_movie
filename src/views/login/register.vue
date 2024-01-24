@@ -181,8 +181,8 @@ export default {
             </div>
             <p class="textL">手機</p>
             <div class="form-floating mb-3">
-              <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="this.phone" onkeyup="value=value.replace(/[^\d]/g,'') ">
-              <label class="tbc" for="floatingInput">請在這裡輸入手機(10個純數字)</label>
+              <input type="text" class="form-control tb" id="floatingInput" placeholder="09xxxxxxxx" v-model="this.phone" onkeyup="value=value.replace(/[^\d]/g,'') ">
+              <label class="tbc" for="floatingInput">請在這裡輸入手機(09xxxxxxxx)</label>
             </div>
             <p class="textL">名字/暱稱</p>
             <div class="form-floating mb-3">

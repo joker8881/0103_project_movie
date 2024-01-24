@@ -140,16 +140,18 @@ export default{
       }
       this.love.push(cc)
       console.log(this.love)
+      alert('增加至我的最愛')
     },
-    savetomoviewall(id,Gid,titlex,overview,path,Originaltitle,Releasedate,Voteavg){
+    savetomoviewall(id,Gid,title,overview,path,Originaltitle,Releasedate,Voteavg){
         // 檢查 moviewall 陣列中是否已經存在具有相同 movieid 的物件
-        const existingMovie = this.moviewall.find(movie => movie.movieid === id);
+        console.log(id)
+        const existingMovie = this.moviewall.find(movie => movie.movieId === id);
         if (!existingMovie) {
           // 如果不存在，則將 id 加入 moviewall
           let cc = {
             movieId:id,
             movieGenreid:Gid,
-            movieTitle:titlex,
+            movieTitle:title,
             movieOverview:overview,
             moviePoster:path,
             movieOriginaltitle:Originaltitle,
@@ -158,8 +160,10 @@ export default{
           }
           this.moviewall.push(cc);
           console.log(this.moviewall);
+          alert('增加至電影牆')
         } else {
-          console.log('元素已存在，不重複加入：', x);
+          console.log('該電影已存在電影牆，不重複加入：' + title);
+          alert('該電影已存在電影牆　'+ title)
         }
     },
     goshow() { //點電影飛去新路由
@@ -268,7 +272,7 @@ export default{
         .upbox{
             height: 40%;
             width: 100%;
-            background-color: burlywood;
+            background-color: #72809d;
             // padding-top: 10%;
             // background-color: burlywood;
             .searchName{

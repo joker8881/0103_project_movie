@@ -33,9 +33,7 @@ export default {
     };
   },
   computed: {
-    sortComments() {
-      // 篩選留言
-      // console.log(this.comments);
+    sortComments() { // 篩選留言
       const sorted = this.comments.slice();
       switch (this.sortOrder) {
         case "latest":
@@ -48,8 +46,7 @@ export default {
     },
   },
   methods: {
-    // cookie
-    logincheck() {
+    logincheck() { // cookie
       this.userLoggedIn = Cookies.get('userLoggedIn') === 'true'
       if (this.userLoggedIn) {
         this.loginAccount = Cookies.get('account')
@@ -68,15 +65,10 @@ export default {
             "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
         },
       };
-      fetch(
-        `https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}/credits?language=en-US`,
-        options
-      )
+      fetch(`https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}/credits?language=en-US`, options)
         .then((response) => response.json())
         .then((response) => {
-          const directors = response.crew.filter(
-            (person) => person.job === "Director"
-          );
+          const directors = response.crew.filter((person) => person.job === "Director");
           const cast = response.cast.slice(0, 5);
           // console.log(directors);
           // console.log(cast);
@@ -99,10 +91,7 @@ export default {
         },
       };
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}/videos?language=en-US`,
-          options
-        );
+        const response = await fetch(`https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}/videos?language=en-US`, options);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -124,10 +113,7 @@ export default {
             "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
         },
       };
-      fetch(
-        "https://api.themoviedb.org/3/genre/movie/list?language=en",
-        options
-      )
+      fetch("https://api.themoviedb.org/3/genre/movie/list?language=en", options)
         .then((response) => response.json())
         .then((response) => {
           (this.type = response.genres),
@@ -159,10 +145,7 @@ export default {
             "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
         },
       };
-      fetch(
-        `https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}?language=en-US`,
-        options
-      )
+      fetch(`https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}?language=en-US`, options)
         .then((response) => response.json())
         .then((response) => {
           (this.movieTime = response.runtime),
@@ -232,23 +215,28 @@ export default {
         this.replyText = "";
       }
     },
-    cancelReply() { // 取消回覆 comment.replying = false;
+    cancelReply() { // 取消回覆 
+      comment.replying = false;
       this.replyText = null;
     },
     likeButton(comment, index, indexOrder) { // 喜歡
       this.commentIndex = index;
       this.commentIndexOrder = indexOrder;
-      comment.favorite++;
+      // 計算 like 的變化值
+      const likeChange = comment.isLiked ? -1 : 1;
+      // 更新 like 數量
+      comment.favorite += likeChange;
+
       fetch("http://localhost:8080/movie/comment/likeAndDislike", {
-        method: "POST", // 這裡使用POST方法，因為後端是@PostMapping
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          commentIndex: this.commentIndex,
-          commentIndexOrder: this.commentIndexOrder,
+          commentIndex: index,
+          commentIndexOrder: indexOrder,
           movieID: this.movieInfo.movieId,
-          like: 1,
+          like: likeChange,
           dislike: 0,
         }),
       })
@@ -260,22 +248,26 @@ export default {
         .catch((error) => {
           console.error("Error fetching data:", error);
         });
+      // 切換 isLiked 狀態
+      comment.isLiked = !comment.isLiked;
     },
     dislikeButton(comment, index, indexOrder) { // 不喜歡
       this.commentIndex = index;
       this.commentIndexOrder = indexOrder;
-      comment.dislike++;
+      const dislikeChange = comment.isDisLiked ? -1 : 1;
+      comment.dislike += dislikeChange;
+      
       fetch("http://localhost:8080/movie/comment/likeAndDislike", {
-        method: "POST", // 這裡使用POST方法，因為後端是@PostMapping
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          commentIndex: this.commentIndex,
-          commentIndexOrder: this.commentIndexOrder,
+          commentIndex: index,
+          commentIndexOrder: indexOrder,
           movieID: this.movieInfo.movieId,
           like: 0,
-          dislike: 1,
+          dislike: dislikeChange,
         }),
       })
         .then((response) => response.json())
@@ -286,6 +278,7 @@ export default {
         .catch((error) => {
           console.error("Error fetching data:", error);
         });
+      comment.isDisLiked = !comment.isDisLiked;
     },
     startEditing(comment, index, indexOrder) { // 開始編輯留言
       this.commentIndex = index;
@@ -524,6 +517,7 @@ export default {
       </div>
     </div>
   </div>
+  
   <div class="body">
     <!-- 電影資料 -->
     <div class="header">
@@ -585,6 +579,7 @@ export default {
         <div class="turn">線上訂票</div>
       </div>
     </div>
+
     <!-- 選擇影城 -->
     <div class="middle1" v-if="this.userLoggedIn">
       <div class="selectTheater">選取影城</div>
@@ -599,16 +594,14 @@ export default {
         <h5>{{ movie.area }}</h5>
         <select v-model="this.selectedTime">
           <option value="">選擇時間</option>
-          <option
-            v-for="(time, timeIndex) in JSON.parse(movie.onTime)"
-            :key="timeIndex"
-          >
+          <option v-for="(time, timeIndex) in JSON.parse(movie.onTime)" :key="timeIndex">
             {{ time }}
           </option>
         </select>
         <button type="button" @click="gotoSeat(movie)">選取位置</button>
       </div>
     </div>
+
     <!-- 討論區 -->
     <h1>討論區</h1>
     <div class="footer">
@@ -622,7 +615,7 @@ export default {
             </div>
           </div>
           <!-- 留言區 -->
-          <!-- <div :style="{ filter: blurredArea && !baoleiButton ? 'blur(5px)' : 'none', }"> -->
+          <div :style="{ filter: blurredArea && !baoleiButton ? 'blur(5px)' : 'none', }">
           <!-- 排序下拉框 -->
           <div class="mb-3">
             <span>{{ this.comments.length + "件留言" }}</span>
@@ -642,68 +635,69 @@ export default {
               </div>
             </div>
           </form>
-          <!-- 遍歷並顯示留言 -->
-          <div v-for="comment in sortComments" :key="comment.number" class="card mb-2">
-            <!-- 留言內容 -->
-            <div class="card-body">
-              <span>{{ "@" + comment.account }}</span>
-              <small class="text-muted">{{ this.commentTimeDif(comment.commentTime) }}</small>
-              <!-- 編輯按鈕 -->
-              <button v-if="userLoggedIn && !comment.editing && this.loginAccount==comment.account" @click="startEditing(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
-              <!-- 保存按鈕 -->
-              <button v-if="comment.editing" type="submit" class="btn btn-link" @click="saveEdit( comment, comment.commentIndex, comment.commentIndexIndex ) " style="text-decoration: none" required>儲存</button>
-              <!-- 刪除按鈕 -->
-              <button v-if="userLoggedIn && !comment.editing && this.loginAccount==comment.account" @click="commentDeleteFather(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
-              <span>{{ comment.commentText }}</span>
-              <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
-              <textarea v-if="comment.editing" v-model="comment.editingText" rows="1" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea><br />
-              <!-- 按讚 -->
-              <button @click=" likeButton( comment, comment.commentIndex, comment.commentIndexIndex ) " class="btn btn-outline-primary" style="border: 0">
-                <i class="fa-regular fa-thumbs-up"></i>
-                {{ comment.favorite }}
-              </button>
-              <button @click="dislikeButton( comment, comment.commentIndex, comment.commentIndexIndex ) " class="btn btn-outline-danger" style="border: 0">
-              <i class="fa-regular fa-thumbs-down"></i>
-                {{ comment.dislike }}
-              </button>
+            <!-- 遍歷並顯示留言 -->
+            <div v-for="comment in sortComments" :key="comment.number" class="card mb-2">
+              <!-- 留言內容 -->
+              <div class="card-body">
+                <span>{{ "@" + comment.account }}</span>
+                <small class="text-muted">{{ this.commentTimeDif(comment.commentTime) }}</small>
+                <!-- 編輯按鈕 -->
+                <button v-if="userLoggedIn && !comment.editing && this.loginAccount==comment.account" @click="startEditing(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+                <!-- 保存按鈕 -->
+                <button v-if="comment.editing" type="submit" class="btn btn-link" @click="saveEdit( comment, comment.commentIndex, comment.commentIndexIndex ) " style="text-decoration: none" required>儲存</button>
+                <!-- 刪除按鈕 -->
+                <button v-if="userLoggedIn && !comment.editing && this.loginAccount==comment.account" @click="commentDeleteFather(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                <span>{{ comment.commentText }}</span>
+                <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
+                <textarea v-if="comment.editing" v-model="comment.editingText" rows="1" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea><br />
+                <!-- 按讚 -->
+                <button @click="likeButton( comment, comment.commentIndex, comment.commentIndexIndex )" class="btn btn-outline-primary" style="border: 0">
+                  <i class="fa-regular fa-thumbs-up"></i>
+                  {{ comment.favorite }}
+                </button>
+                <button @click="dislikeButton( comment, comment.commentIndex, comment.commentIndexIndex )" class="btn btn-outline-danger" style="border: 0">
+                <i class="fa-regular fa-thumbs-down"></i>
+                  {{ comment.dislike }}
+                </button>
 
-              <!-- 回覆按鈕 -->
-              <button v-if="this.userLoggedIn" @click="chooseComment(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none; margin-left: 5px">回覆</button>
-              <!-- 回覆留言的表單 -->
-              <form v-if="comment.replying" @submit.prevent="addReply(comment, comment.replyText)" class="mt-2">
-                <div class="mb-3">
-                  <label for="replyInput" class="form-label">回覆留言</label>
-                  <textarea rows="1" v-model="replyText" class="form-control" id="replyInput" style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
-                </div>
-                <button v-if="this.userLoggedIn" type="submit" class="btn btn-outline-dark" @click="commentCreateChild()">回覆</button>
-                <button type="button" class="btn btn-outline-dark" @click="cancelReply(comment)">取消</button>
-              </form>
+                <!-- 回覆按鈕 -->
+                <button v-if="this.userLoggedIn" @click="chooseComment(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none; margin-left: 5px">回覆</button>
+                <!-- 回覆留言的表單 -->
+                <form v-if="comment.replying" @submit.prevent="addReply(comment, comment.replyText)" class="mt-2">
+                  <div class="mb-3">
+                    <label for="replyInput" class="form-label">回覆留言</label>
+                    <textarea rows="1" v-model="replyText" class="form-control" id="replyInput" style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
+                  </div>
+                  <button v-if="this.userLoggedIn" type="submit" class="btn btn-outline-dark" @click="commentCreateChild()">回覆</button>
+                  <button type="button" class="btn btn-outline-dark" @click="cancelReply(comment)">取消</button>
+                </form>
 
-              <!-- 顯示回覆的區域 -->
-              <div v-if="commentReplies.length > 0" class="mt-2" style="border: 0">
-                <div v-for="item in commentReplies" :key="item.commentIndex" class="card mb-2" style="border: 0">
-                  <div class="card-body" v-if="item.commentIndex === comment.commentIndex">
-                    <div>
-                      <span>{{ "@" + item.account }}</span>
-                      <small class="text-muted">{{ this.commentTimeDif(item.commentTime) }}</small>
-                      <!-- 編輯按鈕 -->
-                      <button v-if="userLoggedIn && this.loginAccount==comment.account" @click="startEditing(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
-                      <!-- 保存按鈕 -->
-                      <button v-if="item.editing" @click="saveEdit( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">儲存</button>
-                      <!-- 刪除按鈕 -->
-                      <button v-if="userLoggedIn && this.loginAccount==comment.account" @click="commentDeleteChild( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">刪除</button><br />
-                      <span>{{ item.commentText }}</span><br />
-                      <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
-                      <textarea v-if="item.editing" v-model="item.editingText" rows="1" class="form-control" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
-                      <!-- 按讚 -->
-                      <button @click="likeButton( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-outline-primary" style="border: 0">
-                        <i class="fa-regular fa-thumbs-up"></i>
-                        {{ item.favorite }}
-                      </button>
-                      <button @click="dislikeButton( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-outline-danger" style="border: 0">
-                        <i class="fa-regular fa-thumbs-down"></i>
-                        {{ item.dislike }}
-                      </button>
+                <!-- 顯示回覆的區域 -->
+                <div v-if="commentReplies.length > 0" class="mt-2" style="border: 0">
+                  <div v-for="item in commentReplies" :key="item.commentIndex" class="card mb-2" style="border: 0">
+                    <div class="card-body" v-if="item.commentIndex === comment.commentIndex">
+                      <div>
+                        <span>{{ "@" + item.account }}</span>
+                        <small class="text-muted">{{ this.commentTimeDif(item.commentTime) }}</small>
+                        <!-- 編輯按鈕 -->
+                        <button v-if="userLoggedIn && this.loginAccount==comment.account" @click="startEditing(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+                        <!-- 保存按鈕 -->
+                        <button v-if="item.editing" @click="saveEdit( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">儲存</button>
+                        <!-- 刪除按鈕 -->
+                        <button v-if="userLoggedIn && this.loginAccount==comment.account" @click="commentDeleteChild( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                        <span>{{ item.commentText }}</span><br />
+                        <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
+                        <textarea v-if="item.editing" v-model="item.editingText" rows="1" class="form-control" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
+                        <!-- 按讚 -->
+                        <button @click="likeButton( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-outline-primary" style="border: 0">
+                          <i class="fa-regular fa-thumbs-up"></i>
+                          {{ item.favorite }}
+                        </button>
+                        <button @click="dislikeButton( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-outline-danger" style="border: 0">
+                          <i class="fa-regular fa-thumbs-down"></i>
+                          {{ item.dislike }}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -714,7 +708,6 @@ export default {
       </div>
     </div>
   </div>
-  <!-- </div> -->
 </template>
 
 <style scoped lang="scss">

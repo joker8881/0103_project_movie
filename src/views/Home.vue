@@ -32,22 +32,14 @@ export default {
     },
     popularPerPage() {
       let cutArray = [];
-      for (
-        let i = 0;
-        i < this.objPopularMovies.length;
-        i += this.itemsPerSlide
-      ) {
+      for (let i = 0; i < this.objPopularMovies.length; i += this.itemsPerSlide) {
         cutArray.push(this.objPopularMovies.slice(i, i + this.itemsPerSlide));
       }
       return cutArray;
     },
     typePerPage() {
       const cutArray = [];
-      for (
-        let i = 0;
-        i < this.objTypeMovies.length;
-        i += this.itemsPerSlide1
-      ) {
+      for (let i = 0; i < this.objTypeMovies.length; i += this.itemsPerSlide1) {
         cutArray.push(
           this.objTypeMovies.slice(i, i + this.itemsPerSlide1)
         );
@@ -57,11 +49,7 @@ export default {
     },
     searchPerPage() {
       const cutArray = [];
-      for (
-        let i = 0;
-        i < this.objSearchMovies.length;
-        i += this.itemsPerSlide
-      ) {
+      for (let i = 0; i < this.objSearchMovies.length; i += this.itemsPerSlide) {
         cutArray.push(this.objSearchMovies.slice(i, i + this.itemsPerSlide));
       }
       console.log("searchPerPage:", cutArray);
@@ -211,7 +199,7 @@ export default {
       };
 
       let page = 1;
-      let count = 50; //要抓的電影數
+      let count = 100; //要抓的電影數
       let popularMovies = [];
 
       try {
@@ -517,13 +505,6 @@ export default {
         (this.currentSlide - 1 + this.itemscutArray.length) %
         this.itemscutArray.length;
     },
-    // splitMovies() {
-    //   const pageSize = 9;
-    //   this.pages = [];
-    //   for (let i = 0; i < this.objTypeMovies.length; i += pageSize) {
-    //     this.pages.push(this.objTypeMovies.slice(i, i + pageSize));
-    //   }
-    // },
   },
   async mounted() {
     await this.getPlayMovie();

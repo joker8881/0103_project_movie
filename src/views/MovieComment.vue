@@ -626,7 +626,7 @@ export default {
             </select>
           </div>
           <!-- 新增留言 -->
-          <form class="mt-4" @click.prevent="">
+          <form class="mt-4" @click.prevent>
             <div class="mb-3" v-if="this.userLoggedIn">
               <label for="commentInput" class="form-label"><span>新增留言</span></label>
               <textarea rows="1" v-model="commentText" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>

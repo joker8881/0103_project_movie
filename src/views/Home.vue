@@ -79,7 +79,7 @@ export default {
         },
       };
       let page = 1;
-      let count = 50; //要抓的電影數
+      let count = 30; //要抓的電影數
       let playingMovies = [];
 
       try {
@@ -677,13 +677,13 @@ export default {
           </div>
         </div>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample3" data-bs-slide="prev" @click="prevSlide" style="left: -150px">
+      <button v-if="searchPerPage.length > 0" class="carousel-control-prev" type="button" data-bs-target="#carouselExample3" data-bs-slide="prev" @click="prevSlide" style="left: -150px">
         <span class="carousel-control-prev-icon" aria-hidden="true">
           <i class="fa-solid fa-circle-arrow-left" style="font-size: 50px"></i>
         </span>
         <span class="visually-hidden">Previous</span>
       </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#carouselExample3" data-bs-slide="next" @click="nextSlide" style="right: -120px">
+      <button v-if="searchPerPage.length > 0" class="carousel-control-next" type="button" data-bs-target="#carouselExample3" data-bs-slide="next" @click="nextSlide" style="right: -120px">
         <span class="carousel-control-next-icon" aria-hidden="true">
           <i class="fa-solid fa-circle-arrow-right" style="font-size: 50px"></i>
         </span>
@@ -722,13 +722,13 @@ export default {
           </div>
         </div>
       </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#customCarousel4" data-bs-slide="prev" @click="prevSlide" style="left: -150px">
+      <button v-if="typePerPage.length > 0" class="carousel-control-prev" type="button" data-bs-target="#customCarousel4" data-bs-slide="prev" @click="prevSlide" style="left: -150px">
         <span class="carousel-control-prev-icon" aria-hidden="true">
           <i class="fa-solid fa-circle-arrow-left" style="font-size: 50px"></i>
         </span>
         <span class="visually-hidden">Previous</span>
       </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#customCarousel4" data-bs-slide="next" @click="nextSlide" style="right: -120px">
+      <button v-if="typePerPage.length > 0" class="carousel-control-next" type="button" data-bs-target="#customCarousel4" data-bs-slide="next" @click="nextSlide" style="right: -120px">
         <span class="carousel-control-next-icon" aria-hidden="true">
           <i class="fa-solid fa-circle-arrow-right" style="font-size: 50px"></i>
         </span>

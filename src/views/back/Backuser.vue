@@ -294,7 +294,7 @@ export default {
                       </div>
                       <div class="modal-footer" style="justify-content: space-around;">
                           <button type="button" class="btn btn-primary a" data-bs-dismiss="modal" style="background-color: green;border: none;">取消</button>
-                          <button type="button" class="btn btn-primary a" data-bs-dismiss="modal" style="background-color: red;border: none;" @click="updateComfirmInfo" >確認修改</button>
+                          <button type="button" class="btn btn-primary a" data-bs-dismiss="modal" style="background-color: red;border: none;" @click="updateComfirmInfo" :disabled="password === '' || (changeName === '' && this.changephone.length != 10 && (changeemail === '' || this.emailboxTarget ==''))">確認修改</button>
                       </div>
                     </div>
                   </div>
@@ -332,7 +332,7 @@ export default {
                       </div>
                       <div class="modal-footer" style="justify-content: space-around;">
                           <button type="button" class="btn btn-primary a" data-bs-dismiss="modal" style="background-color: green;border: none;">取消</button>
-                          <button type="button" class="btn btn-primary a" data-bs-dismiss="modal" style="background-color: red;border: none;" @click="updateComfirmpassword" >確認修改</button>
+                          <button type="button" class="btn btn-primary a" data-bs-dismiss="modal" style="background-color: red;border: none;" @click="updateComfirmpassword" :disabled="this.password2 =='' || this.password3=='' || this.password4==''">確認修改</button>
                       </div>
                     </div>
                   </div>

@@ -205,7 +205,11 @@ export default {
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <p class="textall">帳號：{{this.account}}</p>
+                  <p class="textall">帳號</p>
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="this.account">
+                    <label class="tbc" for="floatingInput">請在這裡輸入帳號</label>
+                  </div>
                   <p class="textall">驗整碼</p>
                   <div class="form-floating mb-3">
                     <input type="text" class="form-control tb" id="floatingInput" placeholder="" v-model="this.verify">

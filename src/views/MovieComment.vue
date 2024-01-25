@@ -543,12 +543,12 @@ export default {
               </div>
               <div class="director">
                 <h3 class="textHeader">片長：</h3>
-                <span class="textallx" style="line-height: 50px">{{ this.hours == 0 && this.minutes == 0 ? "未知" : this.hours + "h" + this.minutes + "m" }}</span><br />
+                <span class="textall" style="line-height: 50px">{{ this.hours == 0 && this.minutes == 0 ? "未知" : this.hours + "h" + this.minutes + "m" }}</span><br />
               </div>
               <div class="casts">
                 <h3 class="textHeader" style="width: 105px; height: 50px">演員：</h3>
                 <div style="width: 90%; display: flex">
-                  <p class="textall" style="line-height: 50px" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em">、</span></p><br/>
+                  <h1 class="textHeader2" style="line-height: 50px" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em">、</span></h1><br/>
                 </div>
               </div>
               <div class="voteAvg">
@@ -859,7 +859,7 @@ button {
 
   .header {
     width: 95vw;
-    height: 110vh;
+    height: 120vh;
     margin: 0 auto;
     padding-top: 20px;
 
@@ -1074,6 +1074,12 @@ button {
 .textHeader {
   font-family: "jf-openhuninn-2.0";
   font-size: 2em;
+  margin: 0;
+}
+
+.textHeader2 {
+  font-family: "jf-openhuninn-2.0";
+  font-size: 1.3em;
   margin: 0;
 }
 

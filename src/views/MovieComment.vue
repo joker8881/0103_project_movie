@@ -1,6 +1,6 @@
 <script>
-import axios from 'axios';
-import Cookies from 'js-cookie'
+import Cookies from "js-cookie";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -11,28 +11,29 @@ export default {
       trailerLink: null,
       type: [], // 所有類型19個
       movieType: [], // 此電影類型
+      movieTime: "",
+      hours: "",
+      minutes: "",
       // 帳號相關
-      account:"",
-      password:"",
       name: "snsdarea1209", // 帳號
-      userLoggedIn:false,
+      userLoggedIn: false,
+      loginAccount: "",
       // 評論區相關
       sortOrder: "sort",
       baoleiButton: false, // 暴雷按鈕
       blurredArea: true, // 模糊區域
       commentText: "",
       comments: [],
-      commentReplies: [],  // 子留言資料
+      commentReplies: [], // 子留言資料
       commentIndex: null,
       commentIndexOrder: null,
       replyText: "",
-      objPlayingMovie:[],
+      objPlayingMovie: [],
       selectedTime: "",
     };
   },
   computed: {
     sortComments() { // 篩選留言
-      // console.log(this.comments);
       const sorted = this.comments.slice();
       switch (this.sortOrder) {
         case "latest":
@@ -45,14 +46,14 @@ export default {
     },
   },
   methods: {
-    logincheck(){
-        this.userLoggedIn = Cookies.get('userLoggedIn')
-        if (this.userLoggedIn) {
-          let a = Cookies.get('account')
-          Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
-          Cookies.set('account', a, { expires: 7, path: '/' });
-        }
+    logincheck() { // cookie
+      this.userLoggedIn = Cookies.get('userLoggedIn') === 'true'
+      if (this.userLoggedIn) {
+        this.loginAccount = Cookies.get('account')
+        Cookies.set('account', this.loginAccount, { expires: 7, path: '/' });
+      }
       // console.log(this.userLoggedIn)
+      // console.log(this.loginAccount)
     },
     // 抓電影
     getPerson() { // 電影相關 上映中 演員*5 + 導演*1
@@ -64,22 +65,17 @@ export default {
             "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
         },
       };
-      fetch(
-        `https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}/credits?language=en-US`,
-        options
-      )
+      fetch(`https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}/credits?language=en-US`, options)
         .then((response) => response.json())
         .then((response) => {
-          const directors = response.crew.filter(
-            (person) => person.job === "Director"
-          );
+          const directors = response.crew.filter((person) => person.job === "Director");
           const cast = response.cast.slice(0, 5);
           // console.log(directors);
           // console.log(cast);
           this.directors = directors;
           this.casts = cast;
-          console.log("導演 objPerson", this.directors);
-          console.log("演員 objPerson", this.casts);
+          // console.log("導演 objPerson", this.directors);
+          // console.log("演員 objPerson", this.casts);
         })
         .catch((error) => {
           console.error(error);
@@ -95,10 +91,7 @@ export default {
         },
       };
       try {
-        const response = await fetch(
-          `https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}/videos?language=en-US`,
-          options
-        );
+        const response = await fetch(`https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}/videos?language=en-US`, options);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -111,34 +104,56 @@ export default {
         return null; // 或者返回其他适当的值，视情况而定
       }
     },
-    getMovieType() { // 電影類型 
-        const options = {
-        method: 'GET',
+    getMovieType() { // 電影類型
+      const options = {
+        method: "GET",
         headers: {
-          accept: 'application/json',
-          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww'
-        }
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
+        },
       };
-      fetch('https://api.themoviedb.org/3/genre/movie/list?language=en', options)
+      fetch("https://api.themoviedb.org/3/genre/movie/list?language=en", options)
         .then((response) => response.json())
         .then((response) => {
-          this.type = response.genres,
-          // console.log("所有類型", this.type)
-          console.log("此電影類型", this.movieInfo.movieGenreid)
+          (this.type = response.genres),
+            // console.log("所有類型", this.type)
+            console.log("此電影類型", this.movieInfo.movieGenreid);
           // console.log(this.movieInfo.movieGenreid.length)
           // console.log(this.type.length)
           // console.log(this.movieInfo.movieGenreid[0])
           // console.log(this.type[6].id)
           // console.log(parseInt(this.movieInfo.movieGenreid[0])===this.type[6].id ? 1:2)
-          for(let i=0;i<this.movieInfo.movieGenreid.length;i++){
-            for(let j=0;j<this.type.length;j++)
-            if(parseInt(this.movieInfo.movieGenreid[i])===this.type[j].id){
-              this.movieType.push(this.type[j].name)
-            }
+          for (let i = 0; i < this.movieInfo.movieGenreid.length; i++) {
+            for (let j = 0; j < this.type.length; j++)
+              if (
+                parseInt(this.movieInfo.movieGenreid[i]) === this.type[j].id
+              ) {
+                this.movieType.push(this.type[j].name);
+              }
           }
-          console.log(this.movieType)
+          console.log(this.movieType);
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
+    },
+    getMovieTime() { // 電影時間
+      const options = {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
+        },
+      };
+      fetch(`https://api.themoviedb.org/3/movie/${this.movieInfo.movieId}?language=en-US`, options)
+        .then((response) => response.json())
+        .then((response) => {
+          (this.movieTime = response.runtime),
+            // console.log(this.movieTime);
+            (this.hours = Math.floor(this.movieTime / 60));
+          this.minutes = this.movieTime % 60;
+        })
+        .catch((err) => console.error(err));
     },
     //評論區相關
     toggleBaolei() { // 暴雷按鈕
@@ -149,26 +164,31 @@ export default {
     },
     commentTimeDif(commentTime) { // 留言時間時間差
       let time = null;
-      if (typeof commentTime === 'string' && commentTime.includes('T')) {
-          time = Date.parse(commentTime);
+      if (typeof commentTime === "string" && commentTime.includes("T")) {
+        time = Date.parse(commentTime);
       } else {
-          time = parseInt(commentTime);
+        time = parseInt(commentTime);
       }
       const now = Date.now(); // 毫秒數
       const timeDif = now - time; // 抓過來為2024/01/16 10:52轉毫秒數
       const seconds = Math.floor(timeDif / 1000); // 與現在差幾秒
-      if (seconds < 60) { // 不到1分鐘
+      if (seconds < 60) {
+        // 不到1分鐘
         return `${seconds}秒前`;
-      } else if (seconds < 3600) { // 不到1小時
+      } else if (seconds < 3600) {
+        // 不到1小時
         const minutes = Math.floor(seconds / 60);
         return `${minutes}分鐘前`;
-      } else if (seconds < 86400) { // 不到1天
+      } else if (seconds < 86400) {
+        // 不到1天
         const hours = Math.floor(seconds / 3600);
         return `${hours}小時前`;
-      } else if (seconds < 86400 * 30) { // 不到1個月
+      } else if (seconds < 86400 * 30) {
+        // 不到1個月
         const days = Math.floor(seconds / 86400);
         return `${days}天前`;
-      } else if (seconds < 86400 * 30 * 12) { // 不到1年
+      } else if (seconds < 86400 * 30 * 12) {
+        // 不到1年
         const months = Math.floor(seconds / (86400 * 30));
         return `${months}個月前`;
       } else {
@@ -181,292 +201,293 @@ export default {
       comment.replying = true;
     },
     addReply(comment) { // 回覆留言且顯示於畫面
-      console.log(this.replyText);
+      // console.log(this.replyText);
       if (this.replyText.trim() !== "") {
         this.commentReplies.push({
-          account: Cookies.get('account'),
+          account: Cookies.get("account"),
           commentText: this.replyText,
           commentTime: Date.now(),
           commentIndex: this.commentIndex,
         });
-        console.log(this.commentReplies);
+        // console.log(this.commentReplies);
         comment.replyText = "";
         comment.replying = false;
         this.replyText = "";
       }
     },
-    cancelReply(comment) { // 取消回覆
+    cancelReply() { // 取消回覆 
       comment.replying = false;
       this.replyText = null;
     },
     likeButton(comment, index, indexOrder) { // 喜歡
-      // console.log('回覆按鈕被點擊，主要留言的位置：', index);
-      // console.log('indexOrder：', indexOrder);
       this.commentIndex = index;
       this.commentIndexOrder = indexOrder;
-      comment.favorite++;
-      fetch('http://localhost:8080/movie/comment/likeAndDislike', {
-        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+      // 計算 like 的變化值
+      const likeChange = comment.isLiked ? -1 : 1;
+      // 更新 like 數量
+      comment.favorite += likeChange;
+
+      fetch("http://localhost:8080/movie/comment/likeAndDislike", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
-          },
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          commentIndex: this.commentIndex,
-          commentIndexOrder: this.commentIndexOrder,
+          commentIndex: index,
+          commentIndexOrder: indexOrder,
           movieID: this.movieInfo.movieId,
-          like: 1,
+          like: likeChange,
           dislike: 0,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // 處理返回的數據
+          console.log(data);
         })
-      })
-      .then(response => response.json())
-      .then(data => { // 處理返回的數據
-        console.log(data);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+      // 切換 isLiked 狀態
+      comment.isLiked = !comment.isLiked;
     },
     dislikeButton(comment, index, indexOrder) { // 不喜歡
-      // console.log('回覆按鈕被點擊，主要留言的位置：', index);
-      // console.log('indexOrder：', indexOrder);
       this.commentIndex = index;
       this.commentIndexOrder = indexOrder;
-      comment.dislike++;
-      fetch('http://localhost:8080/movie/comment/likeAndDislike', {
-        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+      const dislikeChange = comment.isDisLiked ? -1 : 1;
+      comment.dislike += dislikeChange;
+      
+      fetch("http://localhost:8080/movie/comment/likeAndDislike", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
-          },
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          commentIndex: index,
+          commentIndexOrder: indexOrder,
+          movieID: this.movieInfo.movieId,
+          like: 0,
+          dislike: dislikeChange,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // 處理返回的數據
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+      comment.isDisLiked = !comment.isDisLiked;
+    },
+    startEditing(comment, index, indexOrder) { // 開始編輯留言
+      this.commentIndex = index;
+      this.commentIndexOrder = indexOrder;
+      comment.editing = true;
+      comment.editingText = comment.commentText;
+    },
+    saveEdit(comment, index, indexOrder) { // 儲存留言
+      this.commentIndex = index;
+      this.commentIndexOrder = indexOrder;
+      comment.commentText = comment.editingText;
+      comment.editing = false;
+      fetch("http://localhost:8080/movie/comment/update", {
+        method: "POST", // 這裡使用POST方法，因為後端是@PostMapping
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           commentIndex: this.commentIndex,
           commentIndexOrder: this.commentIndexOrder,
+          movie: this.movieInfo.movieTitle,
           movieID: this.movieInfo.movieId,
-          like: 0,
-          dislike: 1,
-        })
+          commentText: comment.commentText,
+          account: Cookies.get("account"),
+        }),
       })
-      .then(response => response.json())
-      .then(data => { // 處理返回的數據
-        console.log(data);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          // 處理返回的數據
+          console.log(data);
+        });
     },
     // 後端api
     commentCreate() { // 留言
-      fetch('http://localhost:8080/movie/comment/create', {
-        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+      fetch("http://localhost:8080/movie/comment/create", {
+        method: "POST", // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
-          'Content-Type': 'application/json'
-          },
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          movieID:this.movieInfo.movieId,
-          commentText:this.commentText,
-          movie:this.movieInfo.movieTitle,
-          account: Cookies.get('account'),
+          movieID: this.movieInfo.movieId,
+          commentText: this.commentText,
+          movie: this.movieInfo.movieTitle,
+          account: Cookies.get("account"),
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // 處理返回的數據
+          console.log(data);
+          if (this.commentText.trim() !== "" && data.code === 200) {
+            this.comments.push({
+              account: Cookies.get("account"),
+              commentText: this.commentText,
+              favorite: 0,
+              dislike: 0,
+              commentTime: Date.now(),
+              replying: false,
+              replyText: "",
+              replies: [],
+            });
+            this.commentText = "";
+          }
+          this.sortComments;
         })
-      })
-      .then(response => response.json())
-      .then(data => { // 處理返回的數據
-        console.log(data);
-        if (this.commentText.trim() !== "" && data.code===200) {
-          this.comments.push({
-            account: Cookies.get('account'),
-            commentText: this.commentText,
-            favorite: 0,
-            dislike: 0,
-            commentTime: Date.now(),
-            replying: false,
-            replyText: "",
-            replies: [],
-          });
-          this.commentText = "";
-        }
-        this.sortComments;
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-    },
-    commentSearch() { // 資料庫抓電影所有留言
-      fetch('http://localhost:8080/movie/comment/search', {
-        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
-        headers: {
-          'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            movieID:this.movieInfo.movieId,
-            })
-          })
-          .then(response => response.json())
-          .then(data => {
-            // 處理返回的數據
-            console.log(data);
-            this.comments = data.commentList;
-            for (let i = 0; i < this.comments.length; i++) {
-              if (this.comments[i].commentIndexIndex !== 0) {
-                this.commentReplies.push(this.comments[i]);
-                this.comments.splice(i, 1);
-                i--;
-              }
-            }
-          })
-          .catch(error => {
-            console.error('Error fetching data:', error);
+        .catch((error) => {
+          console.error("Error fetching data:", error);
         });
     },
-    commentCreateChild() { // 傳送回覆留言
-      fetch('http://localhost:8080/movie/comment/createchild', {
-        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+    commentSearch() { // 抓此電影所有留言
+      fetch("http://localhost:8080/movie/comment/search", {
+        method: "POST", // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
-          'Content-Type': 'application/json'
-          },
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          movieID: this.movieInfo.movieId,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // 處理返回的數據
+          console.log(data);
+          this.comments = data.commentList;
+          for (let i = 0; i < this.comments.length; i++) {
+            if (this.comments[i].commentIndexIndex !== 0) {
+              this.commentReplies.push(this.comments[i]);
+              this.comments.splice(i, 1);
+            }
+          }
+          // console.log(this.commentReplies);
+          // console.log(this.comments);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    },
+    commentCreateChild() { // 回覆留言
+      fetch("http://localhost:8080/movie/comment/createchild", {
+        method: "POST", // 這裡使用POST方法，因為後端是@PostMapping
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           commentIndex: this.commentIndex,
           movie: this.movieInfo.movieTitle,
           movieID: this.movieInfo.movieId,
           commentText: this.replyText,
-          account: Cookies.get('account'),
+          account: Cookies.get("account"),
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // 處理返回的數據
+          console.log(data);
         })
-      })
-      .then(response => response.json())
-      .then(data => { // 處理返回的數據
-        console.log(data);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
     },
     commentDeleteFather(comment, index) { // 刪除父留言
       this.commentIndex = index;
       const index11 = this.comments.indexOf(comment);
-        if (index11 !== -1) {
-          this.comments.splice(index11, 1);
-        }
-      fetch('http://localhost:8080/movie/comment/deleteF', {
-        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+      if (index11 !== -1) {
+        this.comments.splice(index11, 1);
+      }
+      fetch("http://localhost:8080/movie/comment/deleteF", {
+        method: "POST", // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
-          'Content-Type': 'application/json'
-          },
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           commentIndex: this.commentIndex,
           movieID: this.movieInfo.movieId,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // 處理返回的數據
+          console.log(data);
         })
-      })
-      .then(response => response.json())
-      .then(data => { // 處理返回的數據
-        console.log(data);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
     },
     commentDeleteChild(comment, index, indexOrder) { // 刪除子留言
       this.commentIndex = index;
       this.commentIndexOrder = indexOrder;
       const index11 = this.commentReplies.indexOf(comment);
-        if (index11 !== -1) {
-          this.commentReplies.splice(index11, 1);
-        }
-      fetch('http://localhost:8080/movie/comment/deleteC', {
-        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+      if (index11 !== -1) {
+        this.commentReplies.splice(index11, 1);
+      }
+      fetch("http://localhost:8080/movie/comment/deleteC", {
+        method: "POST", // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
-          'Content-Type': 'application/json'
-          },
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           commentIndex: this.commentIndex,
           commentIndexOrder: this.commentIndexOrder,
           movieID: this.movieInfo.movieId,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // 處理返回的數據
+          console.log(data);
         })
-      })
-      .then(response => response.json())
-      .then(data => { // 處理返回的數據
-        console.log(data);
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-      });
-    },
-    // 以下待解決
-    deleteReply(reply) {
-      const replyIndex = this.commentReplies.findIndex(r => r.id === reply.id);
-      if (replyIndex !== -1) {
-        this.commentReplies.splice(replyIndex, 1);
-      }
-    },
-    addComment() { // 新增留言
-      if (this.commentText.trim() !== "") {
-        this.comments.push({
-          id: this.comments.length + 1,
-          text: this.commentText,
-          likes: 0,
-          dislikes: 0,
-          timestamp: Date.now(),
-          replying: false,
-          replyText: "",
-          replies: [],
+        .catch((error) => {
+          console.error("Error fetching data:", error);
         });
-        this.commentText = "";
-      }
-    },
-    deleteComment(comment) { // 刪除留言
-      const index = this.comments.indexOf(comment);
-      if (index !== -1) {
-        this.comments.splice(index, 1);
-      }
-    },
-    editComment(comment) { // 編輯按鈕
-      this.commentText = comment.text;
-      comment.editing = true;
-    },
-    saveEdit(comment) { // 儲存編輯按鈕
-      if (this.commentText.trim() !== "") {
-        comment.text = this.commentText;
-        comment.editing = false;
-        this.commentText = "";
-      }
     },
     cinemaSearch(selectedCinema) {
       const movieId = this.movieInfo.movieId;
       const movieName = selectedCinema;
       axios({
-        url: 'http://localhost:8080/movie/movieinfo/search',
-        method: 'POST',
+        url: "http://localhost:8080/movie/movieinfo/search",
+        method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         data: {
           movieId: movieId,
-          cinema: movieName
-
+          cinema: movieName,
         },
-      }).then(res => {
+      }).then((res) => {
         console.log(res);
         console.log(res.data.movieInfoList);
-        this.objPlayingMovie = res.data.movieInfoList
-
-      }
-      )
+        this.objPlayingMovie = res.data.movieInfoList;
+      });
     },
     gotoSeat(movie) {
       if (!this.selectedTime) {
         // 如果沒有選擇時間，可以進行相應的處理，例如顯示提示訊息
-        alert('請選擇時間');
+        alert("請選擇時間");
         return;
       }
       // 在這裡可以進行相應的處理，比如導航到座位選擇頁面
       this.$router.push({
-        name: 'seat',
+        name: "seat",
         query: {
           movieId: this.movieInfo.movieId,
           movieName: this.movieInfo.movieTitle,
-          cinema: movie.cinema,  // 假設影院資訊存儲在 movie 物件中
+          cinema: movie.cinema, // 假設影院資訊存儲在 movie 物件中
           area: movie.area,
-          price: movie.price,  // 假設票價資訊存儲在 movie 物件中
-          playDate: movie.onDate,  // 假設撥放日期資訊存儲在 movie 物件中
-          playTime: this.selectedTime,  // 已經從下拉選單中選擇的時間
-        }
+          price: movie.price, // 假設票價資訊存儲在 movie 物件中
+          playDate: movie.onDate, // 假設撥放日期資訊存儲在 movie 物件中
+          playTime: this.selectedTime, // 已經從下拉選單中選擇的時間
+        },
       });
     },
   },
@@ -481,6 +502,7 @@ export default {
     this.getPerson();
     this.getMovieType();
     this.commentSearch();
+    this.getMovieTime();
   },
 };
 </script>
@@ -495,7 +517,7 @@ export default {
       </div>
     </div>
   </div>
-
+  
   <div class="body">
     <!-- 電影資料 -->
     <div class="header">
@@ -506,30 +528,36 @@ export default {
         <div class="movieDataRight">
           <h1>{{ this.movieInfo.movieTitle }}</h1>
           <h6>{{ this.movieInfo.movieOriginaltitle }}</h6>
-          <h2 class="textHeader">上映日期：{{ this.movieInfo.movieReleasedate }}</h2>
-          <hr />
+          <h2 class="textHeader">
+            上映日期：{{ this.movieInfo.movieReleasedate }}</h2><hr />
           <h2>Movie Info</h2>
           <div class="movieDataRight1">
             <div class="movieDataRight22">
               <div class="type">
                 <h3 class="textHeader">類型：</h3>
-                <span class="textall" style="line-height: 50px;" v-for="(item,index) in this.movieType" :key="index">{{ item }}<span v-if="index < this.movieType.length - 1" class="textall" style="font-size: 1em;">、</span></span><br>
+                <span class="textall" style="line-height: 50px" v-for="(item, index) in this.movieType" :key="index">{{ item }}<span v-if="index < this.movieType.length - 1" class="textall" style="font-size: 1em">、</span></span><br />
               </div>
               <div class="director">
                 <h3 class="textHeader">導演：</h3>
-                <span class="textall" style="line-height: 50px;" v-for="(item, index) in this.directors" :key="index">{{ item.original_name }}<span v-if="index < this.directors.length - 1">,</span></span><br>
+                <span class="textall" style="line-height: 50px" v-for="(item, index) in this.directors" :key="index">{{ item.original_name }}<span v-if="index < this.directors.length - 1">,</span></span><br />
+              </div>
+              <div class="director">
+                <h3 class="textHeader">片長：</h3>
+                <span class="textallx" style="line-height: 50px">{{ this.hours == 0 && this.minutes == 0 ? "未知" : this.hours + "h" + this.minutes + "m" }}</span><br />
               </div>
               <div class="casts">
-                <h3 class="textHeader" style="width: 105px; height: 50px;">演員：</h3>
-                <div style="width: 90%;display: flex;"><p class="textall" style="line-height: 50px;" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em;">、</span></p><br></div>
+                <h3 class="textHeader" style="width: 105px; height: 50px">演員：</h3>
+                <div style="width: 90%; display: flex">
+                  <p class="textall" style="line-height: 50px" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em">、</span></p><br/>
+                </div>
               </div>
               <div class="voteAvg">
                 <h3 class="textHeader">評分：</h3>
-                <h2 class="textall" style="line-height: 50px;">{{ this.movieInfo.movieVoteavg }}</h2>
+                <h2 class="textall" style="line-height: 50px">{{ this.movieInfo.movieVoteavg }}</h2>
               </div>
               <div class="movieOverview">
-                <h3 class="textHeader" style="width: 105px; height: 50px;">簡介：</h3>
-                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 90%;line-height: 50px;">{{ this.movieInfo.movieOverview }}</p>
+                <h3 class="textHeader" style="width: 105px; height: 50px">簡介：</h3>
+                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 90%; line-height: 50px">{{ this.movieInfo.movieOverview }}</p>
                 <p class="textall" v-else>此電影無簡介</p>
               </div>
             </div>
@@ -538,27 +566,23 @@ export default {
       </div>
     </div>
     <hr />
+
     <!-- 預告片 -->
     <div class="middleInfo">
       <div class="middle">
-        <div class="mid">
-          電影預告
-        </div>
+        <div class="mid">電影預告</div>
       </div>
       <div class="trailer">
-        <iframe width="80%" height="500" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0"
-          allowfullscreen></iframe>
+        <!-- <iframe width="80%" height="500" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen></iframe> -->
       </div>
       <div class="down">
-        <div class="turn">
-          線上訂票
-        </div>
+        <div class="turn">線上訂票</div>
       </div>
     </div>
+
+    <!-- 選擇影城 -->
     <div class="middle1" v-if="this.userLoggedIn">
-      <div class="selectTheater">
-        選取影城
-      </div>
+      <div class="selectTheater">選取影城</div>
       <div class="selectButton">
         <button type="button" @click="cinemaSearch('紹仁戲院')">紹仁戲院</button>
         <button type="button" @click="cinemaSearch('裕峰影城')">裕峰影城</button>
@@ -570,11 +594,14 @@ export default {
         <h5>{{ movie.area }}</h5>
         <select v-model="this.selectedTime">
           <option value="">選擇時間</option>
-          <option v-for="(time, timeIndex) in JSON.parse(movie.onTime)" :key="timeIndex">{{ time }}</option>
+          <option v-for="(time, timeIndex) in JSON.parse(movie.onTime)" :key="timeIndex">
+            {{ time }}
+          </option>
         </select>
         <button type="button" @click="gotoSeat(movie)">選取位置</button>
       </div>
     </div>
+
     <!-- 討論區 -->
     <h1>討論區</h1>
     <div class="footer">
@@ -589,70 +616,86 @@ export default {
           </div>
           <!-- 留言區 -->
           <div :style="{ filter: blurredArea && !baoleiButton ? 'blur(5px)' : 'none', }">
-            <!-- 排序下拉框 -->
-            <div class="mb-3">
-              <span>{{ this.comments.length + "件留言" }}</span>
-              <select v-model="sortOrder" id="sortSelect">
-                <option value="sort">排序</option>
-                <option value="latest">最新留言</option>
-                <option value="likes">最多喜歡</option>
-              </select>
-            </div>
-            <!-- 新增留言 -->
-            <form class="mt-4" @click.prevent="">
-              <div class="mb-3" v-if="this.userLoggedIn">
-                <label for="commentInput" class="form-label"><span>新增留言</span></label>
-                <textarea rows="1" v-model="commentText" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
-                <div style="text-align: end;">
-                  <button type="submit" class="btn btn-outline-dark" required @click="commentCreate">留言</button>
-                </div>
+          <!-- 排序下拉框 -->
+          <div class="mb-3">
+            <span>{{ this.comments.length + "件留言" }}</span>
+            <select v-model="sortOrder" id="sortSelect">
+              <option value="sort">排序</option>
+              <option value="latest">最新留言</option>
+              <option value="likes">最多喜歡</option>
+            </select>
+          </div>
+          <!-- 新增留言 -->
+          <form class="mt-4" @click.prevent="">
+            <div class="mb-3" v-if="this.userLoggedIn">
+              <label for="commentInput" class="form-label"><span>新增留言</span></label>
+              <textarea rows="1" v-model="commentText" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
+              <div style="text-align: end">
+                <button type="submit" class="btn btn-outline-dark" @click="commentCreate">留言</button>
               </div>
-            </form>
+            </div>
+          </form>
             <!-- 遍歷並顯示留言 -->
             <div v-for="comment in sortComments" :key="comment.number" class="card mb-2">
               <!-- 留言內容 -->
               <div class="card-body">
-                <span>{{ "@"+comment.account }}</span>
+                <span>{{ "@" + comment.account }}</span>
                 <small class="text-muted">{{ this.commentTimeDif(comment.commentTime) }}</small>
-                <button v-if="this.userLoggedIn" @click="editComment(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
-                <button v-if="comment.editing" @click="saveEdit(comment)" class="btn btn-link" style="text-decoration: none">儲存</button>
-                <button v-if="this.userLoggedIn" @click="commentDeleteFather(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
-                <span>{{ comment.commentText }}</span><br>
-                <button @click="likeButton(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-outline-primary" style="border: 0">
-                  <i class="fa-regular fa-thumbs-up"></i>{{ comment.favorite }}
+                <!-- 編輯按鈕 -->
+                <button v-if="userLoggedIn && !comment.editing && this.loginAccount==comment.account" @click="startEditing(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+                <!-- 保存按鈕 -->
+                <button v-if="comment.editing" type="submit" class="btn btn-link" @click="saveEdit( comment, comment.commentIndex, comment.commentIndexIndex ) " style="text-decoration: none" required>儲存</button>
+                <!-- 刪除按鈕 -->
+                <button v-if="userLoggedIn && !comment.editing && this.loginAccount==comment.account" @click="commentDeleteFather(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                <span>{{ comment.commentText }}</span>
+                <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
+                <textarea v-if="comment.editing" v-model="comment.editingText" rows="1" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea><br />
+                <!-- 按讚 -->
+                <button @click="likeButton( comment, comment.commentIndex, comment.commentIndexIndex )" class="btn btn-outline-primary" style="border: 0">
+                  <i class="fa-regular fa-thumbs-up"></i>
+                  {{ comment.favorite }}
                 </button>
-                <button @click="dislikeButton(comment, comment.commentIndex, comment.commentIndexIndex)" class="btn btn-outline-danger" style="border: 0">
-                  <i class="fa-regular fa-thumbs-down"></i>{{ comment.dislike }}
+                <button @click="dislikeButton( comment, comment.commentIndex, comment.commentIndexIndex )" class="btn btn-outline-danger" style="border: 0">
+                <i class="fa-regular fa-thumbs-down"></i>
+                  {{ comment.dislike }}
                 </button>
+
+                <!-- 回覆按鈕 -->
                 <button v-if="this.userLoggedIn" @click="chooseComment(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none; margin-left: 5px">回覆</button>
-                <button v-if="comment.editing" @click="saveEdit(comment)" class="btn btn-link" style="text-decoration: none">儲存</button>
-                
                 <!-- 回覆留言的表單 -->
                 <form v-if="comment.replying" @submit.prevent="addReply(comment, comment.replyText)" class="mt-2">
                   <div class="mb-3">
                     <label for="replyInput" class="form-label">回覆留言</label>
-                    <textarea v-model="replyText" class="form-control" id="replyInput" rows="2" required style="resize: none"></textarea>
+                    <textarea rows="1" v-model="replyText" class="form-control" id="replyInput" style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                   </div>
-                  <button v-if="this.userLoggedIn" type="submit" @click="commentCreateChild()">回覆</button>
-                  <button type="button" @click="cancelReply(comment)">取消</button>
+                  <button v-if="this.userLoggedIn" type="submit" class="btn btn-outline-dark" @click="commentCreateChild()">回覆</button>
+                  <button type="button" class="btn btn-outline-dark" @click="cancelReply(comment)">取消</button>
                 </form>
 
                 <!-- 顯示回覆的區域 -->
-                <div v-if="commentReplies.length > 0" class="mt-2" style="border: 0;">
-                  <div v-for="item in commentReplies" :key="item.commentIndex" class="card mb-2" style="border: 0;">
+                <div v-if="commentReplies.length > 0" class="mt-2" style="border: 0">
+                  <div v-for="item in commentReplies" :key="item.commentIndex" class="card mb-2" style="border: 0">
                     <div class="card-body" v-if="item.commentIndex === comment.commentIndex">
                       <div>
                         <span>{{ "@" + item.account }}</span>
                         <small class="text-muted">{{ this.commentTimeDif(item.commentTime) }}</small>
-                        <button v-if="this.userLoggedIn" @click="editComment(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
-                        <button v-if="item.editing" @click="saveEdit(item)" class="btn btn-link" style="text-decoration: none">儲存</button>
-                        <button v-if="this.userLoggedIn" @click="commentDeleteChild(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br/>
-                        <span>{{ item.commentText }}</span><br>
-                        <button @click="likeButton(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-outline-primary" style="border: 0">
-                          <i class="fa-regular fa-thumbs-up"></i>{{ item.favorite }}
+                        <!-- 編輯按鈕 -->
+                        <button v-if="userLoggedIn && this.loginAccount==comment.account" @click="startEditing(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+                        <!-- 保存按鈕 -->
+                        <button v-if="item.editing" @click="saveEdit( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">儲存</button>
+                        <!-- 刪除按鈕 -->
+                        <button v-if="userLoggedIn && this.loginAccount==comment.account" @click="commentDeleteChild( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                        <span>{{ item.commentText }}</span><br />
+                        <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
+                        <textarea v-if="item.editing" v-model="item.editingText" rows="1" class="form-control" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
+                        <!-- 按讚 -->
+                        <button @click="likeButton( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-outline-primary" style="border: 0">
+                          <i class="fa-regular fa-thumbs-up"></i>
+                          {{ item.favorite }}
                         </button>
-                        <button @click="dislikeButton(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-outline-danger" style="border: 0">
-                          <i class="fa-regular fa-thumbs-down"></i>{{ item.dislike }}
+                        <button @click="dislikeButton( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-outline-danger" style="border: 0">
+                          <i class="fa-regular fa-thumbs-down"></i>
+                          {{ item.dislike }}
                         </button>
                       </div>
                     </div>
@@ -910,7 +953,13 @@ button {
         align-items: center;
         border-left: 1px solid rgb(230, 230, 230);
         border-right: 1px solid rgb(230, 230, 230);
-        background: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.067), rgba(0, 0, 0, 0.067) 2px, rgba(0, 0, 0, 0) 2px, rgba(0, 0, 0, 0) 4px);
+        background: repeating-linear-gradient(
+          -45deg,
+          rgba(0, 0, 0, 0.067),
+          rgba(0, 0, 0, 0.067) 2px,
+          rgba(0, 0, 0, 0) 2px,
+          rgba(0, 0, 0, 0) 4px
+        );
       }
     }
 
@@ -944,10 +993,15 @@ button {
         align-items: center;
         border-left: 1px solid rgb(230, 230, 230);
         border-right: 1px solid rgb(230, 230, 230);
-        background: repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.067), rgba(0, 0, 0, 0.067) 2px, rgba(0, 0, 0, 0) 2px, rgba(0, 0, 0, 0) 4px);
+        background: repeating-linear-gradient(
+          -45deg,
+          rgba(0, 0, 0, 0.067),
+          rgba(0, 0, 0, 0.067) 2px,
+          rgba(0, 0, 0, 0) 2px,
+          rgba(0, 0, 0, 0) 4px
+        );
       }
     }
-
   }
 
   .middle1 {
@@ -965,7 +1019,6 @@ button {
 
     .selectTheater {
       margin-bottom: 1em;
-
     }
 
     .selectButton {
@@ -1000,26 +1053,26 @@ button {
 }
 
 .textTilte {
-  font-family: 'jf-openhuninn-2.0';
+  font-family: "jf-openhuninn-2.0";
   font-size: 4em;
   margin: 0 0 20px 0;
 }
 
 .text {
-  font-family: 'jf-openhuninn-2.0';
+  font-family: "jf-openhuninn-2.0";
   font-size: 2em;
   width: 80%;
   margin: 0 auto 0 auto;
 }
 
 .textall {
-  font-family: 'jf-openhuninn-2.0';
+  font-family: "jf-openhuninn-2.0";
   font-size: 1.5em;
   margin: 0;
 }
 
 .textHeader {
-  font-family: 'jf-openhuninn-2.0';
+  font-family: "jf-openhuninn-2.0";
   font-size: 2em;
   margin: 0;
 }
@@ -1038,12 +1091,12 @@ button {
     padding: 5px;
   }
 }
-.textallx{
-  font-family:'jf-openhuninn-2.0';
+.textallx {
+  font-family: "jf-openhuninn-2.0";
   font-size: 1.5em;
   margin: 0;
-  overflow: auto;  /* 或者使用 overflow: scroll; */
-  max-height: 250px;  /* 设置最大高度，超出部分会产生滚动条 */
+  overflow: auto; /* 或者使用 overflow: scroll; */
+  max-height: 250px; /* 设置最大高度，超出部分会产生滚动条 */
   // white-space: nowrap;  /* 防止文本换行 */
 }
 </style>

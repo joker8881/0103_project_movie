@@ -79,7 +79,7 @@ export default {
         },
       };
       let page = 1;
-      let count = 30; //要抓的電影數
+      let count = 50; //要抓的電影數
       let playingMovies = [];
 
       try {

@@ -1,7 +1,9 @@
 <script>
 import { defineComponent } from 'vue'
 import { NCarousel } from 'naive-ui'
-import { mapState,mapActions } from 'pinia';
+import { mapState, mapActions } from 'pinia';
+import Cookies from 'js-cookie'
+import Swal from 'sweetalert2'
 // import auth from '../store/auth';
 export default defineComponent({
   components: {
@@ -14,6 +16,7 @@ export default defineComponent({
       searchText: '',           // 搜尋文字
       searchResults: '',         // 搜尋結果
       convasIsCloss: false,
+      convasIs: false,
       //電影相關
       objPlayMovies: [], //"篩選"過後所剩下的所有電影 (應該是這樣)
       type: [],
@@ -24,18 +27,23 @@ export default defineComponent({
       //點選電影海報後，才出現的電影資料
       selectedMovie: null,
 
-      languageTarget:"zh-TW",
-      
-      // 帳號相關
-      account:"",
-      password:"",
-      userLoggedIn:false,
+      languageTarget: "zh-TW",
 
-      name:"kass",
-      artName:"遊戲",
+      // 帳號相關
+      loginAccount: "",
+      password: "",
+      userLoggedIn: false,
+      artName: "",
 
       //用于存储当前选定电影的图像URL
       carouselImages: [],
+      //用於存帳戶
+      carouselAccount:[],
+      //用於存畫作名稱
+      carouselArt:[],
+
+      //關閉展示區的點點
+      showDots:false,
 
       //畫板相關
       canvasWidth: 763, // 畫板的寬度
@@ -114,15 +122,16 @@ export default defineComponent({
 
   methods: {
 
-    logincheck(){
-        this.userLoggedIn = Cookies.get('userLoggedIn')
-        if (this.userLoggedIn) {
-          this.account = Cookies.get('account')
-          Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
-          Cookies.set('account', this.account, { expires: 7, path: '/' });
-        }
-      console.log(this.userLoggedIn)
+    logincheck() {
+      this.userLoggedIn = Cookies.get('userLoggedIn') === 'true'
+      if (this.userLoggedIn) {
+        this.loginAccount = Cookies.get('account')
+        Cookies.set('account', this.loginAccount, { expires: 7, path: '/' });
+      }
+      // console.log(this.userLoggedIn)
+      console.log(this.loginAccount)
     },
+
 
     PerformSearch() {
       // 執行搜尋邏輯
@@ -167,6 +176,7 @@ export default defineComponent({
       this.noResultsModal = false; // 確保這行存在並將 noResultsModal 設為 false
       this.searchMode = 'original';
       this.convasIsCloss = false;
+      this.convasIs = false;
       this.canEnterArea = true; // 重置为可以进入区域
     },
 
@@ -192,6 +202,11 @@ export default defineComponent({
     onSizeMouseDown() { this.isSizing = true },
     canvasToImage() {
       let url = this.$refs['sketchpad'].toDataURL("image/png", 1.0)
+
+      //將相對路徑保存到變數
+      // const relativePath = `images/circl${this.count}.png`;
+      // console.log(relativePath);
+
       const link = document.createElement('a')
       link.innerText = 'Download'
       link.href = url
@@ -201,28 +216,28 @@ export default defineComponent({
 
       console.log(this.selectedMovie)
 
-fetch('http://localhost:8080/movie/art/create', {
-  method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    movie: this.selectedMovie.title,
-    movieId: this.selectedMovie.id,
-    artname: this.artName,
-    artlocation: url,
-    account: this.name,
-    
-  })
-})
-  .then(response => response.json())
-  .then(data => {
-    // 處理返回的數據
-    console.log(data);
-  })
-  .catch(error => {
-    console.error('Error fetching data:', error);
-  });
+      fetch('http://localhost:8080/movie/art/create', {
+        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          movie: this.selectedMovie.title,
+          movieId: this.selectedMovie.id,
+          artname: this.artName,
+          artlocation: url,
+          account: this.loginAccount
+
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          // 處理返回的數據
+          console.log(data);
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
     },
     setWindowEvent() {
       window.addEventListener('mousemove', (event) => {
@@ -350,7 +365,7 @@ fetch('http://localhost:8080/movie/art/create', {
       window.history.forward()
     },
 
-    
+
 
     async getPlayMovie() { //上映中
 
@@ -425,26 +440,49 @@ fetch('http://localhost:8080/movie/art/create', {
         console.log('After slicing:', this.objPlayMovies.length);
         console.log('上映中 PlayMovies:', this.objPlayMovies);
 
-      this.searchResults = this.searchText;
-      this.searchMode = 'result';
-      this.convasIsCloss = true;
-      this.checkCanEnterArea(); // 每次搜索后检查是否可以进入区域
+        this.searchResults = this.searchText;
+        this.searchMode = 'result';
+        
+        if (this.userLoggedIn) {
+          this.convasIsCloss = true;
+          console.log(this.convasIsCloss);
+        }
+        console.log(this.convasIsCloss);
+        this.convasIs = true;
+        this.checkCanEnterArea(); // 每次搜索后检查是否可以进入区域
 
-      // 检查是否有搜索结果
-      if (this.filteredMovies.length === 0) {
+        // 检查是否有搜索结果
+        if (this.filteredMovies.length === 0) {
           // 显示无匹配电影的模态框
           this.noResultsModal = false;
           // 切回原始模式
           this.searchMode = 'original';
           this.convasIsCloss = false;
+          this.convasIs = false;
           return; // 结束方法，不再继续执行
+          
         }
+        if (this.userLoggedIn) {
+          await Swal.fire({
+        title: "會員登入成功!",
+        text: "請點選電影海報開始屬於你的創作!!",
+        icon: "success"
+      });
+    } else {
+      // 沒有進入區域的 SweetAlert2 彈窗
+      await Swal.fire({
+        title: "訪客登入成功!",
+        text: "點選 前往展示區 觀賞作品吧!!",
+        icon: "success"
+      });
+        }
+        
       } catch (error) {
         // 處理錯誤
         console.error(error);
       }
 
-      
+
 
     },
 
@@ -492,47 +530,54 @@ fetch('http://localhost:8080/movie/art/create', {
       this.maxVisibleCards += 4; // 或其他你希望增加的数量
     },
 
-    searchMovie(movie){
+    searchMovie(movie) {
       this.selectedMovie = movie;
 
       fetch('http://localhost:8080/movie/art/search', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      movie: this.selectedMovie.title,
-      movieId: this.selectedMovie.id,
-      artname: this.artName,
-    })
-  })
-  .then(response => response.json()) 
-  .then(img =>{
-    console.log(img)
-    console.log(img.artList[0].artLocation);
-    
-    this.carouselImages = img.artList.map(art => art.artLocation);
-    console.log(this.carouselImages);
-    // this.carouselImages =img.artList[1].artLocation
-    // this.carouselImages =img.artList[2].artLocation
-    // this.carouselImages =img.artList[3].artLocation
-    ;})
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          movie: this.selectedMovie.title,
+          movieId: this.selectedMovie.id,
+          artname: this.artName,
+        })
+      })
+        .then(response => response.json())
+        .then(img => {
+          console.log(img)
+          console.log(img.artList[0].artLocation);
+          console.log(img.artList[0].artName);
+          console.log(img.artList[0].account);
+
+          this.carouselArt = img.artList.map(art => art.artName);
+          console.log(this.carouselArt);
+          this.carouselAccount = img.artList.map(art => art.account);
+          console.log(this.carouselAccount);
+          this.carouselImages = img.artList.map(art => art.artLocation);
+          console.log(this.carouselImages);
+          // this.carouselImages =img.artList[1].artLocation
+          // this.carouselImages =img.artList[2].artLocation
+          // this.carouselImages =img.artList[3].artLocation
+          ;
+        })
     },
 
-    
+
     //點選電影海報的展示區 (需要抓他的電影名稱，去展示所有這部電影的作品)
     selectMovie(movie) {
       // if(this.userLoggedIn == true)
       this.selectedMovie = movie;
 
-},
+    },
 
   },
 
 
   async mounted() {
     this.searchResults = this.searchText;
-      this.searchMode = 'original';
+    this.searchMode = 'original';
     this.setCanvas()
     this.currentColor = this.colors[0]
     this.setWindowEvent()
@@ -557,7 +602,7 @@ fetch('http://localhost:8080/movie/art/create', {
           <!-- <label class="tbc" for="floatingInput" v-else-if="noResultsModal">無相關電影</label> -->
         </div>
         <!-- <input class="searchMovie1" type="text" v-model="searchText"  placeholder="搜尋電影..."> -->
-        <button @click="getPlayMovie()" class="btn btn-primary allbuttonshoulduseit2">進入區域</button>
+        <button @click="getPlayMovie()" class="btn btn-primary allbuttonshoulduseit2" style="margin-left:1.3%; margin-top:1%;" >進入區域</button>
         <!-- 提示信息 -->
   <!-- <p v-if="!searchText.trim()">請輸入搜索條件</p> //修改1 整合功能510行
   <p v-else-if="noResultsModal">無相關電影</p> -->
@@ -565,7 +610,10 @@ fetch('http://localhost:8080/movie/art/create', {
 
   <!-- Search First Result -->
   <div class="First2" v-if="searchMode === 'result'">
-    <button @click="ResetSearch" style="margin-top:25px" class="btn btn-primary allbuttonshoulduseit">重搜電影</button>
+    <!-- <div class="packTop" style="display:flex; flex-wrap; margin-top:0.1rem; margin-left:15.3rem;"> -->
+    <button @click="ResetSearch" style="margin-top:4.5rem;" class="btn btn-primary allbuttonshoulduseit">重新搜尋</button>
+    <!-- <div class="Reminder" style="width:25rem; height:10rem; margin-left:13.2rem; margin-top:2.5rem; margin-bottom:-3.5rem;"><h1 style="font-size:2rem; line-height:1.5; background-color:	#7E8EAB; color:white; border-radius:15px;">請點選電影海報<br>來完成屬於你的創作吧!!</h1></div> -->
+  <!-- </div> -->
     <!-- <p>電影名稱: {{ searchResults }}</p> -->
 
     <div class="moviePosterAll">
@@ -584,15 +632,18 @@ fetch('http://localhost:8080/movie/art/create', {
       </div>
     </div>
     <!-- Learn More 按钮 -->
-    <button v-if="visibleFilteredMovies.length < filteredMovies.length" @click="showMoreCards" class="btn btn-primary allbuttonshoulduseit">Learn More</button>
+    <button v-if="visibleFilteredMovies.length < filteredMovies.length" @click="showMoreCards" class="btn btn-primary allbuttonshoulduseit">查看更多</button>
     <a href="#" class="btn btn-primary allbuttonshoulduseit" style="">回頂部</a>
 </div>
     
 
-    <div  class="bord" id="bord">
+    <div v-show="convasIsCloss"  class="bord" id="bord">
       <div v-if="this.selectedMovie">
-        <p>電影名稱: {{ selectedMovie.title }}</p>
-        <p>電影id: {{ selectedMovie.id }}</p>
+        <p>創作的主題為: {{ selectedMovie.title }}</p>
+        <!-- <p>電影id: {{ selectedMovie.id }}</p> -->
+        <p>{{"您的帳號:" + this.loginAccount}}</p>
+        <p>請為您的作品取名字</p>              
+        <textarea rows="1" v-model="artName" required style="width:25vw; border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
 
     <!-- 其他的顯示內容... -->
   </div>
@@ -659,17 +710,24 @@ fetch('http://localhost:8080/movie/art/create', {
   </li>
  </ul>
 </div>
-  <div class="Second" v-show="convasIsCloss" id="Second">
-    <p>電影名稱: {{ searchResults }}</p>
+  <div class="Second" v-show="convasIs" id="Second">
+    
     <div class="ShowPoster">
+      <!-- <p>電影名稱: {{ selectedMovie.title }}</p> -->
  <n-carousel
   direction="vertical"
+  :show-dots="showDots"
   dot-placement="right"
   mousewheel
-  style="width: 54%; height: 68.4%"
+  style="width: 838.1px; height: 494.29px"
+  class="NColor"
 >
 <div v-for="(image, index) in carouselImages" :key="index">
-    <img class="carousel-img" :src="image" />
+    <img class="carousel-img" :src="image" style=" margin-top:0px; width: 838.1px; height: 494.29px; object-fit: cover;" />
+    <div class="" style="position:absolute; left:3.1%; bottom:0%; ">
+      <p>{{ "用戶:" + carouselAccount[index] }}</p>
+        <p>{{ "作品名稱:" + carouselArt[index] }}</p>
+      </div>
   </div>
 
 </n-carousel>
@@ -686,7 +744,8 @@ fetch('http://localhost:8080/movie/art/create', {
   .searchMovie1 {
     margin-top: 280px;
   }
-  .selectionBoxGenres{
+
+  .selectionBoxGenres {
     margin: 20px 0;
     height: 5%;
     width: 50%;
@@ -714,12 +773,15 @@ fetch('http://localhost:8080/movie/art/create', {
     justify-content: center;
     align-items: center;
 
-    
-  a.btn.btn-primary {
-    text-decoration: none !important; /* 使用 !important 強制覆蓋其他樣式 */
-    border: none; /* 移除邊框 */
-    outline: none; /* 移除聚焦時的藍色框線 */
-}
+
+    a.btn.btn-primary {
+      text-decoration: none !important;
+      /* 使用 !important 強制覆蓋其他樣式 */
+      border: none;
+      /* 移除邊框 */
+      outline: none;
+      /* 移除聚焦時的藍色框線 */
+    }
 
     .box {
       overflow: hidden;
@@ -741,73 +803,83 @@ fetch('http://localhost:8080/movie/art/create', {
     }
 
     box {
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: all 0.2s;
-  cursor: pointer;
-}
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
 
-.box1 {
-  position: absolute;
-  left: -110%;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
-  transform: skew(-30deg);
-  transition: all 1s; /* 將 transition 移至這裡 */
-}
+    .box1 {
+      position: absolute;
+      left: -110%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, .5), rgba(255, 255, 255, 0));
+      transform: skew(-30deg);
+      transition: all 1s;
+      /* 將 transition 移至這裡 */
+    }
 
-.box:hover .box1 {
-  left: 110%;
-  transform: skew(-30deg) scaleX(2); /* 新增一個 scaleX 可以讓閃爍效果更突顯 */
-}
+    .box:hover .box1 {
+      left: 110%;
+      transform: skew(-30deg) scaleX(2);
+      /* 新增一個 scaleX 可以讓閃爍效果更突顯 */
+    }
 
-.box:hover {
-  transform: translateY(-20px);
-  box-shadow: 0 26px 40px -24px rgb(0 36 100 / 50%);
-}
+    .box:hover {
+      transform: translateY(-20px);
+      box-shadow: 0 26px 40px -24px rgb(0 36 100 / 50%);
+    }
 
-/* 新增的部分，使用 animation 來產生瞬間變化 */
-.box1-shimmer {
-  animation: shimmer 1s;
-}
+    /* 新增的部分，使用 animation 來產生瞬間變化 */
+    .box1-shimmer {
+      animation: shimmer 1s;
+    }
 
-@keyframes shimmer {
-  0%, 100% {
-    transform: skew(-30deg) scaleX(0);
-  }
-  50% {
-    transform: skew(-30deg) scaleX(2);
-  }
-}
+    @keyframes shimmer {
 
-    .card-title { //修改1 調整文字大小
+      0%,
+      100% {
+        transform: skew(-30deg) scaleX(0);
+      }
+
+      50% {
+        transform: skew(-30deg) scaleX(2);
+      }
+    }
+
+    .card-title {
+      //修改1 調整文字大小
       margin-top: 10px;
       font-size: 1.5em;
     }
 
-    .GoShowText { //修改1 修整按鍵大小
+    .GoShowText {
+      //修改1 修整按鍵大小
       position: absolute;
-      bottom: 20px;
-      width: 80%;
-      height: 10%;
-      left: 10%;
-      .goforarea{
+      bottom: 10px;
+      width: 70%;
+      height: 8%;
+      left: 15%;
+
+      .goforarea {
         width: 80%;
         height: 100%;
         font-size: 1.5em;
-        padding: 10px 0 0 0;
+        padding: 2px 0 0 0;
+        // border-radius: 20px;
+       
       }
     }
   }
 }
 
 .bord {
-  height: 100vh;
-  margin-top: 120px;
+  height: 120vh;
+  margin-top: 50px;
 }
 
 .Second {
@@ -850,7 +922,7 @@ fetch('http://localhost:8080/movie/art/create', {
   line-height: 60px;
   height: 75px;
   margin-left: 385px;
-  margin-top: 30px;
+  margin-top: 10px;
   // border: 2px solid #000;
 
   // left: 50%; 
@@ -987,31 +1059,41 @@ span {
   }
 }
 
-.tb{
-    width: 80%;
-    margin: 0 auto;
-  }
-  .tbc{
-    margin-left: 10%;
-  }
-.allbuttonshoulduseit{ //從這個標籤去找其他修改的地方 修改1
+.tb {
+  width: 60%;
+  margin: 0 auto;
+  margin-top: 12%;
+}
+
+.tbc {
+  margin-left: 20%;
+}
+
+.allbuttonshoulduseit {
+  //從這個標籤去找其他修改的地方 修改1
   width: 30%;
   height: 100%;
   font-size: 1.5em;
-  margin-right:28px;
+  margin-right: 28px;
   margin-bottom: 20px;
   background-color: #7e8eab;
   border: #7e8eab;
 }
-.allbuttonshoulduseit2{
+
+.allbuttonshoulduseit2 {
   width: 30%;
   height: 7%;
   font-size: 1.5em;
-  margin-right:28px;
+  margin-right: 28px;
   margin-bottom: 20px;
   background-color: #7e8eab;
   border: #7e8eab;
 }
-// 待修改，將輸入進來的電影種類改成中文
 
+.NColor{
+  background-color: rgb(65, 64, 64);
+  border: 5px solid #C0AC6B !important;
+
+}
+// 待修改，將輸入進來的電影種類改成中文
 </style>

@@ -104,6 +104,7 @@ export default{
             <RouterLink to="/ticket" class="a">購票</RouterLink>
             <RouterLink :to="`/mypage`" class="a">個人主頁</RouterLink>
             <RouterLink :to="`/create`" class="a">影迷創作</RouterLink>
+            <RouterLink :to="`/test`" class="a">測試</RouterLink>
             <div v-if="this.userLoggedIn || this.getAuth" class="a">
                 <p v-if="this.userLoggedIn" @click="backuser()">登入帳號：{{ this.loginAccount }}</p>
                 <p v-if="this.getAuth" @click="backuser()">登入帳號：{{ this.getuser }}</p>

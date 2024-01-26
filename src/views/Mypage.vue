@@ -302,8 +302,8 @@ export default {
           this.movieInfo = JSON.parse(data.mypageList.favorit)
           this.mymovie = JSON.parse(data.mypageList.accountMovieList)
           this.moviecomment = data.mypageList.favoritComment
-          console.log(this.movieInfo)
-          console.log(this.mymovie)
+          // console.log(this.movieInfo)
+          // console.log(this.mymovie)
           console.log(this.moviecomment)
           this.$router.push({
             name: "mypage",

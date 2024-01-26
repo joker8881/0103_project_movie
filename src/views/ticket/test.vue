@@ -8,7 +8,7 @@
             即將上映
         </button>
     </div>
-
+你好
     <div class="sortMoive">
         <div class="moviePic">
         </div>

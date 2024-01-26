@@ -30,6 +30,7 @@ export default {
       replyText: "",
       objPlayingMovie: [],
       selectedTime: "",
+      collapsed: true
     };
   },
   computed: {
@@ -154,6 +155,15 @@ export default {
           this.minutes = this.movieTime % 60;
         })
         .catch((err) => console.error(err));
+    },
+    getMovieBackImageUrl() {
+      // 檢查原始圖片是否可用
+      if (this.movieInfo.movieBack) {
+        return 'https://image.tmdb.org/t/p/original' + this.movieInfo.movieBack;
+      } 
+      else {
+        return 
+      }
     },
     //評論區相關
     toggleBaolei() { // 暴雷按鈕
@@ -310,6 +320,13 @@ export default {
           // 處理返回的數據
           console.log(data);
         });
+    },
+    toggleCollapse(comment, index, indexOrder) {
+      this.commentIndex = index;
+      this.commentIndexOrder = indexOrder;
+      console.log(this.commentIndex);
+      console.log(this.commentIndexOrder);
+      this.collapsed = !this.collapsed;
     },
     // 後端api
     commentCreate() { // 留言
@@ -520,52 +537,58 @@ export default {
   
   <div class="body">
     <!-- 電影資料 -->
-    <div class="header">
-      <div class="movieData">
-        <div class="movieDataLeft">
-          <img :src="'https://image.tmdb.org/t/p/w500' + this.movieInfo.moviePoster" alt=""/>
-        </div>
-        <div class="movieDataRight">
-          <h1>{{ this.movieInfo.movieTitle }}</h1>
-          <h6>{{ this.movieInfo.movieOriginaltitle }}</h6>
-          <h2 class="textHeader">
-            上映日期：{{ this.movieInfo.movieReleasedate }}</h2><hr />
-          <h2>Movie Info</h2>
-          <div class="movieDataRight1">
-            <div class="movieDataRight22">
-              <div class="type">
-                <h3 class="textHeader">類型：</h3>
-                <span class="textall" style="line-height: 50px" v-for="(item, index) in this.movieType" :key="index">{{ item }}<span v-if="index < this.movieType.length - 1" class="textall" style="font-size: 1em">、</span></span><br />
-              </div>
-              <div class="director">
-                <h3 class="textHeader">導演：</h3>
-                <span class="textall" style="line-height: 50px" v-for="(item, index) in this.directors" :key="index">{{ item.original_name }}<span v-if="index < this.directors.length - 1">,</span></span><br />
-              </div>
-              <div class="director">
-                <h3 class="textHeader">片長：</h3>
-                <span class="textall" style="line-height: 50px">{{ this.hours == 0 && this.minutes == 0 ? "未知" : this.hours + "h" + this.minutes + "m" }}</span><br />
-              </div>
-              <div class="casts">
-                <h3 class="textHeader" style="width: 105px; height: 50px">演員：</h3>
-                <div style="width: 90%; display: flex">
-                  <h1 class="textHeader2" style="line-height: 50px" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em">、</span></h1><br/>
+    <div class="card bg-dark text-white">
+      <img :src="getMovieBackImageUrl()" class="card-img" alt="" style="opacity: 0.2;">
+      <div class="card-img-overlay">
+        <div class="header">
+          <div class="movieData">
+            <!-- <img :src="'https://image.tmdb.org/t/p/w342' + this.movieInfo.movieBack " alt="" style="width: 100vw; height: 100vh; opacity: 0.2; position: fixed; top: 0; left: 0;"><br> -->
+            <div class="movieDataLeft">
+              <img :src="'https://image.tmdb.org/t/p/w500' + this.movieInfo.moviePoster" alt=""/>
+            </div>
+            <div class="movieDataRight">
+              <h1 class="text-white">{{ this.movieInfo.movieTitle }}</h1>
+              <h6 class="text-white">{{ this.movieInfo.movieOriginaltitle }}</h6>
+              <h2 class="textHeader text-white">
+                上映日期：{{ this.movieInfo.movieReleasedate }}</h2><hr />
+              <h2 class="text-white">Movie Info</h2>
+              <div class="movieDataRight1">
+                <div class="movieDataRight22">
+                  <div class="type">
+                    <h3 class="textHeader text-white">類型：</h3>
+                    <span class="textall text-white" style="line-height: 50px" v-for="(item, index) in this.movieType" :key="index">{{ item }}<span v-if="index < this.movieType.length - 1" class="textall" style="font-size: 1em">、</span></span><br />
+                  </div>
+                  <div class="director">
+                    <h3 class="textHeader text-white">導演：</h3>
+                    <span class="textall text-white" style="line-height: 50px" v-for="(item, index) in this.directors" :key="index">{{ item.original_name }}<span v-if="index < this.directors.length - 1">,</span></span><br />
+                  </div>
+                  <div class="director">
+                    <h3 class="textHeader text-white">片長：</h3>
+                    <span class="textall text-white" style="line-height: 50px">{{ this.hours == 0 && this.minutes == 0 ? "未知" : this.hours + "h" + this.minutes + "m" }}</span><br />
+                  </div>
+                  <div class="casts">
+                    <h3 class="textHeader text-white" style="width: 105px; height: 50px">演員：</h3>
+                    <div style="width: 90%; display: flex">
+                      <h1 class="textHeader2 text-white" style="line-height: 50px" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em">、</span></h1><br/>
+                    </div>
+                  </div>
+                  <div class="voteAvg">
+                    <h3 class="textHeader text-white">評分：</h3>
+                    <h2 class="textall text-white" style="line-height: 50px">{{ this.movieInfo.movieVoteavg }}</h2>
+                  </div>
+                  <div class="movieOverview">
+                    <h3 class="textHeader text-white" style="width: 105px; height: 50px">簡介：</h3>
+                    <p class="textallx text-white" v-if="this.movieInfo.movieOverview" style="width: 90%; line-height: 50px">{{ this.movieInfo.movieOverview }}</p>
+                    <p class="textall text-white" v-else>此電影無簡介</p>
+                  </div>
                 </div>
-              </div>
-              <div class="voteAvg">
-                <h3 class="textHeader">評分：</h3>
-                <h2 class="textall" style="line-height: 50px">{{ this.movieInfo.movieVoteavg }}</h2>
-              </div>
-              <div class="movieOverview">
-                <h3 class="textHeader" style="width: 105px; height: 50px">簡介：</h3>
-                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 90%; line-height: 50px">{{ this.movieInfo.movieOverview }}</p>
-                <p class="textall" v-else>此電影無簡介</p>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <hr />
+    <hr/>
 
     <!-- 預告片 -->
     <div class="middleInfo">
@@ -651,11 +674,11 @@ export default {
                 <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
                 <textarea v-if="comment.editing" v-model="comment.editingText" rows="1" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea><br />
                 <!-- 按讚 -->
-                <button @click="likeButton( comment, comment.commentIndex, comment.commentIndexIndex )" class="btn btn-outline-primary" style="border: 0">
+                <button @click="likeButton( comment, comment.commentIndex, comment.commentIndexIndex )" class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="喜歡" style="border: 0">
                   <i class="fa-regular fa-thumbs-up"></i>
                   {{ comment.favorite }}
                 </button>
-                <button @click="dislikeButton( comment, comment.commentIndex, comment.commentIndexIndex )" class="btn btn-outline-danger" style="border: 0">
+                <button @click="dislikeButton( comment, comment.commentIndex, comment.commentIndexIndex )" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="不喜歡" style="border: 0">
                 <i class="fa-regular fa-thumbs-down"></i>
                   {{ comment.dislike }}
                 </button>
@@ -676,24 +699,25 @@ export default {
                 <div v-if="commentReplies.length > 0" class="mt-2" style="border: 0">
                   <div v-for="item in commentReplies" :key="item.commentIndex" class="card mb-2" style="border: 0">
                     <div class="card-body" v-if="item.commentIndex === comment.commentIndex">
-                      <div>
+                      <button @click="toggleCollapse(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">{{ collapsed ? '展開' : '收起' }}</button><br>
+                      <div v-if="!collapsed">
                         <span>{{ "@" + item.account }}</span>
                         <small class="text-muted">{{ this.commentTimeDif(item.commentTime) }}</small>
                         <!-- 編輯按鈕 -->
                         <button v-if="userLoggedIn && this.loginAccount==comment.account" @click="startEditing(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
                         <!-- 保存按鈕 -->
-                        <button v-if="item.editing" @click="saveEdit( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">儲存</button>
+                        <button v-if="item.editing" @click="saveEdit(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-link" style="text-decoration: none">儲存</button>
                         <!-- 刪除按鈕 -->
                         <button v-if="userLoggedIn && this.loginAccount==comment.account" @click="commentDeleteChild( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">刪除</button><br />
                         <span>{{ item.commentText }}</span><br />
                         <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
                         <textarea v-if="item.editing" v-model="item.editingText" rows="1" class="form-control" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                         <!-- 按讚 -->
-                        <button @click="likeButton( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-outline-primary" style="border: 0">
+                        <button @click="likeButton(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="喜歡" style="border: 0">
                           <i class="fa-regular fa-thumbs-up"></i>
                           {{ item.favorite }}
                         </button>
-                        <button @click="dislikeButton( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-outline-danger" style="border: 0">
+                        <button @click="dislikeButton(item, item.commentIndex, item.commentIndexIndex)" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="不喜歡" style="border: 0">
                           <i class="fa-regular fa-thumbs-down"></i>
                           {{ item.dislike }}
                         </button>

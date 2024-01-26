@@ -304,7 +304,7 @@ export default {
           this.moviecomment = data.mypageList.favoritComment
           console.log(this.movieInfo)
           console.log(this.mymovie)
-          console.log(this.moviecomment)
+          // console.log(this.moviecomment)
           this.$router.push({
             name: "mypage",
             query: {

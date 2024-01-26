@@ -220,7 +220,7 @@ export default {
       this.selectbar = 1
     },
     gotobackcreate(){
-      this.$router.push("/backCreate")
+      this.$router.push("/backSearch")
     },
   },
   mounted(){

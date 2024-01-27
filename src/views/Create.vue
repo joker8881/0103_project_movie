@@ -45,6 +45,9 @@ export default defineComponent({
       //關閉展示區的點點
       showDots:false,
 
+      //會員or訪客標題
+      pageTitle: '', // 初始化为空
+
       //畫板相關
       canvasWidth: 763, // 畫板的寬度
       canvasHeight: 450, // 畫板的高度
@@ -97,6 +100,18 @@ export default defineComponent({
   created() {
     // 先取得所有電影類型
     this.getMovieType();
+    this.logincheck();
+    console.log(this.userLoggedIn);
+
+    // 根据用户登录状态设置页面标题文字
+    if (this.userLoggedIn) {
+      this.pageTitle = '會員';
+      console.log(this.pageTitle);
+    } else {
+      this.pageTitle = '訪客';
+      console.log(this.pageTitle);
+      
+    }
   },
   computed: {
     filteredMovies() {
@@ -464,15 +479,15 @@ export default defineComponent({
         }
         if (this.userLoggedIn) {
           await Swal.fire({
-        title: "會員登入成功!",
-        text: "請點選電影海報開始屬於你的創作!!",
+        title: "會員身分登入!",
+        text: "請點選 電影海報 開始屬於你的創作!",
         icon: "success"
       });
     } else {
       // 沒有進入區域的 SweetAlert2 彈窗
       await Swal.fire({
-        title: "訪客登入成功!",
-        text: "點選 前往展示區 觀賞作品吧!!",
+        title: "訪客身分登入!",
+        text: "如需 創作 請登入會員!!",
         icon: "success"
       });
         }
@@ -553,8 +568,10 @@ export default defineComponent({
 
           this.carouselArt = img.artList.map(art => art.artName);
           console.log(this.carouselArt);
+
           this.carouselAccount = img.artList.map(art => art.account);
           console.log(this.carouselAccount);
+
           this.carouselImages = img.artList.map(art => art.artLocation);
           console.log(this.carouselImages);
           // this.carouselImages =img.artList[1].artLocation
@@ -596,13 +613,16 @@ export default defineComponent({
           <option value="">All genres</option>  -->
           <!-- <option v-for="genre in movieGenres" :key="genre.id" :value="genre">{{ genre.name }}</option>
         </select> -->
-        <div class="form-floating mb-3">
-          <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="searchText">
+        <div class="" style="background-color:#525f75; width:42%; height:80%; margin-top:90px; margin-left:29%; border-radius:20px;">
+          <h1 style="position:absolute; left:40.8%; top:40%; color:white;">{{ "您的身分為: " + pageTitle }}</h1>
+        <div class="form-floating mb-3" style="position:absolute; left:37.5%; top:47%;">
+          <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="searchText"style="margin-top:70px;" >
           <label class="tbc" for="floatingInput" v-if="!searchText.trim()">搜尋電影...</label>
           <!-- <label class="tbc" for="floatingInput" v-else-if="noResultsModal">無相關電影</label> -->
         </div>
         <!-- <input class="searchMovie1" type="text" v-model="searchText"  placeholder="搜尋電影..."> -->
-        <button @click="getPlayMovie()" class="btn btn-primary allbuttonshoulduseit2" style="margin-left:1.3%; margin-top:1%;" >進入區域</button>
+        <button @click="getPlayMovie()" class="btn btn-primary allbuttonshoulduseit2" style="margin-left:7.8%; margin-top:56%;" >進入區域</button>
+      </div>
         <!-- 提示信息 -->
   <!-- <p v-if="!searchText.trim()">請輸入搜索條件</p> //修改1 整合功能510行
   <p v-else-if="noResultsModal">無相關電影</p> -->
@@ -610,12 +630,7 @@ export default defineComponent({
 
   <!-- Search First Result -->
   <div class="First2" v-if="searchMode === 'result'">
-    <!-- <div class="packTop" style="display:flex; flex-wrap; margin-top:0.1rem; margin-left:15.3rem;"> -->
     <button @click="ResetSearch" style="margin-top:4.5rem;" class="btn btn-primary allbuttonshoulduseit">重新搜尋</button>
-    <!-- <div class="Reminder" style="width:25rem; height:10rem; margin-left:13.2rem; margin-top:2.5rem; margin-bottom:-3.5rem;"><h1 style="font-size:2rem; line-height:1.5; background-color:	#7E8EAB; color:white; border-radius:15px;">請點選電影海報<br>來完成屬於你的創作吧!!</h1></div> -->
-  <!-- </div> -->
-    <!-- <p>電影名稱: {{ searchResults }}</p> -->
-
     <div class="moviePosterAll">
       <div v-for="(movie, index) in visibleFilteredMovies" :key="movie.id" class="card" style="width: 18rem; height: 34.8rem; margin-right:2%; margin-top:2%; margin-bottom:2%;">
         <div class="box" >
@@ -638,13 +653,23 @@ export default defineComponent({
     
 
     <div v-show="convasIsCloss"  class="bord" id="bord">
+      <!-- 用來推的div -->
+      <div style="color:rgba(255, 255, 255, 0.01);">232</div>
+      <div><h1 style="margin-top:20px;">創作區</h1></div>
       <div v-if="this.selectedMovie">
-        <p>創作的主題為: {{ selectedMovie.title }}</p>
+        <div class="CreateOoeName">
+          <!-- 用來推的p -->
+          <p style="color:rgb(82, 95, 117);">232</p>
+        <p style="font-size:20pt; margin-top:20px; color:white;">創作主題: {{ selectedMovie.title }}</p>
         <!-- <p>電影id: {{ selectedMovie.id }}</p> -->
-        <p>{{"您的帳號:" + this.loginAccount}}</p>
-        <p>請為您的作品取名字</p>              
-        <textarea rows="1" v-model="artName" required style="width:25vw; border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
-
+        <p style="font-size:21pt; margin-top:40px; color:white;">{{"設計者:" + this.loginAccount}}</p>
+        <div style="height:45%; width:75%; margin-left:13%; margin-top:8px; background-color:#7E8EAB; border-radius:20px;">
+          <!-- 用來推的p -->
+          <p style="color:#7E8EAB;">232</p>
+        <p style="font-size:15pt; margin-top:38px;">請為您的作品命名:</p>              
+<textarea rows="1" v-model="artName" required style="width:18vw; border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black; margin-bottom:30px;"></textarea>
+          </div>      
+            </div>
     <!-- 其他的顯示內容... -->
   </div>
  <ul class="navbar " 
@@ -719,14 +744,14 @@ export default defineComponent({
   :show-dots="showDots"
   dot-placement="right"
   mousewheel
-  style="width: 838.1px; height: 494.29px"
+  style="width: 602.4px; height: 352px;"
   class="NColor"
 >
 <div v-for="(image, index) in carouselImages" :key="index">
-    <img class="carousel-img" :src="image" style=" margin-top:0px; width: 838.1px; height: 494.29px; object-fit: cover;" />
-    <div class="" style="position:absolute; left:3.1%; bottom:0%; ">
-      <p>{{ "用戶:" + carouselAccount[index] }}</p>
-        <p>{{ "作品名稱:" + carouselArt[index] }}</p>
+    <img class="carousel-img" :src="image" style=" margin-top:0px; max-width: 100%; max-height: 100%; object-fit: cover;" />
+    <div class="" style="position:absolute; left:3.1%; bottom:1.2%;">
+      <p style=" color:black; background-color:pink; border-radius:20px; margin-bottom:10px; padding: 5px 15px;">{{ "設計者:" + carouselAccount[index] }}</p>
+        <p style=" color:black; background-color:#7e8eab; border-radius:20px; padding: 5px 15px;">{{ "作品名稱:" + carouselArt[index] }}</p>
       </div>
   </div>
 
@@ -738,8 +763,13 @@ export default defineComponent({
 <style scoped lang="scss">
 .First {
   width: 100vw;
-  height: 100vh;
-  border: 1px solid black;
+  height: 90vh;
+  // border: 1px solid black;
+  background-image: url(../src/picture/CreateBackground.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow-x: hidden; //隱藏水平滾動條
+  overflow-y: hidden; //隱藏垂直滾動條
 
   .searchMovie1 {
     margin-top: 280px;
@@ -761,7 +791,7 @@ export default defineComponent({
   overflow: auto;
   // width: 100vw;
   // height: 100vh;
-  border: 1px solid black;
+  // border: 1px solid black;
 
   .moviePosterAll {
     width: 100%;
@@ -878,26 +908,41 @@ export default defineComponent({
 }
 
 .bord {
-  height: 120vh;
-  margin-top: 50px;
+  height: 170vh;
+  // margin-top: 50px;
+  background-image: url(../src/picture/bordImage.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  .CreateOoeName{
+    width: 35%;
+    height: 370px;
+    margin-left: 32.5%;
+    margin-top: 20px;
+    background-color: rgb(82, 95, 117);
+    border-radius: 20px;
+  }
 }
 
 .Second {
   width: 100vw;
-  height: 100vh;
-  border: 1px solid black;
+  height: 150vh;
+  // border: 1px solid black;
+  background-image: url(../src/picture/CreateBackground.png);
+  background-repeat: no-repeat;
+  background-size: cover;
 
   .ShowPoster {
     width: 100%;
     height: 100%;
-    border: 1px solid black;
+    // border: 1px solid black;
     position: relative;
 
     .n-carousel {
       position: absolute;
       top: 22%;
       left: 23%;
-      border: 1px solid black;
+      // border: 1px solid black;
     }
 
     .carousel-img {
@@ -922,7 +967,7 @@ export default defineComponent({
   line-height: 60px;
   height: 75px;
   margin-left: 385px;
-  margin-top: 10px;
+  margin-top: 40px;
   // border: 2px solid #000;
 
   // left: 50%; 
@@ -946,7 +991,7 @@ export default defineComponent({
       color: #535353;
       transform: scale(1.1, 1.1);
       cursor: pointer;
-      transition: 0.5s;
+      transition: 0.2s;
       border-radius: 30px;
     }
   }
@@ -1060,13 +1105,16 @@ span {
 }
 
 .tb {
-  width: 60%;
-  margin: 0 auto;
-  margin-top: 12%;
+  width: 400px;
+  height: 30px;
+  margin-left: -0.1%;
+  // margin: 0 auto;
+  // margin-top: 5%;
 }
 
 .tbc {
-  margin-left: 20%;
+  margin-left: 0.5%;
+  margin-top: 18%;
 }
 
 .allbuttonshoulduseit {
@@ -1081,8 +1129,8 @@ span {
 }
 
 .allbuttonshoulduseit2 {
-  width: 30%;
-  height: 7%;
+  width: 20%;
+  height: 10%;
   font-size: 1.5em;
   margin-right: 28px;
   margin-bottom: 20px;
@@ -1091,8 +1139,10 @@ span {
 }
 
 .NColor{
-  background-color: rgb(65, 64, 64);
-  border: 5px solid #C0AC6B !important;
+  background-color: rgb(255, 255, 255,0.2);
+  margin-left: 6%;
+  margin-top: 10%;
+  // border: 2px solid #C0AC6B !important;
 
 }
 // 待修改，將輸入進來的電影種類改成中文

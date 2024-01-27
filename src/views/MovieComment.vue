@@ -209,7 +209,7 @@ export default {
         this.replyText = "";
       }
     },
-    cancelReply() { // 取消回覆 
+    cancelReply(comment) { // 取消回覆 
       comment.replying = false;
       this.replyText = null;
     },
@@ -304,6 +304,15 @@ export default {
           // 處理返回的數據
           console.log(data);
         });
+    },
+    filterComments(commentText) { // 偵測敏感字符
+    const dirtyWords = ['黃牛'];
+    let filteredText = commentText;
+    for (const word of dirtyWords) {
+      const regex = new RegExp(word, 'gi');
+      filteredText = filteredText.replace(regex, '*'.repeat(word.length));
+    }
+    return filteredText;
     },
     // 後端api
     commentCreate() { // 留言
@@ -641,8 +650,9 @@ export default {
                 <button v-if="comment.editing" type="submit" class="btn btn-link" @click="saveEdit( comment, comment.commentIndex, comment.commentIndexIndex ) " style="margin-left: 10px; text-decoration: none" required>儲存</button>
                 <!-- 刪除按鈕 -->
                 <button v-if="userLoggedIn && !comment.editing && this.loginAccount==comment.account" @click="commentDeleteFather(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
-                <span>{{ comment.commentText }}</span>
-                <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
+                <!-- 留言內容 -->
+                <span>{{ filterComments(comment.commentText) }}</span>
+                <!-- 編輯模式下顯示編輯框 -->
                 <textarea v-if="comment.editing" v-model="comment.editingText" rows="1" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea><br />
                 <!-- 按讚 -->
                 <button v-if="userLoggedIn" @click="likeButton( comment, comment.commentIndex, comment.commentIndexIndex )" class="btn btn-outline-primary" style="border: 0">
@@ -667,20 +677,21 @@ export default {
                 </form>
 
                 <!-- 顯示回覆的區域 -->
-                <div v-if="commentReplies.length > 0" class="mt-2" style="border: 0">
+                <div v-if="commentReplies.length > 0" style="border: 0">
                   <div v-for="item in commentReplies" :key="item.commentIndex" class="card mb-2" style="border: 0">
                     <div class="card-body" v-if="item.commentIndex === comment.commentIndex">
                       <div>
                         <span>{{ "@" + item.account }}</span>
                         <small class="text-muted">{{ this.commentTimeDif(item.commentTime) }}</small>
                         <!-- 編輯按鈕 -->
-                        <button v-if="userLoggedIn && !item.editing && this.loginAccount==comment.account" @click="startEditing(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+                        <button v-if="userLoggedIn && !item.editing && this.loginAccount==item.account" @click="startEditing(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
                         <!-- 保存按鈕 -->
                         <button v-if="item.editing" @click="saveEdit( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="margin-left: 10px; text-decoration: none">儲存</button>
                         <!-- 刪除按鈕 -->
-                        <button v-if="userLoggedIn && !item.editing && this.loginAccount==comment.account" @click="commentDeleteChild( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">刪除</button><br />
-                        <span>{{ item.commentText }}</span><br />
-                        <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
+                        <button v-if="userLoggedIn && !item.editing && this.loginAccount==item.account" @click="commentDeleteChild( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                        <!-- 回覆內容 -->
+                        <span>{{ filterComments(comment.commentText) }}</span><br/>
+                        <!-- 編輯模式下顯示編輯框 -->
                         <textarea v-if="item.editing" v-model="item.editingText" rows="1" class="form-control" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                         <!-- 按讚 -->
                         <button v-if="userLoggedIn" @click="likeButton( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-outline-primary" style="border: 0">

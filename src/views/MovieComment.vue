@@ -690,7 +690,7 @@ export default {
                         <!-- 刪除按鈕 -->
                         <button v-if="userLoggedIn && !item.editing && this.loginAccount==item.account" @click="commentDeleteChild( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">刪除</button><br />
                         <!-- 回覆內容 -->
-                        <span>{{ filterComments(comment.commentText) }}</span><br/>
+                        <span>{{ filterComments(item.commentText) }}</span><br/>
                         <!-- 編輯模式下顯示編輯框 -->
                         <textarea v-if="item.editing" v-model="item.editingText" rows="1" class="form-control" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                         <!-- 按讚 -->

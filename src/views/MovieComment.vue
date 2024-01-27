@@ -620,7 +620,7 @@ export default {
             </select>
           </div>
           <!-- 新增留言 -->
-          <form class="mt-4" @click.prevent="">
+          <div class="mt-4">
             <div class="mb-3" v-if="this.userLoggedIn">
               <label for="commentInput" class="form-label"><span>新增留言</span></label>
               <textarea rows="1" v-model="commentText" class="form-control" name="comment" id="commentInput" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
@@ -628,7 +628,7 @@ export default {
                 <button type="submit" class="btn btn-outline-dark" @click="commentCreate">留言</button>
               </div>
             </div>
-          </form>
+          </div>
             <!-- 遍歷並顯示留言 -->
             <div v-for="comment in sortComments" :key="comment.number" class="card mb-2">
               <!-- 留言內容 -->
@@ -638,7 +638,7 @@ export default {
                 <!-- 編輯按鈕 -->
                 <button v-if="userLoggedIn && !comment.editing && this.loginAccount==comment.account" @click="startEditing(comment)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
                 <!-- 保存按鈕 -->
-                <button v-if="comment.editing" type="submit" class="btn btn-link" @click="saveEdit( comment, comment.commentIndex, comment.commentIndexIndex ) " style="text-decoration: none" required>儲存</button>
+                <button v-if="comment.editing" type="submit" class="btn btn-link" @click="saveEdit( comment, comment.commentIndex, comment.commentIndexIndex ) " style="margin-left: 10px; text-decoration: none" required>儲存</button>
                 <!-- 刪除按鈕 -->
                 <button v-if="userLoggedIn && !comment.editing && this.loginAccount==comment.account" @click="commentDeleteFather(comment, comment.commentIndex)" class="btn btn-link" style="text-decoration: none">刪除</button><br />
                 <span>{{ comment.commentText }}</span>
@@ -674,11 +674,11 @@ export default {
                         <span>{{ "@" + item.account }}</span>
                         <small class="text-muted">{{ this.commentTimeDif(item.commentTime) }}</small>
                         <!-- 編輯按鈕 -->
-                        <button v-if="userLoggedIn && this.loginAccount==comment.account" @click="startEditing(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
+                        <button v-if="userLoggedIn && !item.editing && this.loginAccount==comment.account" @click="startEditing(item)" class="btn btn-link" style="margin-left: 10px; text-decoration: none">編輯</button>
                         <!-- 保存按鈕 -->
-                        <button v-if="item.editing" @click="saveEdit( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">儲存</button>
+                        <button v-if="item.editing" @click="saveEdit( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="margin-left: 10px; text-decoration: none">儲存</button>
                         <!-- 刪除按鈕 -->
-                        <button v-if="userLoggedIn && this.loginAccount==comment.account" @click="commentDeleteChild( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                        <button v-if="userLoggedIn && !item.editing && this.loginAccount==comment.account" @click="commentDeleteChild( item, item.commentIndex, item.commentIndexIndex )" class="btn btn-link" style="text-decoration: none">刪除</button><br />
                         <span>{{ item.commentText }}</span><br />
                         <!-- 留言文本，如果在編輯模式下顯示編輯框 -->
                         <textarea v-if="item.editing" v-model="item.editingText" rows="1" class="form-control" required style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>

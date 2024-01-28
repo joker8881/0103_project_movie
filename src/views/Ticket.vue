@@ -146,7 +146,7 @@ export default {
         },
       };
       let page = 1;
-      let count = 300; //要抓的電影數
+      let count = 200; //要抓的電影數
       let playingMovies = [];
 
       try {
@@ -305,7 +305,7 @@ export default {
 <style scoped lang="scss">
 .view {
   width: 100vw;
-  height: 270vh;
+  // height: 270vh;
   background-color: rgb(63, 63, 63);
 
   .wrapper {
@@ -365,11 +365,11 @@ export default {
     text-align: center;
 
     .post-box {
-      width: 20vw;
+      width: 300px;
       height: 80vh;
 
       .post {
-        width: 20vw;
+        width: 300px;
         height: 60vh;
         max-height: 60vh;
 

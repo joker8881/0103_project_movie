@@ -29,12 +29,14 @@
                 </tr>
                 <tr v-for="(movie, index) in displayedMovies " :key="index">
 
-                    <td><img :src="'https://image.tmdb.org/t/p/w92' + movie.poster_path" alt="" @click="gotoSeat(movie)">
+                    <td><img :src="'https://image.tmdb.org/t/p/w342' + movie.poster_path" alt=""
+                            @click="gotoSeat(movie)"  style="width: 150px; height: 225px;">
                     </td>
                     <td>{{ movie.id }}</td>
                     <td>{{ movie.title }}</td>
                     <td>{{ movie.release_date }}</td>
-                    <td><button class="create" type="button" @click="gotoSeat(movie)">建立</button></td>
+                    <td><button class="create" type="button" @click="gotoSeat(movie)"
+                            style="background-color: rgb(100, 99, 99);">建立</button></td>
                 </tr>
             </thead>
         </table>
@@ -84,9 +86,6 @@ export default {
                 this.currentPage--;
             }
             this.scrollToTop()
-        },
-        goToPage(pageNumber) {
-            this.currentPage = pageNumber;
         },
         gobackSearch() {
             this.$router.push('/backSearch')
@@ -233,15 +232,18 @@ export default {
 
 <style scoped lang="scss">
 .view {
-    margin-top: 20px;
-    margin-left: 8vw;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgb(100, 99, 99);
 
     .check {
         display: flex;
-        // flex-wrap: wrap;
-        width: 80vw;
+        width: 90vw;
         height: 12vh;
         border: 1px solid black;
+        margin-top: 10px;
 
 
         .movieName {
@@ -257,7 +259,8 @@ export default {
                 height: 5vh;
                 margin-left: 20px;
             }
-            p{
+
+            p {
                 margin: 0;
             }
         }
@@ -279,11 +282,13 @@ export default {
         }
 
         .click {
+            height: 10vh;
             width: 30vw;
+
             .search {
                 width: 30%;
                 height: 5vh;
-                margin-top: 25px;
+                margin-top: 3.5vh;
                 color: white;
                 background-color: salmon;
             }
@@ -291,7 +296,6 @@ export default {
             .search1 {
                 width: 30%;
                 height: 5vh;
-                margin-top: 25px;
                 color: white;
                 background-color: salmon;
                 margin-right: 35px;
@@ -306,12 +310,13 @@ export default {
 
     .icon {
         display: flex;
-        justify-content: start;
-        align-items: center;
-        margin-bottom: 3vh;
+        width: 90vw;
+        height: 8vh;
+
 
         button {
-            background-color: white;
+            // background-color: white;
+            background-color: rgb(100, 99, 99);
             border-width: 0;
             font-size: 32pt;
             width: 5vw;
@@ -319,24 +324,32 @@ export default {
         }
     }
 
+
     .table1 {
-        width: 80vw;
+        width: 90vw;
         height: auto;
 
         .index {
-            background-color: gray;
+            background-color: rgb(218, 216, 216);
 
+        }
 
+        img {
+            cursor: pointer;
+            width: 100%; /* 使圖片寬度滿格 */
+            object-fit: cover; /* 保持圖片比例並填滿td */
         }
 
         th {
             height: 5vh;
             border: 1px solid black;
+
         }
 
         td {
-            height: 5vh;
             border: 1px solid black;
+            color: white;
+            font-size: 16pt;
 
         }
 
@@ -348,14 +361,15 @@ export default {
     }
 
     .pagination {
-        width: 80vw;
+        width: 90vw;
         justify-content: center;
         align-items: center;
+        background-color: rgb(100, 99, 99);
 
         button {
             color: rgb(158, 158, 158);
             font-size: 18pt;
-            background-color: rgb(63, 63, 63);
+            background-color: rgb(100, 99, 99);
             border: 0px;
 
             &.active-page,
@@ -365,5 +379,4 @@ export default {
         }
 
     }
-}
-</style>
+}</style>

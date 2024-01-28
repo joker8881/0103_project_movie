@@ -29,8 +29,8 @@
                 </tr>
                 <tr v-for="(movie, index) in displayedMovies " :key="index">
 
-                    <td><img :src="'https://image.tmdb.org/t/p/w342' + movie.poster_path" alt=""
-                            @click="gotoSeat(movie)"  style="width: 150px; height: 225px;">
+                    <td style="width: 200px;"><img :src="'https://image.tmdb.org/t/p/w342' + movie.poster_path" alt=""
+                            @click="gotoSeat(movie)"  style="width: 200px; ">
                     </td>
                     <td>{{ movie.id }}</td>
                     <td>{{ movie.title }}</td>

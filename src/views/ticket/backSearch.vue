@@ -44,7 +44,7 @@
                     <td>
                         <!-- 修改按鈕 -->
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop" @click="showEditModal(movie);searchTime() " >
+                            data-bs-target="#staticBackdrop" @click="showEditModal(movie); searchTime()">
                             修改
                         </button>
 
@@ -53,8 +53,10 @@
             </thead>
         </table>
         <div class="pagination">
-            <button @click="prevPage()" :disabled="currentPage === 1">上一頁</button>
-            <button @click="nextPage()" :disabled="currentPage === Math.ceil(movieList.length / pageSize)">下一頁</button>
+            <button @click="prevPage" :disabled="currentPage === 1">上一頁</button>
+            <button v-for="pageNumber in pageNumbers" :key="pageNumber" @click="goToPage(pageNumber)"
+                :class="{ 'active-page': pageNumber === currentPage }">{{ pageNumber }}</button>
+            <button @click="nextPage" :disabled="currentPage === totalPages">下一頁</button>
         </div>
     </div>
 
@@ -164,8 +166,22 @@ export default {
             // 返回排序后的片段
             return sortedMovies.slice(startIndex, endIndex);
         },
+        pageNumbers() {
+            const totalPages = Math.ceil(this.movieList.length / this.pageSize);
+            return Array.from({ length: totalPages }, (_, index) => index + 1);
+        },
     },
     methods: {
+        scrollToTop() {
+            window.scrollTo(0, 0);
+        },
+        goToPage(pageNumber) {
+            this.currentPage = pageNumber;
+            this.scrollToTop()
+        },
+        calculateTotalPages() {
+            this.totalPages = Math.ceil(this.movieList.length / this.pageSize);
+        },
         movieTimeAdd() {
             // 檢查是否至少相隔一個 runtime
             if (this.checkTimeGap()) {
@@ -481,10 +497,17 @@ export default {
         align-items: center;
 
         button {
-            color: salmon;
-            background-color: white;
+            color: rgb(158, 158, 158);
             font-size: 18pt;
+            background-color: rgb(63, 63, 63);
+            border: 0px;
+
+            &.active-page,
+            &:hover {
+                color: salmon; // 上一页、下一页的颜色
+            }
         }
+
     }
 }
 

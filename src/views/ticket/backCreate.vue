@@ -1,17 +1,18 @@
 <template>
-    
     <div class="view">
-        <div class="check" >
+        <div class="check">
             <div class="movieName">
                 <p>電影名稱:</p>
                 <input type="text" v-model="this.movieName">
             </div>
-            <div class="onDate">
+            <!-- <div class="onDate">
                 <p>上映日期:</p>
                 <input type="date" name="" id="" v-model="this.onDate">
+            </div> -->
+            <div class="click">
+                <button class="search1" type="submit" @click="getPlayMovie()">正在熱映</button>
+                <button class="search" type="submit" @click="getMovieName()">搜尋</button>
             </div>
-            <button class="search1" type="submit" @click="getPlayMovie()">正在熱映</button>
-            <button class="search" type="submit" @click="getMovieName()" >搜尋</button>
         </div>
         <div class="icon">
             <button type="button" @click="gobackSearch()"><i class="fa-solid fa-rotate-left"></i></button>
@@ -26,9 +27,10 @@
                     <th>新增</th>
 
                 </tr>
-                <tr v-for="(movie, index) in displayedMovies " :key="index" >
+                <tr v-for="(movie, index) in displayedMovies " :key="index">
 
-                    <td><img :src="'https://image.tmdb.org/t/p/w92' + movie.poster_path" alt="" @click="gotoSeat(movie)"></td>
+                    <td><img :src="'https://image.tmdb.org/t/p/w92' + movie.poster_path" alt="" @click="gotoSeat(movie)">
+                    </td>
                     <td>{{ movie.id }}</td>
                     <td>{{ movie.title }}</td>
                     <td>{{ movie.release_date }}</td>
@@ -38,7 +40,9 @@
         </table>
         <div class="pagination">
             <button @click="prevPage" :disabled="currentPage === 1">上一頁</button>
-            <button @click="nextPage" :disabled="currentPage === Math.ceil(objPlayMovies.length / pageSize)">下一頁</button>
+            <button v-for="pageNumber in pageNumbers" :key="pageNumber" @click="goToPage(pageNumber)"
+                :class="{ 'active-page': pageNumber === currentPage }">{{ pageNumber }}</button>
+            <button @click="nextPage" :disabled="currentPage === totalPages">下一頁</button>
         </div>
     </div>
 </template>
@@ -62,15 +66,24 @@ export default {
         }
     },
     methods: {
+        scrollToTop() {
+            window.scrollTo(0, 0);
+        },
+        goToPage(pageNumber) {
+            this.currentPage = pageNumber;
+            this.scrollToTop()
+        },
         nextPage() {
             if (this.currentPage < Math.ceil(this.objPlayMovies.length / this.pageSize)) {
                 this.currentPage++;
             }
+            this.scrollToTop()
         },
         prevPage() {
             if (this.currentPage > 1) {
                 this.currentPage--;
             }
+            this.scrollToTop()
         },
         goToPage(pageNumber) {
             this.currentPage = pageNumber;
@@ -206,7 +219,13 @@ export default {
             const startIndex = (this.currentPage - 1) * this.pageSize;
             const endIndex = startIndex + this.pageSize;
             return this.objPlayMovies.slice(startIndex, endIndex);
-        }
+        },
+        totalPages() {
+            return Math.ceil(this.objPlayMovies.length / this.pageSize);
+        },
+        pageNumbers() {
+            return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+        },
     },
 }
 </script>
@@ -219,24 +238,27 @@ export default {
 
     .check {
         display: flex;
-        flex-wrap: wrap;
+        // flex-wrap: wrap;
         width: 80vw;
-        height: 25vh;
+        height: 12vh;
         border: 1px solid black;
 
 
         .movieName {
-            width: 100vw;
+            width: 60vw;
             display: flex;
             justify-content: start;
             align-items: center;
             font-size: 16pt;
-            margin-left: 50px;
+            margin-left: 20px;
 
             input {
-                width: 75%;
+                width: 80%;
                 height: 5vh;
-                margin-left: 3vw;
+                margin-left: 20px;
+            }
+            p{
+                margin: 0;
             }
         }
 
@@ -256,25 +278,28 @@ export default {
             }
         }
 
-        .search {
-            width: 8%;
-            height: 5vh;
-            margin-top: 35px;
-            color: white;
-            background-color: salmon;
-        }
+        .click {
+            width: 30vw;
+            .search {
+                width: 30%;
+                height: 5vh;
+                margin-top: 25px;
+                color: white;
+                background-color: salmon;
+            }
 
-        .search1 {
-            width: 10%;
-            height: 5vh;
-            margin-top: 35px;
-            color: white;
-            background-color:salmon;
-            margin-right: 35px;
-        }
+            .search1 {
+                width: 30%;
+                height: 5vh;
+                margin-top: 25px;
+                color: white;
+                background-color: salmon;
+                margin-right: 35px;
+            }
 
-        p {
-            margin: 0;
+            p {
+                margin: 0;
+            }
         }
     }
 
@@ -328,10 +353,17 @@ export default {
         align-items: center;
 
         button {
-            color: salmon;
-            background-color: white;
+            color: rgb(158, 158, 158);
             font-size: 18pt;
+            background-color: rgb(63, 63, 63);
+            border: 0px;
+
+            &.active-page,
+            &:hover {
+                color: salmon; // 上一页、下一页的颜色
+            }
         }
+
     }
 }
 </style>

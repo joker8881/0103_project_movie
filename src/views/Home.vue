@@ -517,13 +517,6 @@ export default {
         (this.currentSlide - 1 + this.itemscutArray.length) %
         this.itemscutArray.length;
     },
-    // splitMovies() {
-    //   const pageSize = 9;
-    //   this.pages = [];
-    //   for (let i = 0; i < this.objTypeMovies.length; i += pageSize) {
-    //     this.pages.push(this.objTypeMovies.slice(i, i + pageSize));
-    //   }
-    // },
   },
   async mounted() {
     await this.getPlayMovie();
@@ -536,7 +529,7 @@ export default {
 
 <template>
   <h1>上映中電影</h1>
-  <div class="container mt-5">
+  <div class="container">
     <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
         <div v-for="(itemsChunk, index) in playPerPage" :key="index" :class="['carousel-item', index === currentSlide ? 'active' : '']">
@@ -574,7 +567,7 @@ export default {
   </div>
 
   <h1>近期上映電影</h1>
-  <div class="container mt-5">
+  <div class="container">
     <div id="carouselExample1" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
         <div v-for="(itemsChunk, index) in comePerPage" :key="index" :class="['carousel-item', index === currentSlide ? 'active' : '']">
@@ -612,7 +605,7 @@ export default {
   </div>
 
   <h1>為你推薦</h1>
-  <div class="container mt-5">
+  <div class="container">
     <div id="carouselExample2" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
         <div v-for="(itemsChunk, index) in popularPerPage" :key="index" :class="['carousel-item', index === currentSlide ? 'active' : '']">
@@ -650,7 +643,7 @@ export default {
   </div>
 
   <h1>搜尋電影</h1>
-  <div class="container mt-5">
+  <div class="container">
     <input type="text" v-model="searchText" required style=" width: 25vw; border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"/>
     <button type="submit" class="btn btn-outline-dark" @click="searchMovie" style="margin-left: 10px">
       搜尋
@@ -700,7 +693,7 @@ export default {
       </option>
     </select>
   </div>
-  <div class="container mt-5">
+  <div class="container">
     <div id="customCarousel4" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
         <div v-for="(itemsChunk, index) in typePerPage" :key="index" :class="['carousel-item', index === currentSlide ? 'active' : '']">
@@ -739,6 +732,9 @@ export default {
 </template>
 
 <style scoped lang="scss">
+h1 {
+  margin-top: 10px;
+}
 span,
 button,
 p,

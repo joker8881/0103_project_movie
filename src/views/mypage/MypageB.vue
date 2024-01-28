@@ -1,6 +1,7 @@
 <script>
 import Popper from "vue3-popper";
 import { RouterLink, RouterView } from "vue-router";
+import Swal from 'sweetalert2'
 export default{
     data(){
         return{
@@ -28,6 +29,7 @@ export default{
     components: {
       RouterLink,
       Popper,
+      Swal,
     },
     computed: {
     //計算總頁數
@@ -140,7 +142,7 @@ export default{
       }
       this.love.push(cc)
       console.log(this.love)
-      alert('增加至我的最愛')
+      Swal.fire('增加至我的最愛');
     },
     savetomoviewall(id,Gid,title,overview,path,Originaltitle,Releasedate,Voteavg){
         // 檢查 moviewall 陣列中是否已經存在具有相同 movieid 的物件
@@ -160,10 +162,10 @@ export default{
           }
           this.moviewall.push(cc);
           console.log(this.moviewall);
-          alert('增加至電影牆')
+          Swal.fire("已加入電影牆");
         } else {
           console.log('該電影已存在電影牆，不重複加入：' + title);
-          alert('該電影已存在電影牆　'+ title)
+          Swal.fire('該電影已存在電影牆　'+ title);
         }
     },
     goshow() { //點電影飛去新路由

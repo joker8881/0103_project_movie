@@ -253,6 +253,7 @@ export default {
             align-items: center;
             font-size: 16pt;
             margin-left: 20px;
+            color: white;
 
             input {
                 width: 80%;

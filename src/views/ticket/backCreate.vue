@@ -23,6 +23,7 @@
                     <th>電影海報</th>
                     <th>電影ID</th>
                     <th>電影名稱</th>
+                    <th>電影描述</th>
                     <th>上映日期</th>
                     <th>新增</th>
 
@@ -30,10 +31,12 @@
                 <tr v-for="(movie, index) in displayedMovies " :key="index">
 
                     <td style="width: 200px;"><img :src="'https://image.tmdb.org/t/p/w342' + movie.poster_path" alt=""
-                            @click="gotoSeat(movie)"  style="width: 200px; ">
+                            @click="gotoSeat(movie)" style="width: 200px; ">
                     </td>
                     <td>{{ movie.id }}</td>
                     <td>{{ movie.title }}</td>
+                    <td style=" width: 35vw;">{{truncateOverview( movie.overview === "" ? "尚未有簡介" :
+                        movie.overview) }}</td>
                     <td>{{ movie.release_date }}</td>
                     <td><button class="create" type="button" @click="gotoSeat(movie)"
                             style="background-color: rgb(100, 99, 99);">建立</button></td>
@@ -68,6 +71,14 @@ export default {
         }
     },
     methods: {
+        truncateOverview(overview) {
+            const maxLength = 200; // 设置最大字数
+            if (overview.length > maxLength) {
+                return overview.substring(0, maxLength) + "...";
+            } else {
+                return overview;
+            }
+        },
         scrollToTop() {
             window.scrollTo(0, 0);
         },
@@ -337,8 +348,10 @@ export default {
 
         img {
             cursor: pointer;
-            width: 100%; /* 使圖片寬度滿格 */
-            object-fit: cover; /* 保持圖片比例並填滿td */
+            width: 100%;
+            /* 使圖片寬度滿格 */
+            object-fit: cover;
+            /* 保持圖片比例並填滿td */
         }
 
         th {

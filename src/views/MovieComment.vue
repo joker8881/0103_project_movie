@@ -584,10 +584,10 @@ export default {
         </div>
       </div>
     </div>
-    <hr />
+    <!-- <hr /> -->
 
     <!-- 預告片 -->
-    <div class="middleInfo">
+    <div class="middleInfo" style="margin-top:  50px; ;">
       <div class="middle">
         <div class="mid">
           電影預告
@@ -1144,5 +1144,5 @@ button {
   font-size: 1.5em;
   margin: 0;
   overflow: auto;
-  max-height: 250px;
+  max-height: 190px;
 }</style>

@@ -189,7 +189,7 @@ export default {
         return "1年前";
       }
     },
-    chooseComment(comment, index) { // 顯示點擊回覆留言的編號
+    chooseComment(comment, index) { // 顯示點擊回覆留言的編號123
       // console.log('回覆按鈕被點擊，主要留言的位置：', index);
       this.commentIndex = index;
       comment.replying = true;

@@ -737,14 +737,22 @@ export default defineComponent({
 </div>
   <div class="Second" v-show="convasIs" id="Second">
     
+   <!-- 用來推的p -->
+   <p style="color:rgb(255, 255, 255, 0.01);">232</p>
+    <h1 style="margin-top:50px;">展示區</h1>
+    <!-- 用來推的div -->
+    <div style="color:rgba(255, 255, 255, 0.01);">232</div>
+    
     <div class="ShowPoster">
+      
+      
       <!-- <p>電影名稱: {{ selectedMovie.title }}</p> -->
  <n-carousel
   direction="vertical"
   :show-dots="showDots"
   dot-placement="right"
   mousewheel
-  style="width: 602.4px; height: 352px;"
+  style="width: 610.4px; height: 360px;"
   class="NColor"
 >
 <div v-for="(image, index) in carouselImages" :key="index">
@@ -756,6 +764,7 @@ export default defineComponent({
   </div>
 
 </n-carousel>
+
 </div>
 </div>
 </template>
@@ -792,7 +801,7 @@ export default defineComponent({
   // width: 100vw;
   // height: 100vh;
   // border: 1px solid black;
-
+  background-color: rgb(202, 207, 230);
   .moviePosterAll {
     width: 100%;
     // height: 100%;
@@ -909,6 +918,7 @@ export default defineComponent({
 
 .bord {
   height: 170vh;
+  
   // margin-top: 50px;
   background-image: url(../src/picture/bordImage.jpg);
   background-repeat: no-repeat;
@@ -926,16 +936,25 @@ export default defineComponent({
 
 .Second {
   width: 100vw;
-  height: 150vh;
+  height: 130vh;
   // border: 1px solid black;
-  background-image: url(../src/picture/CreateBackground.png);
+  background-image: url(../src/picture/bordImage.jpg);
   background-repeat: no-repeat;
   background-size: cover;
 
+
+
   .ShowPoster {
-    width: 100%;
-    height: 100%;
+    width: 903px;
+    height: 700px;
+    margin-left: 21%;
+    margin-top: 3.5%;
     // border: 1px solid black;
+  background-image: url(../src/picture/12345603.png);
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  
     position: relative;
 
     .n-carousel {
@@ -1139,9 +1158,9 @@ span {
 }
 
 .NColor{
-  background-color: rgb(255, 255, 255,0.2);
-  margin-left: 6%;
-  margin-top: 10%;
+  background-color: rgb(255, 255, 255,0.01);
+  margin-left: -8%;
+  margin-top: -8%;
   // border: 2px solid #C0AC6B !important;
 
 }

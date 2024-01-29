@@ -421,7 +421,7 @@ export default {
   <div class="body">
     <!-- 電影資料 -->
     <div class="header">
-      <!-- <button type="button" @click="goback">去後台</button> -->
+      <button type="button" @click="goback">去後台</button>
       <p class="textHeader" style="margin: 1% auto 1% auto; width: 60%; background-color: rgb(176, 182, 213); border-radius: 20px;">目前頁面：{{ this.account }}</p>
       <div class="movieData">
         <!-- <img :src="'https://image.tmdb.org/t/p/w342' + this.movieInfo.movieBack " alt="" style="width: 100vw; height: 100vh; opacity: 0.2; position: fixed; top: 0; left: 0;"><br> -->

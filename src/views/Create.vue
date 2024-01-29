@@ -764,7 +764,7 @@ export default defineComponent({
   </div>
 
 </n-carousel>
-
+<!-- getMovieType() { //電影類型 -->
 </div>
 </div>
 </template>

@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { RouterLink } from "vue-router";
 import Cookies from 'js-cookie'
 import Popper from "vue3-popper";
+import Swal from 'sweetalert2'
 export default {
   data() {
     return{
@@ -31,12 +32,17 @@ export default {
       changeemail:"",
       emailboxA:["@gmail.com","@yahoo.com.tw"],
       emailboxTarget:"",
-      buylist:[]
+      buylist:[],
+      holdname:"",
+      holdcardnumber:"",
+      holdcarddate:"",
+      holdcardpass:"",
     }
   },
   components: {
     RouterLink,
     Popper,
+    Swal,
   },
   methods:{
     clickC(){
@@ -180,9 +186,9 @@ export default {
                     console.log(data)
                     console.log(data.code)
                     if(data.code = 200){
-                      alert('修改完成')
+                      Swal.fire('修改完成')
                     } else(
-                      alert('修改失敗')
+                      Swal.fire('修改失敗')
                     )
                 })
                 .catch(error => {
@@ -243,6 +249,9 @@ export default {
         if (indexToDelete !== -1) {
         // 从数组中删除该对象
         this.buylist.splice(indexToDelete, 1);
+        Swal.fire('已取消訂單')
+        } else{
+          Swal.fire('訂單已繳費，無法取消')
         }
       }
       })
@@ -250,6 +259,32 @@ export default {
       console.error('Error fetching data:', error);
       });
     },
+    paycheck(index){
+      console.log(index)
+      fetch('http://localhost:8080/movie/buyinfo/paycheck', {
+        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          number:index,
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+      // 處理返回的數據
+      console.log(data)
+      console.log(data.code)
+      if(data.code = 200){
+        Swal.fire('已繳費完成')
+      } else{
+        Swal.fire('已繳費過')
+      }
+      })
+      .catch(error => {
+      console.error('Error fetching data:', error);
+      });
+    }
   },
   mounted(){
     this.backuserc()
@@ -266,7 +301,7 @@ export default {
             <div class="centerbox">
               <div class="leftbox">
                 <p class="transcolor" @click="gotomyInfo()">個人資訊</p>
-                <p class="transcolor" @click="gotomyticket()">訂票資訊</p>
+                <p class="transcolor" @click="gotomyticket()" v-if="this.accountadminverify == false">訂票資訊</p>
                 <p class="transcolor" @click="gotomypageB()">修改個人頁</p>
                 <p class="transcolor" v-if="this.accountadminverify" @click="gotobackcreate()">後台系統</p>
               </div>
@@ -382,8 +417,9 @@ export default {
                     <p>座位：{{ item.seat }}</p>
                     <p>總花費：{{ item.price }}</p>
                     <div class="logboxC">
-                      <button type="button" class="buttonC" data-bs-toggle="modal" data-bs-target="#cancel">取消訂單</button>
-                      <button type="button" class="buttonC" data-bs-toggle="modal" data-bs-target="#pay">確認付款</button>
+                      <button type="button" class="buttonC" data-bs-toggle="modal" data-bs-target="#cancel" v-if="item.confirmpay==false">取消訂單</button>
+                      <button type="button" class="buttonC" data-bs-toggle="modal" data-bs-target="#pay" v-if="item.confirmpay==false" :disabled="this.buylist.confirmpay ==true">確認付款</button>
+                      <button type="button" class="buttonC" data-bs-toggle="modal" data-bs-target="#pay" v-if="item.confirmpay==true" :disabled="item.confirmpay === true">已繳費完成</button>
                     </div>
                     <hr class="style-two">
                   <!-- 取消訂單 -->
@@ -406,35 +442,34 @@ export default {
                       <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title a" id="exampleModalLabel">請輸入修改</h5>
+                            <h5 class="modal-title a" id="exampleModalLabel">請輸入信用卡資訊</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
-                          <div class="modal-body mbl">
-                            <p class="boxT font">請輸入舊的密碼</p>
+                          <div class="modal-body">
+                            <p class="textall">持卡人姓名</p>
                             <div class="form-floating mb-3">
-                              <input type="password" class="form-control tbp" id="acc2" placeholder="" v-model="this.password2">
-                              <i v-if="this.show2 == 0" class="fa-solid fa-eye fa-lg eye" @click="this.clickC2()" name="eye2"></i>
-                              <i v-if="this.show2 == 1" class="fa-solid fa-eye-slash fa-lg eye" @click="this.clickC2()" name="eye2"></i>
-                              <label class="tbc" for="floatingInput">請在這裡輸入舊密碼</label>
+                                <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="this.holdname">
+                                <label class="tbck" for="floatingInput">請在這裡輸入持卡人姓名</label>
                             </div>
-                            <p class="boxT font">請輸入新的密碼</p>
+                            <p class="textall">信用卡卡號</p>
                             <div class="form-floating mb-3">
-                              <input type="password" class="form-control tbp" id="acc3" placeholder="" v-model="this.password3">
-                              <i v-if="this.show3 == 0" class="fa-solid fa-eye fa-lg eye" @click="this.clickC3()" name="eye3"></i>
-                              <i v-if="this.show3 == 1" class="fa-solid fa-eye-slash fa-lg eye" @click="this.clickC3()" name="eye3"></i>
-                              <label class="tbc" for="floatingInput">請在這裡輸入新密碼</label>
+                                <input type="text" class="form-control tb" id="floatingInput" placeholder="name@example.com" v-model="this.holdcardnumber">
+                                <label class="tbck" for="floatingInput">請在這裡輸入卡號</label>
                             </div>
-                            <p class="boxT font">請再次確認密碼</p>
+                            <p class="textall">到期日</p>
                             <div class="form-floating mb-3">
-                              <input type="password" class="form-control tbp" id="acc4" placeholder="" v-model="this.password4">
-                              <i v-if="this.show4 == 0" class="fa-solid fa-eye fa-lg eye" @click="this.clickC4()" name="eye4"></i>
-                              <i v-if="this.show4 == 1" class="fa-solid fa-eye-slash fa-lg eye" @click="this.clickC4()" name="eye4"></i>
-                              <label class="tbc" for="floatingInput">請在這裡確認密碼</label>
+                                <input type="date" class="form-control tb" id="floatingInput" placeholder="" v-model="this.holdcarddate">
+                                <label class="tbck" for="floatingInput">在這裡輸入到期日</label>
+                            </div>
+                            <p class="textall">安全碼</p>
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control tb" id="floatingInput" placeholder="" v-model="this.holdcardpass">
+                                <label class="tbck" for="floatingInput">在這裡輸入安全碼</label>
                             </div>
                           </div>
                           <div class="modal-footer" style="justify-content: space-around;">
                               <button type="button" class="btn btn-primary a" data-bs-dismiss="modal" style="background-color: green;border: none;">取消</button>
-                              <button type="button" class="btn btn-primary a" data-bs-dismiss="modal" style="background-color: red;border: none;" @click="updateComfirmpassword" :disabled="this.password2 =='' || this.password3=='' || this.password4==''">確認修改</button>
+                              <button type="button" class="btn btn-primary a" data-bs-dismiss="modal" style="background-color: red;border: none;" @click="paycheck(item.number)" :disabled="!this.holdname || !this.holdcardnumber || !this.holdcarddate || !this.holdcardpass">確認修改</button>
                           </div>
                         </div>
                       </div>
@@ -547,6 +582,12 @@ export default {
   .tbc{
     font-family:'jf-openhuninn-2.0';
     font-size: 1em;
+    margin-left: 10%;
+  }
+
+  .tbck{
+    font-family:'jf-openhuninn-2.0';
+    font-size: 0.7em;
     margin-left: 10%;
   }
   .checkbox{

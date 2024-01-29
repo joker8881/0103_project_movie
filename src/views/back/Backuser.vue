@@ -242,7 +242,7 @@ export default {
         let indexToDelete = this.buylist.findIndex(obj => obj.number === index);
         if (indexToDelete !== -1) {
         // 从数组中删除该对象
-        // this.buylist.splice(indexToDelete, 1);
+        this.buylist.splice(indexToDelete, 1);
         }
       }
       })

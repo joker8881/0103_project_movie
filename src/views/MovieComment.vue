@@ -1,7 +1,6 @@
 <script>
 import Cookies from "js-cookie";
 import axios from "axios";
-123
 export default {
   data() {
     return {
@@ -587,7 +586,7 @@ export default {
     <!-- <hr /> -->
 
     <!-- 預告片 -->
-    <div class="middleInfo" style="margin-top:  50px; ;">
+    <div class="middleInfo" style="margin-top:  50px; ">
       <div class="middle">
         <div class="mid">
           電影預告

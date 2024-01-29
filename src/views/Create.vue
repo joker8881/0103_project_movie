@@ -783,7 +783,7 @@ export default defineComponent({
 <div v-for="(image, index) in carouselImages" :key="index">
     <img class="carousel-img" :src="image" style=" margin-top:0px; max-width: 100%; max-height: 100%; object-fit: cover;" />
     <div class="" style="position:absolute; left:3.1%; bottom:1.2%;">
-      <p style=" color:black; background-color:pink; border-radius:20px; margin-bottom:10px; padding: 5px 15px;">{{ "設計者:" + carouselAccount[index] }}</p>
+      <p style=" color:black; background-color:pink; border-radius:20px; margin-bottom:10px; padding: 5px 15px;">{{ "創作者:" + carouselAccount[index] }}</p>
         <p style=" color:black; background-color:#a4b3cc; border-radius:20px; padding: 5px 15px;">{{ "作品名稱:" + carouselArt[index] }}</p>
       </div>
   </div>

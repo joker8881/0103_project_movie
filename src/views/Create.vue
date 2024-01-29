@@ -777,8 +777,8 @@ export default defineComponent({
   background-image: url(../src/picture/CreateBackground.png);
   background-repeat: no-repeat;
   background-size: cover;
-  overflow-x: hidden; //隱藏水平滾動條
-  overflow-y: hidden; //隱藏垂直滾動條
+  overflow-x: hidden; //隱藏水平滾動條.
+  overflow-y: hidden; //隱藏垂直滾動條.
 
   .searchMovie1 {
     margin-top: 280px;

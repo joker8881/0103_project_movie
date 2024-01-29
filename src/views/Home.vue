@@ -534,15 +534,15 @@ export default {
       <div class="carousel-inner">
         <div v-for="(itemsChunk, index) in playPerPage" :key="index" :class="['carousel-item', index === currentSlide ? 'active' : '']">
           <div class="row">
-            <div v-for="(item, innerIndex) in itemsChunk" :key="innerIndex" class="col-md-4">
+            <div v-for="(item, innerIndex) in itemsChunk" :key="innerIndex" class="col">
               <a @click="chooseMovie(item)">
-                <div class="card" style="width: 400px">
-                  <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100 card-img-top" alt="無電影海報"/>
-                  <div class="card-body">
-                    <p class="card-text">
-                      <span>{{ "名稱：" + item.title }}</span><br />
-                      <span>{{ "上映日期：" + item.release_date }}</span>
-                    </p>
+                <div class="card" style="width: 400px;">
+                  <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100 card-img-top" alt="無電影海報" style="width: 400px; height: 500px;"/>
+                  <div class="card-body" style="width: 400px; height: 110px;">
+                      <p class="card-text">
+                        <span>{{ "名稱：" + item.title }}</span><br />
+                        <span>{{ "上映日期：" + item.release_date }}</span>
+                      </p>
                   </div>
                 </div>
               </a>
@@ -574,13 +574,13 @@ export default {
           <div class="row">
             <div v-for="(item, innerIndex) in itemsChunk" :key="innerIndex" class="col-md-4">
               <a @click="chooseMovie(item)">
-                <div class="card" style="width: 400px">
-                  <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100 card-img-top" alt="無電影海報"/>
-                  <div class="card-body">
-                    <p class="card-text">
-                      <span>{{ "名稱：" + item.title }}</span><br/>
-                      <span>{{ "上映日期：" + item.release_date }}</span>
-                    </p>
+                <div class="card" style="width: 400px;">
+                  <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100 card-img-top" alt="無電影海報" style="width: 400px; height: 500px;"/>
+                  <div class="card-body" style="width: 400px; height: 110px;">
+                      <p class="card-text">
+                        <span>{{ "名稱：" + item.title }}</span><br />
+                        <span>{{ "上映日期：" + item.release_date }}</span>
+                      </p>
                   </div>
                 </div>
               </a>
@@ -612,13 +612,13 @@ export default {
           <div class="row">
             <div v-for="(item, innerIndex) in itemsChunk" :key="innerIndex" class="col-md-4">
               <a @click="chooseMovie(item)">
-                <div class="card" style="width: 400px">
-                  <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100 card-img-top" alt="無電影海報"/>
-                  <div class="card-body">
-                    <p class="card-text">
-                      <span>{{ "名稱：" + item.title }}</span><br />
-                      <span>{{ "上映日期：" + item.release_date }}</span>
-                    </p>
+                <div class="card" style="width: 400px;">
+                  <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100 card-img-top" alt="無電影海報" style="width: 400px; height: 500px;"/>
+                  <div class="card-body" style="width: 400px; height: 110px;">
+                      <p class="card-text">
+                        <span>{{ "名稱：" + item.title }}</span><br />
+                        <span>{{ "上映日期：" + item.release_date }}</span>
+                      </p>
                   </div>
                 </div>
               </a>
@@ -655,13 +655,13 @@ export default {
           <div class="row">
             <div v-for="(item, innerIndex) in itemsChunk" :key="innerIndex" class="col-md-4">
               <a @click="chooseMovie(item)">
-                <div class="card" style="width: 400px">
-                  <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100 card-img-top" alt="無電影海報"/>
-                  <div class="card-body">
-                    <p class="card-text">
-                      <span>{{ "名稱：" + item.title }}</span><br />
-                      <span>{{ "上映日期：" + item.release_date }}</span>
-                    </p>
+                <div class="card" style="width: 400px;">
+                  <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100 card-img-top" alt="無電影海報" style="width: 400px; height: 500px;"/>
+                  <div class="card-body" style="width: 400px; height: 110px;">
+                      <p class="card-text">
+                        <span>{{ "名稱：" + item.title }}</span><br />
+                        <span>{{ "上映日期：" + item.release_date }}</span>
+                      </p>
                   </div>
                 </div>
               </a>
@@ -700,13 +700,13 @@ export default {
           <div class="row">
             <div v-for="(item, innerIndex) in itemsChunk" :key="innerIndex" class="col-md-4">
               <a @click="chooseMovie(item)">
-                <div class="card">
-                  <img :src="'https://image.tmdb.org/t/p/w342' + item.poster_path" class="d-block w-100 card-img-top" alt="無電影海報"/>
-                  <div class="card-body">
-                    <p class="card-text">
-                      <span>{{ "名稱：" + item.title }}</span><br />
-                      <span>{{ "上映日期：" + item.release_date }}</span>
-                    </p>
+                <div class="card" style="width: 400px;">
+                  <img :src="'https://image.tmdb.org/t/p/w500' + item.poster_path" class="d-block w-100 card-img-top" alt="無電影海報" style="width: 400px; height: 500px;"/>
+                  <div class="card-body" style="width: 400px; height: 110px;">
+                      <p class="card-text">
+                        <span>{{ "名稱：" + item.title }}</span><br />
+                        <span>{{ "上映日期：" + item.release_date }}</span>
+                      </p>
                   </div>
                 </div>
               </a>
@@ -734,6 +734,7 @@ export default {
 <style scoped lang="scss">
 h1 {
   margin-top: 10px;
+  text-align: center;
 }
 span,
 button,
@@ -742,14 +743,14 @@ label,
 select {
   font-family: "Montserrat", sans-serif, sans-serif, "M PLUS 1";
   color: #557;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .movieType {
   button {
     width: 200px;
     height: 100px;
-    margin: 20px;
+    margin: 22px;
 
     &:hover {
       background-color: gray;

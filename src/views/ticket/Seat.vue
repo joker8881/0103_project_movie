@@ -65,11 +65,14 @@ export default {
             movieInfo: {},
             userLoggedIn: false,
             account: "",
+            mail:"",
             lockedSeats: [
                 // { row: 2, col: 3 },
                 // { row: 4, col: 6 },
                 // { row: 3, col: 2 }
-            ] // 鎖定的座位
+            ], // 鎖定的座位
+            loginAccount:"",
+            accountInfo:[]
         };
     }, computed: {
         formattedSelectedSeatsString() {
@@ -108,6 +111,7 @@ export default {
             this.$router.push("/ticket")
         },
         buyTicket() {
+            console.log(this.mail)
             axios({
                 url: 'http://localhost:8080/movie/buyinfo/create',
                 method: 'POST',
@@ -115,6 +119,7 @@ export default {
                     "Content-Type": "application/json"
                 },
                 data: {
+                    mail:this.mail,
                     account: this.account,
                     movie: this.movieInfo.movieName,
                     movieId: this.movieInfo.movieId,
@@ -135,6 +140,46 @@ export default {
             }
             )
 
+        },
+        backuserc() { //點電影飛去新路由
+            console.log(Cookies.get('account'))
+            this.loginAccount = Cookies.get('account')
+            
+            if(this.loginAccount != ""){
+                fetch('http://localhost:8080/movie/user/loginCheck', {
+                    method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                    account:this.loginAccount,
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                // 處理返回的數據
+                    console.log(data)
+                    console.log(data.code)
+                    this.mail = data.mypageList.email
+                    this.accountInfo = data.mypageList
+                    console.log(this.accountInfo)
+                    console.log(this.mail)
+                    if(data.code == 201){
+                    Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
+                    Cookies.set('account', this.loginAccount, { expires: 7, path: '/' });
+                    this.accountadminverify = true
+                    }
+                    if(data.code == 200){
+                    Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
+                    Cookies.set('account', this.loginAccount, { expires: 7, path: '/' });
+                    console.log("A")
+                    this.accountadminverify = false
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+            } 
         },
         ticketSearch() {
             axios({
@@ -177,6 +222,7 @@ export default {
         console.log("Movie Details:", this.movieInfo);
         this.ticketSearch()
         this.logincheck()
+        this.backuserc()
     },
     watch: {
         selectedSeats() {

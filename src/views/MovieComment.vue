@@ -121,7 +121,7 @@ export default {
             for (let j = 0; j < this.type.length; j++)
               if (
                 parseInt(this.movieInfo.movieGenreid[i]) === this.type[j].id
-              ) {
+              ) {ㄆ
                 this.movieType.push(this.type[j].name);
               }
           }

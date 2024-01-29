@@ -264,7 +264,7 @@ export default {
     },
     mounted() {
         this.getPlayMovie()
-        this.getMovieType()
+        // this.getMovieType()
     },
     computed: {
         displayedMovies() {

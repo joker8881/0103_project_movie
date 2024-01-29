@@ -9,7 +9,7 @@ export default {
       objSearchMovies: [], // 搜尋電影
       objTypeMovies: [], // 選擇類型找電影
       itemsPerSlide: 3, // 每頁顯示的輪播項目數量
-      itemsPerSlide1: 9, // 每頁顯示的輪播項目數量
+      // itemsPerSlide1: 9, // 每頁顯示的輪播項目數量
       currentSlide: 0,
       selectedType: "", // 選單選到的類型
       searchText: "", // 搜尋電影
@@ -46,10 +46,10 @@ export default {
       for (
         let i = 0;
         i < this.objTypeMovies.length;
-        i += this.itemsPerSlide1
+        i += this.itemsPerSlide
       ) {
         cutArray.push(
-          this.objTypeMovies.slice(i, i + this.itemsPerSlide1)
+          this.objTypeMovies.slice(i, i + this.itemsPerSlide)
         );
       }
       console.log("typePerPage:", cutArray);

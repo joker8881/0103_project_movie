@@ -308,7 +308,7 @@ export default {
       const dirtyWords = ['黃牛'];
       let filteredText = commentText;
       for (const word of dirtyWords) {
-        const regex = new RegExp(word, 'gi');
+        const regex = new RegExp(word.split('').join('\\s*'), 'gi');
         filteredText = filteredText.replace(regex, '*'.repeat(word.length));
       }
       return filteredText;

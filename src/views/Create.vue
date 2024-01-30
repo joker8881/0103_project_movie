@@ -795,6 +795,7 @@ export default defineComponent({
 
 </n-carousel>
 <div v-else>
+  <!-- 用來推的p -->
   <p style="color:rgba(255, 255, 255, 0.01);">232</p>
     <h1 style="font-size:20pt; margin-top:215px; margin-right:15px;">未點選『前往展示區』或『暫無作品』</h1>
   </div>

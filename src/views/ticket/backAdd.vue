@@ -284,7 +284,7 @@ export default {
     justify-content: center;
     align-items: center;
     background-color: rgb(174, 177, 192);
-    height: 120vh;
+    height: 125vh;
 
     .createMovieInfo {
         width: 50vw;

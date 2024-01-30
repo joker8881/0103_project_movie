@@ -590,25 +590,20 @@ export default {
               <div class="type">
                 <h3 class="textHeader">類型：</h3>
                 <span class="textall" style="line-height: 50px" v-for="(item, index) in this.movieType" :key="index">{{
-                  item }}<span v-if="index < this.movieType.length - 1" class="textall"
-                    style="font-size: 1em">、</span></span><br />
+                  item }}<span v-if="index < this.movieType.length - 1" class="textall" style="font-size: 1em">、</span></span><br />
               </div>
               <div class="director">
                 <h3 class="textHeader">片長：</h3>
-                <span class="textallx" style="line-height: 50px">{{ this.hours == 0 && this.minutes == 0 ? "未知" :
-                  this.hours + "小時" + this.minutes + "分鐘" }}</span><br />
+                <span class="textallx" style="line-height: 50px">{{ this.hours == 0 && this.minutes == 0 ? "未知" : this.hours + "小時" + this.minutes + "分鐘" }}</span><br />
               </div>
               <div class="director">
                 <h3 class="textHeader">導演：</h3>
-                <span class="textall" style="line-height: 50px" v-for="(item, index) in this.directors" :key="index">{{
-                  item.original_name }}<span v-if="index < this.directors.length - 1">,</span></span><br />
+                <span class="textall" style="line-height: 50px" v-for="(item, index) in this.directors" :key="index">{{ item.original_name }}<span v-if="index < this.directors.length - 1">,</span></span><br />
               </div>
               <div class="casts">
                 <h3 class="textHeader" style="width: 105px; height: 50px">演員：</h3>
                 <div style="width: 90%; display: flex">
-                  <p class="textall" style="line-height: 50px" v-for="(item, index) in this.casts" :key="index">{{
-                    item.original_name }}<span v-if="index < this.casts.length - 1" class="textall"
-                      style="font-size: 1em">、</span></p><br />
+                  <p class="textall" style="line-height: 50px" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em">、</span></p><br />
                 </div>
               </div>
               <div class="voteAvg">
@@ -617,8 +612,7 @@ export default {
               </div>
               <div class="movieOverview">
                 <h3 class="textHeader" style="width: 105px; height: 50px">簡介：</h3>
-                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 90%; line-height: 50px">{{
-                  this.movieInfo.movieOverview }}</p>
+                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 90%; line-height: 50px">{{ this.movieInfo.movieOverview }}</p>
                 <p class="textall" v-else>此電影無簡介</p>
               </div>
             </div>

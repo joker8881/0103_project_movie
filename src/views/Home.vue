@@ -9,7 +9,6 @@ export default {
       objSearchMovies: [], // 搜尋電影
       objTypeMovies: [], // 選擇類型找電影
       itemsPerSlide: 3, // 每頁顯示的輪播項目數量
-      // itemsPerSlide1: 9, // 每頁顯示的輪播項目數量
       currentSlide: 0,
       selectedType: "", // 選單選到的類型
       searchText: "", // 搜尋電影
@@ -681,6 +680,7 @@ export default {
       </button>
     </div>
   </div>
+  
   <h1>分類選擇</h1>
   <div class="movieType">
     <select @change="getTypeMovie">

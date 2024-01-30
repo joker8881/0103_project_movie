@@ -147,7 +147,7 @@ export default {
                     body: JSON.stringify({
                     account:this.loginAccount,
                     password:this.password,
-                    newPassword:this.changeName,
+                    name:this.changeName,
                     phone:this.changephone,
                     email:(this.changeemail + this.emailboxTarget),
                     })

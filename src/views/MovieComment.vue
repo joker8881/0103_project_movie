@@ -596,7 +596,7 @@ export default {
               <div class="director">
                 <h3 class="textHeader">片長：</h3>
                 <span class="textallx" style="line-height: 50px">{{ this.hours == 0 && this.minutes == 0 ? "未知" :
-                  this.hours + "h" + this.minutes + "m" }}</span><br />
+                  this.hours + "小時" + this.minutes + "分鐘" }}</span><br />
               </div>
               <div class="director">
                 <h3 class="textHeader">導演：</h3>

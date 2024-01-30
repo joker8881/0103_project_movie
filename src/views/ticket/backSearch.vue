@@ -10,7 +10,7 @@
                 <input type="text" name="" id="" v-model="this.cinema">
             </div>
             <div class="onDate">
-                <p style="margin: 0;">撥放日期：</p>
+                <p style="margin: 0;">播放日期：</p>
                 <input type="date" name="" id="" v-model="this.startDate">
                 <p>到</p>
                 <input type="date" name="" id="" v-model="this.endDate">
@@ -95,13 +95,13 @@
                         <label for="floatingPrice">票價</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="date" class="form-control" id="floatingTime" placeholder="撥放日期"
+                        <input type="date" class="form-control" id="floatingTime" placeholder="播放日期"
                             v-model="this.editMovie.movieOnDate">
-                        <label for="floatingTime">撥放日期</label>
+                        <label for="floatingTime">播放日期</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="time" class="form-control" id="floatingTime" placeholder="撥放時間" v-model="movieNewTime">
-                        <label for="floatingTime">撥放時間</label>
+                        <input type="time" class="form-control" id="floatingTime" placeholder="播放時間" v-model="movieNewTime">
+                        <label for="floatingTime">播放時間</label>
                         <button type="button" @click="movieTimeAdd()" class="buttonS">加入</button>
                     </div>
                     <p style="margin: 0;" class="textT">時間選項</p>
@@ -144,7 +144,7 @@ export default {
             pageSize: 10,
             // 添加一个用于编辑模态框的数据对象
             editMovie: [],
-            //電影撥放時間
+            //電影播放時間
             runtime: "",
             //電影相關資訊
             number: "",
@@ -412,7 +412,7 @@ export default {
                 errorMessage += "請填寫有效的價格\n";
             }
             if (this.editMovie.movieOnDate === "") {
-                errorMessage += "請填寫撥放日期\n";
+                errorMessage += "請填寫播放日期\n";
             }
             if (this.editMovie.movieOnTime == "") {
                 errorMessage += "請填寫影片播放時間\n";
@@ -479,7 +479,7 @@ export default {
                 errorMessage += "請填寫有效的價格\n";
             }
             if (this.editMovie.movieOnDate === "") {
-                errorMessage += "請填寫撥放日期\n";
+                errorMessage += "請填寫播放日期\n";
             }
             if (this.editMovie.movieOnTime == "") {
                 errorMessage += "請填寫影片播放時間\n";
@@ -751,7 +751,7 @@ export default {
     margin-top: 2.5%;
     transition: 0.4s;
     line-height: 1em;
-    margin: 20px 20px 10px 20px;
+    margin: 20px 90px 10px 20px;
 
     &:hover {
         background-color: rgb(227, 20, 20);
@@ -783,14 +783,14 @@ export default {
     width: 6.2vw;
     height: 5.9vh;
     border: none;
-    background-color: blue;
+    background-color: rgb(110, 110, 226);
     border-radius: 10px;
     font-size: 1em;
     font-family: 'jf-openhuninn-2.0';
     margin-top: 2.5%;
     transition: 0.4s;
     line-height: 1em;
-    margin: 20px 20px 10px 20px;
+    margin: 20px 10px 10px 20px;
 
     &:hover {
         background-color: blue;

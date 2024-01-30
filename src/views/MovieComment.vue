@@ -572,7 +572,7 @@ export default {
   </div>
 
   <div class="body">
-    <!-- 電影資料 -->
+    <!-- 電影資料  -->
     <div class="header">
       <div class="movieData">
         <div class="movieDataLeft">

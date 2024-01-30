@@ -369,6 +369,7 @@ export default {
       width: 300px;
       height: 80vh;
     border: 1px solid black;
+    // border: 1px solid black;
 
 
       .post {

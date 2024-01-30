@@ -36,10 +36,12 @@
           v-if="selectedTab === '即將上映'">
           <div class="post"><img :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path" alt=""
               @click="gotointroduce(movie)">
+              <div style="border:1.5px solid pink; border-radius: 0px 0px 10px 10px;">
             <div class="title" style="color:black; margin-top: 17px;">{{ movie.title }}</div>
             <!-- <div class="title1">{{ movie.original_title }}</div>
             <div>評分:{{ movie.vote_average === 0 ? '尚未有評分' : movie.vote_average }}</div> -->
-            <div style="color:black; margin-top: 12px;">上映日:{{ movie.release_date }}</div>
+            <div style="color:black; margin-top: 12px; margin-bottom: 8px;">上映日:{{ movie.release_date }}</div>
+          </div>
           </div>
         </div>
       </div>

@@ -644,10 +644,10 @@ export default {
         選取影城
       </div>
       <div class="selectButton">
-        <button type="button" @click="cinemaSearch('紹仁戲院')">紹仁戲院</button>
-        <button type="button" @click="cinemaSearch('裕峰影城')">裕峰影城</button>
-        <button type="button" @click="cinemaSearch('梓宏影院')">梓宏影院</button>
-        <button type="button" @click="cinemaSearch('暐衡劇院')">暐衡劇院</button>
+        <button style="border-radius: 6px; font-size: 15pt;" type="button" @click="cinemaSearch('紹仁戲院')">紹仁戲院</button>
+        <button style="border-radius: 6px; font-size: 15pt;" type="button" @click="cinemaSearch('裕峰影城')">裕峰影城</button>
+        <button style="border-radius: 6px; font-size: 15pt;" type="button" @click="cinemaSearch('梓宏影院')">梓宏影院</button>
+        <button style="border-radius: 6px; font-size: 15pt;" type="button" @click="cinemaSearch('暐衡劇院')">暐衡劇院</button>
       </div>
       <div class="selectDate" v-for="(movie, index) in objPlayingMovie">
         <h6>{{ movie.onDate }}</h6>
@@ -656,12 +656,12 @@ export default {
           <option value="">選擇時間</option>
           <option v-for="(time, timeIndex) in JSON.parse(movie.onTime)" :key="timeIndex">{{ time }}</option>
         </select>
-        <button type="button" @click="gotoSeat(movie)">選取位置</button>
+        <button style="border-radius: 6px; font-size: 12pt; color:black; background-color: rgb(245, 208, 215);" type="button" @click="gotoSeat(movie)">選取位置</button>
       </div>
     </div>
 
     <!-- 創作區 -->
-    <h1>展示區</h1>
+    <h1>網友創作展示</h1>
     <div class="ShowPoster">
       <div v-if="carouselImages.length === 0">
         <h4>此電影暫無創作</h4>
@@ -1077,8 +1077,8 @@ span, button {
       button {
         width: 10vw;
         height: 6vh;
-        margin-right: 1em;
-        margin-bottom: 0.6em;
+        margin-right: 2em;
+        margin-bottom: 2em;
         padding: 5px;
       }
     }

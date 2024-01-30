@@ -209,7 +209,7 @@ export default {
                 .then(data => {
                 // 處理返回的數據
                     console.log(data)
-                    console.log(data.code)
+                    // console.log(data.code)
                     if(data.code = 200){
                     this.buylist = data.buyInfoList
                     this.selectbar = 2

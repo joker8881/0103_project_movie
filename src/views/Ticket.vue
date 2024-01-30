@@ -21,10 +21,12 @@
         <div class="post-box" v-for="(movie, index) in paginatedMovies" :key="index" v-if="selectedTab === '正在熱映'">
           <div class="post"><img :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path" alt=""
               @click="gotointroduce(movie)">
-            <div class="title">{{ movie.title }}</div>
-            <div class="title1">{{ movie.original_title }}</div>
-            <div>評分:{{ movie.vote_average === 0 ? '尚未有評分' : movie.vote_average }}</div>
-            <div>上映日:{{ movie.release_date }}</div>
+              <div style="border:1.5px solid pink; border-radius: 0px 0px 10px 10px;">
+            <div style="color:black;" class="title">{{ movie.title }}</div>
+            <!-- <div class="title1">{{ movie.original_title }}</div>
+            <div>評分:{{ movie.vote_average === 0 ? '尚未有評分' : movie.vote_average }}</div> -->
+            <div style="color:black; margin-top: 12px; margin-bottom: 8px;">上映日:{{ movie.release_date }}</div>
+          </div>
           </div>
         </div>
       </div>
@@ -34,10 +36,10 @@
           v-if="selectedTab === '即將上映'">
           <div class="post"><img :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path" alt=""
               @click="gotointroduce(movie)">
-            <div class="title">{{ movie.title }}</div>
-            <div class="title1">{{ movie.original_title }}</div>
-            <div>評分:{{ movie.vote_average === 0 ? '尚未有評分' : movie.vote_average }}</div>
-            <div>上映日:{{ movie.release_date }}</div>
+            <div class="title" style="color:black; margin-top: 17px;">{{ movie.title }}</div>
+            <!-- <div class="title1">{{ movie.original_title }}</div>
+            <div>評分:{{ movie.vote_average === 0 ? '尚未有評分' : movie.vote_average }}</div> -->
+            <div style="color:black; margin-top: 12px;">上映日:{{ movie.release_date }}</div>
           </div>
         </div>
       </div>
@@ -146,7 +148,7 @@ export default {
         },
       };
       let page = 1;
-      let count = 200; //要抓的電影數
+      let count = 30; //要抓的電影數
       let playingMovies = [];
 
       try {
@@ -207,7 +209,7 @@ export default {
       };
 
       let page = 1;
-      let count = 100; //要抓的電影數
+      let count = 30; //要抓的電影數
       let comingMovies = [];
 
       try {
@@ -306,7 +308,7 @@ export default {
 .view {
   width: 100vw;
   // height: 270vh;
-  background-color: rgb(63, 63, 63);
+  background-color: white;
 
   .wrapper {
     display: flex;
@@ -317,8 +319,9 @@ export default {
     button {
       width: 150px;
       margin-top: 40px;
+      margin-right: 8px;
       border: none;
-      background-color: rgb(63, 63, 63);
+      background-color: #a4b3cc;
 
       cursor: pointer;
 
@@ -333,10 +336,11 @@ export default {
   }
 
   .underline {
-    width: 300px;
+    width: 308px;
     text-align: center;
     margin: 3px auto 40px;
     height: 2px;
+    margin-left: 610.5px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.3);
 
     .bar,
@@ -344,7 +348,7 @@ export default {
       width: 50%;
       height: 2px;
       margin-bottom: -2px;
-      background-color: rgb(231, 0, 140);
+      background-color: rgb(245, 120, 141);
     }
 
     .bar {
@@ -363,12 +367,14 @@ export default {
     flex-wrap: wrap;
     margin: auto;
     text-align: center;
-    border: 1px solid black;
+    margin-left: 113px;
+    // border: 1px solid black;
 
     .post-box {
       width: 300px;
       height: 80vh;
-    border: 1px solid black;
+      margin-right: 35px;
+    // border: 1px solid black;
     // border: 1px solid black;
 
 
@@ -382,14 +388,17 @@ export default {
           height: 100%;
           width: 100%;
           margin-right: 10px;
+          border-radius: 10px 10px 0 0;
           object-fit: cover; // 保持圖片比例並填滿 img 區域
           cursor: pointer;
+          
         }
 
         .title {
           font-size: 20pt;
           width: 270px;
           margin-left: 17px;
+          margin-top: 17px;
           // border: 1px solid black;
           text-align: center;
           text-overflow: ellipsis;
@@ -420,8 +429,9 @@ export default {
   button {
     color: rgb(158, 158, 158);
     font-size: 18pt;
-    background-color: rgb(63, 63, 63);
+    background-color: white;
     border: 0px;
+    margin-bottom: 5px;
 
     &.active-page,
     &:hover {

@@ -545,7 +545,7 @@ export default {
     <hr />
     <!-- 預告片 -->
     <h1 class="textTilte">個人影評</h1>
-    <p class="text">{{ this.moviecomment }}</p>
+    <p class="text" style="margin-bottom: 30px;">{{ this.moviecomment }}</p>
     <div class="middle">
       <!-- <h1>預告片</h1> -->
       <!-- <video :src="this.trailerLink" controls></video> -->

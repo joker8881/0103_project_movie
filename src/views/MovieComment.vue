@@ -640,31 +640,31 @@ export default {
     </div>
     <!-- 選擇影城 -->
     <div class="middle1" v-if="this.userLoggedIn">
-      <div class="selectTheater">
+      <div class="selectTheater" style="color:#557;">
         選取影城
       </div>
       <div class="selectButton">
-        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:black; background-color: #d1d8e3; " type="button" @click="cinemaSearch('紹仁戲院')">紹仁戲院</button>
-        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:black; background-color: #d1d8e3;" type="button" @click="cinemaSearch('裕峰影城')">裕峰影城</button>
-        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:black; background-color: #d1d8e3;" type="button" @click="cinemaSearch('梓宏影院')">梓宏影院</button>
-        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:black; background-color: #d1d8e3;" type="button" @click="cinemaSearch('暐衡劇院')">暐衡劇院</button>
+        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3; " type="button" @click="cinemaSearch('紹仁戲院')">紹仁戲院</button>
+        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('裕峰影城')">裕峰影城</button>
+        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('梓宏影院')">梓宏影院</button>
+        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('暐衡劇院')">暐衡劇院</button>
       </div>
       <div class="selectDate" v-for="(movie, index) in objPlayingMovie">
-        <h6 style="font-family:'jf-openhuninn-2.0'; color: black;">{{ movie.onDate }}</h6>
-        <h5 style="font-family:'jf-openhuninn-2.0'; color: black;">{{ movie.area }}</h5>
-        <select style="font-family:'jf-openhuninn-2.0'; color: black;" v-model="this.selectedTime">
+        <h6 style="font-family:'jf-openhuninn-2.0'; color: #557;">{{ movie.onDate }}</h6>
+        <h5 style="font-family:'jf-openhuninn-2.0'; color: #557;">{{ movie.area }}</h5>
+        <select style="font-family:'jf-openhuninn-2.0'; color: #557;" v-model="this.selectedTime">
           <option style=" " value="">選擇時間</option>
           <option v-for="(time, timeIndex) in JSON.parse(movie.onTime)" :key="timeIndex">{{ time }}</option>
         </select>
-        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 12pt; color:black; background-color: #d1d8e3;" type="button" @click="gotoSeat(movie)">選取位置</button>
+        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 12pt; color:#557; background-color: #d1d8e3;" type="button" @click="gotoSeat(movie)">選取位置</button>
       </div>
     </div>
 
     <!-- 創作區 -->
-    <h1 style="font-family:'jf-openhuninn-2.0'; color: black;">網友創作展示</h1>
+    <h1 style="font-family:'jf-openhuninn-2.0'; color: #557;">網友創作展示</h1>
     <div class="ShowPoster">
       <div v-if="carouselImages.length === 0">
-        <h4 style="font-family:'jf-openhuninn-2.0'; color: black;">此電影暫無創作</h4>
+        <h4 style="font-family:'jf-openhuninn-2.0'; color: #557;">此電影暫無創作</h4>
       </div>
       <div v-else>
         <n-carousel direction="vertical" :show-dots="showDots" dot-placement="right" mousewheel style="width: 763px; height: 450px;" class="nColor">
@@ -680,7 +680,7 @@ export default {
     </div>
 
     <!-- 討論區 -->
-    <h1 style="font-family:'jf-openhuninn-2.0'; color: black;">討論區</h1>
+    <h1 style="font-family:'jf-openhuninn-2.0'; color: #557;">討論區</h1>
     <div class="footer">
       <div class="row">
         <div class="col-md-8">
@@ -689,7 +689,7 @@ export default {
             <div class="form-check form-switch">
               <input v-model="baoleiButton" @input="toggleBaolei" class="form-check-input" type="checkbox"
                 id="baoleiSwitch" />
-              <label class="form-label" style="font-family:'jf-openhuninn-2.0'; color: black;">暴雷按鈕</label>
+              <label class="form-label" style="font-family:'jf-openhuninn-2.0'; color: #557;">暴雷按鈕</label>
             </div>
           </div>
           <!-- 留言區 -->
@@ -710,7 +710,7 @@ export default {
                 <textarea rows="1" v-model="commentText" class="form-control FontA" name="comment" id="commentInput" required
                   style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                 <div style="text-align: end">
-                  <button type="submit" class="btn btn-outline-dark FontA" @click="commentCreate">留言</button>
+                  <button type="submit" class="btn btn-outline-dark FontB" @click="commentCreate">留言</button>
                 </div>
               </div>
             </div>
@@ -762,9 +762,9 @@ export default {
                     <textarea rows="1" v-model="replyText" class="form-control FontA" id="replyInput"
                       style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                   </div>
-                  <button v-if="this.userLoggedIn" type="submit" class="btn btn-outline-dark FontA"
+                  <button v-if="this.userLoggedIn" type="submit" class="btn btn-outline-dark FontB"
                     @click="commentCreateChild()">回覆</button>
-                  <button type="button" class="btn btn-outline-dark FontA" @click="cancelReply(comment)">取消</button>
+                  <button type="button" class="btn btn-outline-dark FontB" @click="cancelReply(comment)">取消</button>
                 </form>
 
                 <!-- 顯示回覆的區域 -->
@@ -772,33 +772,33 @@ export default {
                   <div v-for="item in commentReplies" :key="item.commentIndex" class="card mb-2" style="border: 0">
                     <div class="card-body" v-if="item.commentIndex === comment.commentIndex">
                       <div>
-                        <span>{{ "@" + item.account }}</span>
-                        <small class="text-muted">{{ this.commentTimeDif(item.commentTime) }}</small>
+                        <span class="FontA">{{ "@" + item.account }}</span>
+                        <small class="text-muted FontA">{{ this.commentTimeDif(item.commentTime) }}</small>
                         <!-- 編輯按鈕 -->
                         <button v-if="userLoggedIn && !item.editing && this.loginAccount == item.account"
-                          @click="startEditing(item)" class="btn btn-link"
+                          @click="startEditing(item)" class="btn btn-link FontA"
                           style="margin-left: 10px; text-decoration: none">編輯</button>
                         <!-- 保存按鈕 -->
                         <button v-if="item.editing" @click="saveEdit(item, item.commentIndex, item.commentIndexIndex)"
-                          class="btn btn-link" style="margin-left: 10px; text-decoration: none">儲存</button>
+                          class="btn btn-link FontA" style="margin-left: 10px; text-decoration: none">儲存</button>
                         <!-- 刪除按鈕 -->
                         <button v-if="userLoggedIn && !item.editing && this.loginAccount == item.account"
                           @click="commentDeleteChild(item, item.commentIndex, item.commentIndexIndex)"
-                          class="btn btn-link" style="text-decoration: none">刪除</button><br />
+                          class="btn btn-link FontA" style="text-decoration: none">刪除</button><br />
                         <!-- 回覆內容 -->
-                        <span>{{ filterComments(item.commentText) }}</span><br />
+                        <span class="FontA">{{ filterComments(item.commentText) }}</span><br />
                         <!-- 編輯模式下顯示編輯框 -->
                         <textarea v-if="item.editing" v-model="item.editingText" rows="1" class="form-control" required
                           style="border-radius: 0%; outline: none; resize: none; border: 0; background: none; border-bottom: 1px solid black;"></textarea>
                         <!-- 按讚 -->
                         <button v-if="userLoggedIn" @click="likeButton(item, item.commentIndex, item.commentIndexIndex)"
-                          class="btn btn-outline-primary" style="border: 0">
+                          class="btn btn-outline-primary FontA" style="border: 0">
                           <i class="fa-regular fa-thumbs-up"></i>
                           {{ item.favorite }}
                         </button>
                         <button v-if="userLoggedIn"
                           @click="dislikeButton(item, item.commentIndex, item.commentIndexIndex)"
-                          class="btn btn-outline-danger" style="border: 0">
+                          class="btn btn-outline-danger FontA" style="border: 0">
                           <i class="fa-regular fa-thumbs-down"></i>
                           {{ item.dislike }}
                         </button>
@@ -1147,6 +1147,10 @@ span, button {
 
 .FontA{
   font-family:'jf-openhuninn-2.0'; 
-  color: black;
+  color: #557;
+}
+
+.FontB{
+  font-family:'jf-openhuninn-2.0'; 
 }
 </style>

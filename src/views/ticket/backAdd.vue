@@ -220,7 +220,8 @@ export default {
                     },
                 }).then(res => {
                     console.log(res);
-                    // this.$router.push("/backSearch");
+                    Swal.fire("以儲存到電影時刻表中!!")
+                    this.$router.push("/backSearch");
                 });
             }
         },
@@ -285,6 +286,7 @@ export default {
                     },
                 }).then(res => {
                     console.log(res);
+                    Swal.fire("以儲存到電影時刻表中，且可開始購票!!")
                     this.$router.push("/backSearch");
                 });
             }

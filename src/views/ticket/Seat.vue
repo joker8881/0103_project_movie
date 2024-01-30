@@ -39,16 +39,16 @@
                 <li>影院：{{ this.movieInfo.cinema }}</li>
                 <li>影廳：{{ this.movieInfo.area }}</li>
                 <li>票價：{{ this.movieInfo.price }}</li>
-                <li>撥放日期：{{ this.movieInfo.playDate }}</li>
-                <li>撥放時間：{{ this.movieInfo.playTime }}</li>
+                <li>播放日期：{{ this.movieInfo.playDate }}</li>
+                <li>播放時間：{{ this.movieInfo.playTime }}</li>
                 <li>訂票者：{{ this.account }}</li>
                 <li>座位：{{ this.formattedSelectedSeatsString }}</li>
             </ul>
             <hr class="separator">
             <h2>總金額</h2>
             <h3>${{ this.totalPrice }}</h3>
-            <button style=" background-color: pink; margin-left: 17px; border-radius: 5px;" type="button" @click="goinTicket()">取消</button>
-            <button style=" background-color: pink; margin-left: 15px; border-radius: 5px;" type="button" @click="buyTicket()">立即購票</button>
+            <button style=" background-color:  #d1d8e3; margin-left: 17px; border-radius: 5px;" type="button" @click="goinTicket()">取消</button>
+            <button style=" background-color:  #d1d8e3; margin-left: 15px; border-radius: 5px;" type="button" @click="buyTicket()">立即購票</button>
         </div>
     </div>
 </template>

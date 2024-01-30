@@ -36,7 +36,8 @@
                     <th style="width: 10vw;">修改場次</th>
                 </tr>
                 <tr v-for="(movie, index) in displayedMovies" :key="index">
-                    <td style="background-color: #6f81a2;"><i class="fa-solid fa-trash" @click="this.deleteMovie(movie.number)"></i>
+                    <td style="background-color: #6f81a2;"><i class="fa-solid fa-trash"
+                            @click="this.deleteMovie(movie.number)"></i>
                     </td>
                     <td style="background-color: #6f81a2;">{{ movie.movie }}</td>
                     <td style="background-color: #6f81a2;">{{ movie.cinema }}</td>
@@ -47,8 +48,8 @@
                     <td style="background-color: #6f81a2;">{{ visableSell(movie.onSell) }}</td>
                     <td style="background-color: #6f81a2;">
                         <!-- 修改按鈕 -->
-                        <button type="button" class="fixword" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop" @click="showEditModal(movie); searchTime()" :disabled="movie.onSell">
+                        <button type="button" class="fixword" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                            @click="showEditModal(movie); searchTime()" :disabled="movie.onSell">
                             修改
                         </button>
 
@@ -110,11 +111,14 @@
                             <td>{{ time }}</td>
                         </tr>
                     </div>
-                    <button v-if="editMovie.movieOnTime != ''" type="button" @click="deleteSelected()" class="buttonS">刪除</button>
+                    <button v-if="editMovie.movieOnTime != ''" type="button" @click="deleteSelected()"
+                        class="buttonS">刪除</button>
                 </div>
                 <div class="modal-footer">
                     <button id="cancel" type="button" class="btn btn-secondary buttonY" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary buttonX" @click="update()">確認傳送</button>
+                    <button id="cancel" type="button" class="btn btn-secondary buttonA" data-bs-dismiss="modal"
+                        @click="updateS()">僅儲存</button>
+                    <button type="button" class="btn btn-primary buttonX" @click="updateP()">確認傳送</button>
                 </div>
             </div>
         </div>
@@ -154,7 +158,7 @@ export default {
         }
     },
     components: {
-      Swal,
+        Swal,
     },
     computed: {
         displayedMovies() {
@@ -179,7 +183,7 @@ export default {
             return Array.from({ length: totalPages }, (_, index) => index + 1);
         },
         visableTime() {
-            return function(x) {
+            return function (x) {
                 let onTimeString = x;
                 let cleanedOnTime = onTimeString.replace(/[\[\]"']/g, '');
                 let onTimeArray = cleanedOnTime.split(',');
@@ -188,11 +192,11 @@ export default {
             };
         },
         visableSell() {
-            return function(x) {
+            return function (x) {
                 let cc = x
-                if (x == true || x == "true"){
+                if (x == true || x == "true") {
                     cc = "開放購票"
-                } else{
+                } else {
                     cc = "尚未開放購票"
                 }
                 return cc;
@@ -200,17 +204,25 @@ export default {
         },
     },
     methods: {
+        //滑到最上面
         scrollToTop() {
             window.scrollTo(0, 0);
         },
+        //跳轉到指定頁數
         goToPage(pageNumber) {
             this.currentPage = pageNumber;
             this.scrollToTop()
         },
+        //計算頁數
         calculateTotalPages() {
             this.totalPages = Math.ceil(this.movieList.length / this.pageSize);
         },
+        //添加時間
         movieTimeAdd() {
+            if (this.movieNewTime == "") {
+                Swal.fire("新加入的時間不能是空的");
+                return
+            }
             // 檢查是否至少相隔一個 runtime
             if (this.checkTimeGap()) {
                 this.editMovie.movieOnTime.push(this.movieNewTime);
@@ -220,6 +232,7 @@ export default {
                 Swal.fire("新加入的時間必須至少相隔 " + this.runtime + " 分鐘");
             }
         },
+        //確認時間的間隔差
         checkTimeGap() {
             // 如果 editMovie.movieOnTime為空，直接允許加入
             if (this.editMovie.movieOnTime === "") {
@@ -241,10 +254,12 @@ export default {
             // 所有時間差都大於等於 runtime，返回 true
             return true;
         },
+        //把電影時間解析程分鐘
         convertTimeToMinutes(time) {
             // 解析時間為分鐘
             return parseInt(time.split(":")[0]) * 60 + parseInt(time.split(":")[1]);
         },
+        //搜尋電影時間
         searchTime() {
             axios({
                 method: 'GET',
@@ -256,16 +271,18 @@ export default {
                 }
             }).then(res => {
                 console.log(res);
-                this.runtime = res.data.runtime+40
+                this.runtime = res.data.runtime + 40
                 console.log(this.runtime);
             })
         },
+        //刪除勾選的時間
         deleteSelected() {
             // 過濾出被勾選的項目並更新 movieAllTime
             this.editMovie.movieOnTime = this.editMovie.movieOnTime.filter((time, index) => !this.selectedItems[index]);
             // 刪除後清空 selectedItems 陣列
             this.selectedItems = [];
         },
+        //把要修改的影片資訊傳入修改頁面
         showEditModal(movie) {
             this.editMovie = {
                 number: movie.number,
@@ -280,6 +297,7 @@ export default {
             console.log(this.editMovie);
             // this.movieAllTime = JSON.parse(movie.onTime).sort();
         },
+        //搜尋電影時刻表
         search() {
             axios({
                 url: 'http://localhost:8080/movie/movieinfo/search',
@@ -324,19 +342,23 @@ export default {
             this.startDate = ""
             this.endDate = ""
         },
+        //前往創造頁面
         create() {
             this.$router.push('/backCreate')
         },
+        //下一頁
         nextPage() {
             if (this.currentPage < Math.ceil(this.movieList.length / this.pageSize)) {
                 this.currentPage++;
             }
         },
+        //上一頁
         prevPage() {
             if (this.currentPage > 1) {
                 this.currentPage--;
             }
         },
+        //刪除電影的功能
         async deleteMovie(movieNumber) {
             // 提示使用者確認是否刪除
             const confirmDelete = window.confirm('確定要刪除此電影嗎？');
@@ -360,7 +382,20 @@ export default {
             }
             this.search()
         },
-        update() {
+        //更新電影不可購票
+        updateS() {
+            const repet = this.movieList.some(movie =>
+                movie.cinema === this.editMovie.movieCinema &&
+                movie.area === this.editMovie.movieArea &&
+                movie.onDate === this.editMovie.movieOnDate &&
+                movie.number !== this.editMovie.number
+            );
+            console.log(repet);
+
+            if (repet) {
+                Swal.fire("此影城的影廳在這一天已經有排程了");
+                return;
+            }
             // 初始化錯誤訊息
             let errorMessage = "";
             // 檢查每個必填項目
@@ -379,14 +414,13 @@ export default {
             if (this.editMovie.movieOnDate === "") {
                 errorMessage += "請填寫撥放日期\n";
             }
-            if (this.editMovie.movieOnTime === "") {
+            if (this.editMovie.movieOnTime == "") {
                 errorMessage += "請填寫影片播放時間\n";
             }
-
             // 如果 errorMessage 不為空，表示有未填寫的項目
             if (errorMessage !== "") {
                 // 顯示提示訊息
-                alert(errorMessage);
+                Swal.fire(errorMessage);
             } else {
                 axios({
                     url: 'http://localhost:8080/movie/movieinfo/update',
@@ -403,6 +437,75 @@ export default {
                         price: this.editMovie.moviePrice,
                         onDate: this.editMovie.movieOnDate,
                         onTime: JSON.stringify(this.editMovie.movieOnTime),
+                    },
+                }).then(res => {
+                    console.log(res);
+                    if (res.data.code == 200) {
+                        document.getElementById('cancel').click();
+                        location.reload();
+                    }
+                });
+            }
+        },
+        //更新電影可購票
+        updateP() {
+
+            const repet = this.movieList.some(movie =>
+                movie.cinema === this.editMovie.movieCinema &&
+                movie.area === this.editMovie.movieArea &&
+                movie.onDate === this.editMovie.movieOnDate &&
+                movie.number !== this.editMovie.number
+            );
+            console.log(repet);
+
+            if (repet) {
+                Swal.fire("此影城的影廳在這一天已經有排程了");
+                return;
+            }
+
+            // 初始化錯誤訊息
+            let errorMessage = "";
+            // 檢查每個必填項目
+            if (this.editMovie.movieName === "") {
+                errorMessage += "請填寫電影名稱\n";
+            }
+            if (this.editMovie.movieCinema === "選擇影院") {
+                errorMessage += "請選擇影院\n";
+            }
+            if (this.editMovie.movieArea === "選擇影廳") {
+                errorMessage += "請選擇影廳\n";
+            }
+            if (isNaN(this.editMovie.moviePrice) || this.editMovie.moviePrice === "" || this.editMovie.moviePrice === "0") {
+                errorMessage += "請填寫有效的價格\n";
+            }
+            if (this.editMovie.movieOnDate === "") {
+                errorMessage += "請填寫撥放日期\n";
+            }
+            if (this.editMovie.movieOnTime == "") {
+                errorMessage += "請填寫影片播放時間\n";
+            }
+            // 如果 errorMessage 不為空，表示有未填寫的項目
+            if (errorMessage !== "") {
+                // 顯示提示訊息
+                Swal.fire(errorMessage);
+            } else {
+                // 所有必填項目都填寫了，執行後續的操作
+                axios({
+                    url: 'http://localhost:8080/movie/movieinfo/update',
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    data: {
+                        number: this.editMovie.number,
+                        movieId: this.editMovie.movieId,
+                        movie: this.editMovie.movieName,
+                        cinema: this.editMovie.movieCinema,
+                        area: this.editMovie.movieArea,
+                        price: this.editMovie.moviePrice,
+                        onDate: this.editMovie.movieOnDate,
+                        onTime: JSON.stringify(this.editMovie.movieOnTime),
+                        onSell: true
                     },
                 }).then(res => {
                     console.log(res);
@@ -541,13 +644,14 @@ export default {
         // line-height: 2em;
         padding-top: 30px;
     }
-    .textTC{
-            font-family:'jf-openhuninn-2.0';
-            font-size: 1.5em;
-            margin-top: 20px;
-            color: rgb(0, 0, 0);
-            // margin-bottom: 50px;
-        }
+
+    .textTC {
+        font-family: 'jf-openhuninn-2.0';
+        font-size: 1.5em;
+        margin-top: 20px;
+        color: rgb(0, 0, 0);
+        // margin-bottom: 50px;
+    }
 
     .pagination {
         width: 90vw;
@@ -576,111 +680,140 @@ export default {
 //     overflow-y: auto;
 // }
 
-.fixword{
-        width: 6.2vw;
-        height: 3.9vh;
-        border: none;
-        font-size: 1em;
-        font-family:'jf-openhuninn-2.0';
-        color: rgb(0, 0, 0);
-        margin-top: 2.5%;
-        transition: 0.4s;
-        line-height: 1em;
-        border: none;
-        background: none;
-        outline: none;
-        &:hover{
-          color:rgb(255, 255, 255);
-          transform:scale(1.2,1.2);
-        }
+.fixword {
+    width: 6.2vw;
+    height: 3.9vh;
+    border: none;
+    font-size: 1em;
+    font-family: 'jf-openhuninn-2.0';
+    color: rgb(0, 0, 0);
+    margin-top: 2.5%;
+    transition: 0.4s;
+    line-height: 1em;
+    border: none;
+    background: none;
+    outline: none;
+
+    &:hover {
+        color: rgb(255, 255, 255);
+        transform: scale(1.2, 1.2);
+    }
+}
+
+.buttonS {
+    width: 6.2vw;
+    height: 3.9vh;
+    border: none;
+    background-color: rgb(176, 182, 213);
+    border-radius: 10px;
+    font-size: 1em;
+    font-family: 'jf-openhuninn-2.0';
+    margin-top: 2.5%;
+    transition: 0.4s;
+    line-height: 1em;
+    margin: 20px 20px 10px 20px;
+
+    &:hover {
+        background-color: gainsboro;
+        color: darkslategray;
+        transform: scale(1.1, 1.1);
+    }
+}
+
+.buttonX {
+    width: 6.2vw;
+    height: 5.9vh;
+    border: none;
+    background-color: rgb(74, 174, 46);
+    border-radius: 10px;
+    font-size: 1em;
+    font-family: 'jf-openhuninn-2.0';
+    margin-top: 2.5%;
+    transition: 0.4s;
+    line-height: 1em;
+    margin: 20px 20px 10px 20px;
+
+    &:hover {
+        background-color: rgb(65, 227, 20);
+        color: rgb(255, 255, 255);
+        transform: scale(1.1, 1.1);
+    }
+}
+
+.buttonY {
+    width: 6.2vw;
+    height: 5.9vh;
+    border: none;
+    background-color: rgb(174, 46, 46);
+    border-radius: 10px;
+    font-size: 1em;
+    font-family: 'jf-openhuninn-2.0';
+    margin-top: 2.5%;
+    transition: 0.4s;
+    line-height: 1em;
+    margin: 20px 20px 10px 20px;
+
+    &:hover {
+        background-color: rgb(227, 20, 20);
+        color: rgb(255, 255, 255);
+        transform: scale(1.1, 1.1);
+    }
+}
+
+.buttonZ {
+    width: 5.2vw;
+    height: 4.9vh;
+    border: none;
+    background-color: rgb(176, 182, 213);
+    border-radius: 10px;
+    font-size: 1em;
+    font-family: 'jf-openhuninn-2.0';
+    transition: 0.4s;
+    line-height: 1em;
+    margin: 25px 0 0 0;
+
+    &:hover {
+        background-color: gainsboro;
+        color: darkslategray;
+        transform: scale(1.1, 1.1);
+    }
+}
+
+.buttonA {
+    width: 6.2vw;
+    height: 5.9vh;
+    border: none;
+    background-color: blue;
+    border-radius: 10px;
+    font-size: 1em;
+    font-family: 'jf-openhuninn-2.0';
+    margin-top: 2.5%;
+    transition: 0.4s;
+    line-height: 1em;
+    margin: 20px 20px 10px 20px;
+
+    &:hover {
+        background-color: blue;
+        color: rgb(255, 255, 255);
+        transform: scale(1.1, 1.1);
     }
 
-.buttonS{
-        width: 6.2vw;
-        height: 3.9vh;
-        border: none;
-        background-color: rgb(176, 182, 213);
-        border-radius: 10px;
-        font-size: 1em;
-        font-family:'jf-openhuninn-2.0';
-        margin-top: 2.5%;
-        transition: 0.4s;
-        line-height: 1em;
-        margin: 20px 20px 10px 20px;
-        &:hover{
-          background-color: gainsboro;
-          color:darkslategray;
-          transform:scale(1.1,1.1);
-        }
-    }
-    .buttonX{
-        width: 6.2vw;
-        height: 5.9vh;
-        border: none;
-        background-color: rgb(74, 174, 46);
-        border-radius: 10px;
-        font-size: 1em;
-        font-family:'jf-openhuninn-2.0';
-        margin-top: 2.5%;
-        transition: 0.4s;
-        line-height: 1em;
-        margin: 20px 20px 10px 20px;
-        &:hover{
-          background-color: rgb(65, 227, 20);
-          color:rgb(255, 255, 255);
-          transform:scale(1.1,1.1);
-        }
-    }
+}
 
-    .buttonY{
-        width: 6.2vw;
-        height: 5.9vh;
-        border: none;
-        background-color: rgb(174, 46, 46);
-        border-radius: 10px;
-        font-size: 1em;
-        font-family:'jf-openhuninn-2.0';
-        margin-top: 2.5%;
-        transition: 0.4s;
-        line-height: 1em;
-        margin: 20px 20px 10px 20px;
-        &:hover{
-          background-color: rgb(227, 20, 20);
-          color:rgb(255, 255, 255);
-          transform:scale(1.1,1.1);
-        }
-    }
-    .buttonZ{
-        width: 5.2vw;
-        height: 4.9vh;
-        border: none;
-        background-color: rgb(176, 182, 213);
-        border-radius: 10px;
-        font-size: 1em;
-        font-family:'jf-openhuninn-2.0';
-        transition: 0.4s;
-        line-height: 1em;
-        margin: 25px 0 0 0;
-        &:hover{
-          background-color: gainsboro;
-          color:darkslategray;
-          transform:scale(1.1,1.1);
-        }
-    }
-    .textT{
-    font-family:'jf-openhuninn-2.0';
+.textT {
+    font-family: 'jf-openhuninn-2.0';
     font-size: 1.5em;
     margin-top: 20px;
     color: rgb(0, 0, 0);
     margin-bottom: 50px;
-  }
+}
 
-  .playTime {
-        margin-top: 10px;
-        padding: 5px 0 0 10px;
-        height: 15vh;
-        border: 2px solid black;
-        overflow-y: auto;
-        border-radius: 10px;
-    }
+.playTime {
+    margin-top: 10px;
+    padding: 5px 0 0 10px;
+    height: 15vh;
+    border: 2px solid black;
+    overflow-y: auto;
+    border-radius: 10px;
+}
 </style>

@@ -407,7 +407,9 @@ export default {
                 });
               })
           this.logincheck()
-          }
+        } else if(data.code == 400){
+          this.getrandonpage()
+        }
       })
       .catch(error => {
         console.error('Error fetching data:', error);

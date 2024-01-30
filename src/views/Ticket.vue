@@ -25,7 +25,7 @@
             <div style="color:black;" class="title">{{ movie.title }}</div>
             <!-- <div class="title1">{{ movie.original_title }}</div>
             <div>評分:{{ movie.vote_average === 0 ? '尚未有評分' : movie.vote_average }}</div> -->
-            <div style="color:black; margin-top: 12px; margin-bottom: 8px;">上映日:{{ movie.release_date }}</div>
+            <div style="color:black; margin-top: 0px; margin-bottom: 18px;">上映日:{{ movie.release_date }}</div>
           </div>
           </div>
         </div>
@@ -400,7 +400,8 @@ export default {
           font-size: 20pt;
           width: 270px;
           margin-left: 17px;
-          margin-top: 17px;
+          margin-top: 10px;
+          
           // border: 1px solid black;
           text-align: center;
           text-overflow: ellipsis;
@@ -442,4 +443,22 @@ export default {
   }
 
 }
+
+.pagination {
+        width: 100vw;
+        justify-content: center;
+        align-items: center;
+        button {
+            color: rgb(0, 0, 0);
+            font-size: 18pt;
+            // background-color: #525f75;
+            border: 0px;
+
+            &.active-page,
+            &:hover {
+                color: rgb(141, 141, 125); // 上一页、下一页的颜色
+            }
+        }
+
+    }
 </style>  

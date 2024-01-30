@@ -682,7 +682,7 @@ export default {
   </div>
   
   <h1>分類選擇</h1>
-  <div class="movieType">
+  <div class="movieType" style="margin: 20px 0 60px 0;">
     <select @change="getTypeMovie">
       <option v-for="(item, index) in this.objtype" :key="index">
         {{ item.name }}
@@ -733,8 +733,9 @@ h1 {
   text-align: center;
 }
 span, button, p, label, select {
-  font-family: "Montserrat", sans-serif, sans-serif, "M PLUS 1";
-  color: #557;
+  // font-family: "Montserrat", sans-serif, sans-serif, "M PLUS 1";
+  font-family:'jf-openhuninn-2.0';
+  color: rgb(51, 51, 62);
   font-size: 22px;
 }
 
@@ -751,5 +752,11 @@ span, button, p, label, select {
 }
 .card {
   margin: 10px 0;
+}
+
+.textHeader{
+  font-family:'jf-openhuninn-2.0';
+  font-size: 2em;
+  margin: 0;
 }
 </style>

@@ -49,8 +49,12 @@
                     <td style="background-color: #6f81a2;">
                         <!-- 修改按鈕 -->
                         <button type="button" class="fixword" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
-                            @click="showEditModal(movie); searchTime()" :disabled="movie.onSell">
+                            @click="showEditModal(movie); searchTime()" :disabled="movie.onSell" v-if="!movie.onSell">
                             修改
+                        </button>
+                        <button type="button" class="fixwordX" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
+                            @click="showEditModal(movie); searchTime()" :disabled="movie.onSell" v-if="movie.onSell">
+                            停止修改
                         </button>
 
                     </td>
@@ -698,6 +702,21 @@ export default {
         color: rgb(255, 255, 255);
         transform: scale(1.2, 1.2);
     }
+}
+
+.fixwordX {
+    width: 6.2vw;
+    height: 3.9vh;
+    border: none;
+    font-size: 1em;
+    font-family: 'jf-openhuninn-2.0';
+    color: rgb(0, 0, 0);
+    margin-top: 2.5%;
+    transition: 0.4s;
+    line-height: 1em;
+    border: none;
+    background: none;
+    outline: none;
 }
 
 .buttonS {

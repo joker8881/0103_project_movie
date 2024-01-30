@@ -302,7 +302,7 @@ export default {
   <div class="body">
     <!-- 電影資料 -->
     <div class="header">
-      <button type="button" @click="goback">回去後台</button>
+      <button type="button" @click="goback" class="buttonX">回去重新建立</button>
       <div class="movieData">
         <!-- <img :src="'https://image.tmdb.org/t/p/w342' + this.movieInfo.movieBack " alt="" style="width: 100vw; height: 100vh; opacity: 0.2; position: fixed; top: 0; left: 0;"><br> -->
         <div class="movieDataLeft">
@@ -374,7 +374,7 @@ export default {
       是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
       電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
   </p> -->
-  <button type="button" @click="gosend()">gosend</button>
+  <button type="button" @click="gosend()" class="buttonX">確認送出</button>
     <div class="footer" ref="scheduleSwipers">
       <swiper :options="swiperOption" ref="mySwiper">
         <swiper-slide v-for="(page, index) in pages" :key="index">
@@ -624,5 +624,26 @@ span, button {
   overflow: auto;  /* 或者使用 overflow: scroll; */
   max-height: 250px;  /* 设置最大高度，超出部分会产生滚动条 */
   // white-space: nowrap;  /* 防止文本换行 */
+}
+
+.buttonX {
+    width: 14.2vw;
+    height: 5.9vh;
+    border: none;
+    background-color: rgb(127, 136, 180);
+    border-radius: 10px;
+    font-size: 1.5em;
+    font-family: 'jf-openhuninn-2.0';
+    margin-top: 2.5%;
+    transition: 0.4s;
+    line-height: 1em;
+    margin: 20px 20px 10px 20px;
+    color: rgb(0, 0, 0);
+
+    &:hover {
+        background-color: rgb(63, 85, 195);
+        color: rgb(255, 255, 255);
+        transform: scale(1.1, 1.1);
+    }
 }
 </style>

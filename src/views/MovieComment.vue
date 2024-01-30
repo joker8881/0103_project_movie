@@ -496,7 +496,7 @@ export default {
         });
     },
     cinemaSearch(selectedCinema) {
-      const movieId = this.movieInfo.movieId;
+      const movie = this.movieInfo.movieTitle;
       const movieName = selectedCinema;
       axios({
         url: 'http://localhost:8080/movie/movieinfo/search',
@@ -505,7 +505,7 @@ export default {
           "Content-Type": "application/json"
         },
         data: {
-          movieId: movieId,
+          movie: movie,
           cinema: movieName
         },
       }).then(res => {
@@ -644,7 +644,7 @@ export default {
         選取影城
       </div>
       <div class="selectButton">
-        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3; " type="button" @click="cinemaSearch('紹仁戲院')">紹仁戲院</button>
+        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3; " type="button" @click="cinemaSearch('紹人戲院')">紹人戲院</button>
         <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('裕峰影城')">裕峰影城</button>
         <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('梓宏影院')">梓宏影院</button>
         <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('暐衡劇院')">暐衡劇院</button>

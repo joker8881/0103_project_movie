@@ -5,7 +5,7 @@
 
             <select class="form-select form-select mb-3" v-model="this.movieCinema">
                 <option selected class="textTX">選擇影院</option>
-                <option value="紹仁戲院" class="textTX">紹仁戲院</option>
+                <option value="紹人戲院" class="textTX">紹人戲院</option>
                 <option value="裕峰影城" class="textTX">裕峰影城</option>
                 <option value="梓宏影院" class="textTX">梓宏影院</option>
                 <option value="暐衡劇院" class="textTX">暐衡劇院</option>

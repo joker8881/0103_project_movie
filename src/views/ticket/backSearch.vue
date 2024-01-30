@@ -81,7 +81,7 @@
                 <div class="modal-body">
                     <select class="form-select form-select mb-3" v-model="this.editMovie.movieCinema">
                         <option selected>選擇影院</option>
-                        <option value="紹仁戲院">紹仁戲院</option>
+                        <option value="紹人戲院">紹人戲院</option>
                         <option value="裕峰影城">裕峰影城</option>
                         <option value="梓宏影院">梓宏影院</option>
                         <option value="暐衡劇院">暐衡劇院</option>

@@ -1,21 +1,21 @@
 <template>
     <div class="view">
-        <h1 style="color: white;">{{ this.movieInfo.movieTitle }}</h1>
+        <h1 style="color: rgb(0, 0, 0);">{{ this.movieInfo.movieTitle }}</h1>
         <div class="createMovieInfo">
 
             <select class="form-select form-select mb-3" v-model="this.movieCinema">
-                <option selected>選擇影院</option>
-                <option value="紹仁戲院">紹仁戲院</option>
-                <option value="裕峰影城">裕峰影城</option>
-                <option value="梓宏影院">梓宏影院</option>
-                <option value="暐衡劇院">暐衡劇院</option>
+                <option selected class="textTX">選擇影院</option>
+                <option value="紹仁戲院" class="textTX">紹仁戲院</option>
+                <option value="裕峰影城" class="textTX">裕峰影城</option>
+                <option value="梓宏影院" class="textTX">梓宏影院</option>
+                <option value="暐衡劇院" class="textTX">暐衡劇院</option>
             </select>
             <select class="form-select form-select mb-3" v-model="this.movieArea">
-                <option selected>選擇影廳</option>
-                <option value="1號影廳">1號影廳</option>
-                <option value="2號影廳">2號影廳</option>
-                <option value="3號影廳">3號影廳</option>
-                <option value="4號影廳">4號影廳</option>
+                <option selected class="textTX">選擇影廳</option>
+                <option value="1號影廳" class="textTX">1號影廳</option>
+                <option value="2號影廳" class="textTX">2號影廳</option>
+                <option value="3號影廳" class="textTX">3號影廳</option>
+                <option value="4號影廳" class="textTX">4號影廳</option>
             </select>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control" id="floatingPrice" placeholder="票價" v-model="this.moviePrice">
@@ -30,8 +30,8 @@
                 <label for="floatingTime">播放時間</label>
                 <button type="button" @click="movieTimeAdd()" :disabled="isDisabled || isDisabledtime" class="buttonX">新增場次時段</button>
             </div>
-            <p v-if="isDisabled" style="color: rgb(255, 0, 0); background-color: wheat; border-radius: 20px;margin: 10px 0 10px 0 ;">每個項目都必須填入才可以新增場次時段</p>
-            <p v-if="isDisabledtime" style="color: rgb(255, 0, 0); background-color: wheat; border-radius: 20px;">播放日期必須在今天之後！</p>
+            <p v-if="isDisabled" style="color: rgb(255, 0, 0); background-color: rgb(221, 161, 65); border-radius: 20px;margin: 10px 0 10px 0 ;height: 30px;line-height: 1.7em;">每個項目都必須填入才可以新增場次時段</p>
+            <p v-if="isDisabledtime" style="color: rgb(255, 0, 0); background-color: rgb(221, 161, 65); border-radius: 20px;height: 30px;line-height: 1.7em;">播放日期必須在今天之後！</p>
             <p style="margin: 0;" class="textT">時間選項</p>
             <div class="playTime" style="background-color: white;">
                 <tr v-for="(play, index) in movieAllTime " :key="index">
@@ -283,7 +283,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgb(98, 98, 117);
+    background-color: rgb(174, 177, 192);
     height: 120vh;
 
     .createMovieInfo {
@@ -330,9 +330,9 @@ export default {
         line-height: 1em;
         margin: 20px 20px 10px 20px;
         &:hover{
-          background-color: gainsboro;
-          color:darkslategray;
-          transform:scale(1.1,1.1);
+            background-color: rgb(63, 85, 195);
+            color:rgb(255, 255, 255);
+            transform:scale(1.1,1.1);
         }
     }
 
@@ -340,7 +340,7 @@ export default {
         width: 14.2vw;
         height: 5.9vh;
         border: none;
-        background-color: rgb(176, 182, 213);
+        background-color: rgb(127, 136, 180);
         border-radius: 10px;
         font-size: 1.5em;
         font-family:'jf-openhuninn-2.0';
@@ -348,9 +348,10 @@ export default {
         transition: 0.4s;
         line-height: 1em;
         margin: 20px 20px 10px 20px;
+        color: rgb(0, 0, 0);
         &:hover{
-          background-color: gainsboro;
-          color:darkslategray;
+          background-color: rgb(63, 85, 195);
+          color:rgb(255, 255, 255);
           transform:scale(1.1,1.1);
         }
     }
@@ -359,7 +360,7 @@ export default {
         width: 14.2vw;
         height: 5.9vh;
         border: none;
-        background-color: rgb(176, 182, 213);
+        background-color: rgb(127, 136, 180);
         border-radius: 10px;
         font-size: 1.3em;
         font-family:'jf-openhuninn-2.0';
@@ -367,16 +368,24 @@ export default {
         transition: 0.4s;
         line-height: 1em;
         margin: 20px 20px 10px 20px;
+        color: rgb(0, 0, 0);
         &:hover{
-          background-color: gainsboro;
-          color:darkslategray;
-          transform:scale(1.1,1.1);
+            background-color: rgb(63, 85, 195);
+            color:rgb(255, 255, 255);
+            transform:scale(1.1,1.1);
         }
     }
 
     .textT{
     font-family:'jf-openhuninn-2.0';
     font-size: 1.5em;
+    margin-top: 20px;
+    color: rgb(0, 0, 0);
+    margin-bottom: 50px;
+  }
+  .textTX{
+    font-family:'jf-openhuninn-2.0';
+    font-size: 1.2em;
     margin-top: 20px;
     color: rgb(0, 0, 0);
     margin-bottom: 50px;

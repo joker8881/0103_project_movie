@@ -17,8 +17,9 @@
             </div>
             <button class="buttonZ" type="button" @click="search()">搜尋</button>
         </div>
-        <div class="icon">
-            <button type="button" @click="create()"><i class="fa-solid fa-plus  fa-xs"></i></button>
+        <div style="display: flex;width: 90vw;">
+            <i class="fa-solid fa-plus  fa-xs icon" @click="create()"></i>
+            <p class="textTC">點此新增場次</p>
         </div>
         {{ this.selectedMovies }}
         <table class="table1">
@@ -35,17 +36,16 @@
                     <th style="width: 10vw;">修改場次</th>
                 </tr>
                 <tr v-for="(movie, index) in displayedMovies" :key="index">
-                    <td><button type="button" @click="this.deleteMovie(movie.number)"
-                            style="border: 0;background-color: rgb(100, 99, 99);"><i class="fa-solid fa-trash"></i></button>
+                    <td style="background-color: #6f81a2;"><i class="fa-solid fa-trash" @click="this.deleteMovie(movie.number)"></i>
                     </td>
-                    <td>{{ movie.movie }}</td>
-                    <td>{{ movie.cinema }}</td>
-                    <td>{{ movie.area }}</td>
-                    <td>{{ movie.price }}</td>
-                    <td>{{ movie.onDate }}</td>
-                    <td>{{ visableTime(movie.onTime) }}</td>
-                    <td>{{ visableSell(movie.onSell) }}</td>
-                    <td>
+                    <td style="background-color: #6f81a2;">{{ movie.movie }}</td>
+                    <td style="background-color: #6f81a2;">{{ movie.cinema }}</td>
+                    <td style="background-color: #6f81a2;">{{ movie.area }}</td>
+                    <td style="background-color: #6f81a2;">{{ movie.price }}</td>
+                    <td style="background-color: #6f81a2;">{{ movie.onDate }}</td>
+                    <td style="background-color: #6f81a2;">{{ visableTime(movie.onTime) }}</td>
+                    <td style="background-color: #6f81a2;">{{ visableSell(movie.onSell) }}</td>
+                    <td style="background-color: #6f81a2;">
                         <!-- 修改按鈕 -->
                         <button type="button" class="fixword" data-bs-toggle="modal"
                             data-bs-target="#staticBackdrop" @click="showEditModal(movie); searchTime()" :disabled="movie.onSell">
@@ -423,20 +423,22 @@ export default {
 
 <style scoped lang="scss">
 .view {
-    height: 90vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     // justify-content: center;
     align-items: center;
-    background-color: rgb(100, 99, 99);
+    background-color: rgb(174, 177, 192);
 
     .check {
         display: flex;
         // flex-wrap: wrap;
         width: 90vw;
         height: 12vh;
-        border: 1px solid black;
+        // border: 1px solid black;
+        border-radius: 10px;
         margin-top: 10px;
+        background-color: #525f75;
 
         .search {
             height: 5vh;
@@ -509,12 +511,13 @@ export default {
 
         // border: 1px solid black;
         .index {
-            background-color: rgb(218, 216, 216);
+            background-color: #525f75;
         }
 
         th {
             height: 5vh;
             border: 1px solid black;
+            color: rgb(237, 235, 235);
 
         }
 
@@ -522,7 +525,7 @@ export default {
             // width: 10vw;
             height: 5vh;
             border: 1px solid black;
-            color: white;
+            color: rgb(0, 0, 0);
             font-size: 16pt;
             white-space: nowrap;
             overflow: hidden;
@@ -532,35 +535,35 @@ export default {
 
     .icon {
         display: flex;
-        width: 90vw;
-        height: 8vh;
-
-
-        button {
-            // background-color: white;
-            background-color: rgb(100, 99, 99);
-            border-width: 0;
-            font-size: 32pt;
-            width: 5vw;
-            height: 5vh;
-        }
+        width: 60px;
+        height: 9vh;
+        font-size: 48pt;
+        // line-height: 2em;
+        padding-top: 30px;
     }
+    .textTC{
+            font-family:'jf-openhuninn-2.0';
+            font-size: 1.5em;
+            margin-top: 20px;
+            color: rgb(0, 0, 0);
+            // margin-bottom: 50px;
+        }
 
     .pagination {
         width: 90vw;
         justify-content: center;
         align-items: center;
-        background-color: rgb(100, 99, 99);
+        background-color: #525f75;
 
         button {
-            color: rgb(158, 158, 158);
+            color: rgb(255, 255, 255);
             font-size: 18pt;
-            background-color: rgb(100, 99, 99);
+            background-color: #525f75;
             border: 0px;
 
             &.active-page,
             &:hover {
-                color: salmon; // 上一页、下一页的颜色
+                color: rgb(0, 0, 0); // 上一页、下一页的颜色
             }
         }
 
@@ -579,7 +582,7 @@ export default {
         border: none;
         font-size: 1em;
         font-family:'jf-openhuninn-2.0';
-        color: white;
+        color: rgb(0, 0, 0);
         margin-top: 2.5%;
         transition: 0.4s;
         line-height: 1em;

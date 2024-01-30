@@ -2,16 +2,16 @@
     <div class="view">
         <div class="check">
             <div class="movieName">
-                <p>電影名稱:</p>
-                <input type="text" v-model="this.movieName">
+                <p>電影名稱：</p>
+                <input type="text" v-model="this.movieName" style="width: 82%;">
             </div>
             <!-- <div class="onDate">
                 <p>上映日期:</p>
                 <input type="date" name="" id="" v-model="this.onDate">
             </div> -->
             <div class="click">
-                <button class="search1" type="submit" @click="getPlayMovie()">正在熱映</button>
-                <button class="search" type="submit" @click="getMovieName()">搜尋</button>
+                <button class="buttonZ" type="submit" @click="getPlayMovie()">正在熱映</button>
+                <button class="buttonZ" type="submit" @click="getMovieName()">搜尋</button>
             </div>
         </div>
         <div class="icon">
@@ -21,11 +21,11 @@
             <thead>
                 <tr class="index">
                     <th>電影海報</th>
-                    <th>電影名稱</th>
+                    <th style="width: 5vw;">電影名稱</th>
                     <!-- <th>電影類型</th> -->
-                    <th>電影描述</th>
-                    <th>上映日期</th>
-                    <th>新增</th>
+                    <th style="width: 46vw;">電影描述</th>
+                    <th style="width: 10vw;">上映日期</th>
+                    <th style="width: 7vw;">新增</th>
 
                 </tr>
                 <tr v-for="(movie, index) in displayedMovies " :key="index">
@@ -37,9 +37,9 @@
                     <!-- <td>{{ getType(movie) }}</td> -->
                     <td style=" width: 35vw;">{{ truncateOverview(movie.overview === "" ? "尚未有簡介" :
                         movie.overview) }}</td>
-                    <td>{{ movie.release_date }}</td>
+                    <td style="margin: 0 2% 0 2%;">{{ movie.release_date }}</td>
                     <td><button class="create" type="button" @click="gotoSeat(movie)"
-                            style="background-color: rgb(100, 99, 99);">建立</button></td>
+                            style="background-color: rgb(100, 99, 99);">建立場次</button></td>
                 </tr>
             </thead>
         </table>
@@ -411,8 +411,19 @@ export default {
 
         .create {
             border: 0;
-            background-color: white;
-            color: salmon;
+            font-size: 1em;
+            font-family:'jf-openhuninn-2.0';
+            color: white;
+            margin-top: 2.5%;
+            transition: 0.4s;
+            line-height: 1em;
+            border: none;
+            background: none;
+            outline: none;
+            &:hover{
+            color:rgb(255, 255, 255);
+            transform:scale(1.2,1.2);
+            }
         }
     }
 
@@ -436,4 +447,41 @@ export default {
 
     }
 }
+.buttonZ{
+        width: 12.2vw;
+        height: 4.9vh;
+        border: none;
+        background-color: rgb(176, 182, 213);
+        border-radius: 10px;
+        font-size: 1.2em;
+        font-family:'jf-openhuninn-2.0';
+        transition: 0.4s;
+        line-height: 1em;
+        margin: 25px 30px 0 0;
+        &:hover{
+          background-color: gainsboro;
+          color:darkslategray;
+          transform:scale(1.1,1.1);
+        }
+    }
+
+    
+.fixword{
+        width: 6.2vw;
+        height: 3.9vh;
+        border: none;
+        font-size: 1em;
+        font-family:'jf-openhuninn-2.0';
+        color: white;
+        margin-top: 2.5%;
+        transition: 0.4s;
+        line-height: 1em;
+        border: none;
+        background: none;
+        outline: none;
+        &:hover{
+          color:rgb(255, 255, 255);
+          transform:scale(1.2,1.2);
+        }
+    }
 </style>

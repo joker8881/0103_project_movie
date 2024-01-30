@@ -2,20 +2,20 @@
     <div class="view">
         <div class="check">
             <div class="movieName">
-                <p>電影名稱:</p>
+                <p>電影名稱：</p>
                 <input type="text" v-model="this.movieName">
             </div>
             <div class="cinema">
-                <p>影院:</p>
+                <p>影院：</p>
                 <input type="text" name="" id="" v-model="this.cinema">
             </div>
             <div class="onDate">
-                <p>撥放日期:</p>
+                <p style="margin: 0;">撥放日期：</p>
                 <input type="date" name="" id="" v-model="this.startDate">
                 <p>到</p>
                 <input type="date" name="" id="" v-model="this.endDate">
             </div>
-            <button class="search" type="button" @click="search()">搜尋</button>
+            <button class="buttonZ" type="button" @click="search()">搜尋</button>
         </div>
         <div class="icon">
             <button type="button" @click="create()"><i class="fa-solid fa-plus  fa-xs"></i></button>
@@ -28,10 +28,11 @@
                     <th style="width: 15vw;">電影名稱</th>
                     <th style="width: 12vw;">影院</th>
                     <th style="width: 12vw;">影廳</th>
-                    <th style="width: 6vw;">價格</th>
+                    <th style="width: 4vw;">價格</th>
                     <th style="width: 10vw;">播放日期</th>
                     <th style="width: 15vw;">播放時段</th>
-                    <th style="width: 10vw;">修改</th>
+                    <th style="width: 10vw;">購票開放</th>
+                    <th style="width: 10vw;">修改場次</th>
                 </tr>
                 <tr v-for="(movie, index) in displayedMovies" :key="index">
                     <td><button type="button" @click="this.deleteMovie(movie.number)"
@@ -42,10 +43,11 @@
                     <td>{{ movie.area }}</td>
                     <td>{{ movie.price }}</td>
                     <td>{{ movie.onDate }}</td>
-                    <td>{{ movie.onTime }}</td>
+                    <td>{{ visableTime(movie.onTime) }}</td>
+                    <td>{{ visableSell(movie.onSell) }}</td>
                     <td>
                         <!-- 修改按鈕 -->
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        <button type="button" class="fixword" data-bs-toggle="modal"
                             data-bs-target="#staticBackdrop" @click="showEditModal(movie); searchTime()" :disabled="movie.onSell">
                             修改
                         </button>
@@ -99,20 +101,20 @@
                     <div class="form-floating mb-3">
                         <input type="time" class="form-control" id="floatingTime" placeholder="撥放時間" v-model="movieNewTime">
                         <label for="floatingTime">撥放時間</label>
-                        <button type="button" @click="movieTimeAdd()">加入</button>
+                        <button type="button" @click="movieTimeAdd()" class="buttonS">加入</button>
                     </div>
-                    <p style="margin: 0;">時間選項</p>
+                    <p style="margin: 0;" class="textT">時間選項</p>
                     <div class="playTime">
                         <tr v-for="(time, index) in editMovie.movieOnTime" :key="index">
                             <td><input type="checkbox" v-model="selectedItems[index]"></td>
                             <td>{{ time }}</td>
                         </tr>
                     </div>
-                    <button v-if="editMovie.movieOnTime != ''" type="button" @click="deleteSelected()">刪除</button>
+                    <button v-if="editMovie.movieOnTime != ''" type="button" @click="deleteSelected()" class="buttonS">刪除</button>
                 </div>
                 <div class="modal-footer">
-                    <button id="cancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" @click="update()">確認傳送</button>
+                    <button id="cancel" type="button" class="btn btn-secondary buttonY" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary buttonX" @click="update()">確認傳送</button>
                 </div>
             </div>
         </div>
@@ -121,6 +123,7 @@
 
 <script>
 import axios from 'axios';
+import Swal from 'sweetalert2'
 export default {
     data() {
         return {
@@ -150,6 +153,9 @@ export default {
             endDate: "",
         }
     },
+    components: {
+      Swal,
+    },
     computed: {
         displayedMovies() {
             const startIndex = (this.currentPage - 1) * this.pageSize;
@@ -172,6 +178,26 @@ export default {
             const totalPages = Math.ceil(this.movieList.length / this.pageSize);
             return Array.from({ length: totalPages }, (_, index) => index + 1);
         },
+        visableTime() {
+            return function(x) {
+                let onTimeString = x;
+                let cleanedOnTime = onTimeString.replace(/[\[\]"']/g, '');
+                let onTimeArray = cleanedOnTime.split(',');
+                let formattedOnTime = onTimeArray.join(', ');
+                return formattedOnTime;
+            };
+        },
+        visableSell() {
+            return function(x) {
+                let cc = x
+                if (x == true || x == "true"){
+                    cc = "開放購票"
+                } else{
+                    cc = "尚未開放購票"
+                }
+                return cc;
+            };
+        },
     },
     methods: {
         scrollToTop() {
@@ -191,7 +217,7 @@ export default {
                 // 對 editMovie.movieOnTime 進行排序
                 this.editMovie.movieOnTime.sort();
             } else {
-                alert("新加入的時間必須至少相隔 " + this.runtime + " 分鐘");
+                Swal.fire("新加入的時間必須至少相隔 " + this.runtime + " 分鐘");
             }
         },
         checkTimeGap() {
@@ -230,7 +256,7 @@ export default {
                 }
             }).then(res => {
                 console.log(res);
-                this.runtime = res.data.runtime
+                this.runtime = res.data.runtime+40
                 console.log(this.runtime);
             })
         },
@@ -273,15 +299,15 @@ export default {
                 console.log(res.data.movieInfoList);
                 this.movieList = res.data.movieInfoList
 
-                //將播放時間變成可視化格式
-                for (let i = 0; i < this.movieList.length; i++) {
-                    let onTimeString = this.movieList[i].onTime;
-                    let cleanedOnTime = onTimeString.replace(/[\[\]"']/g, '');
-                    let onTimeArray = cleanedOnTime.split(',');
-                    let formattedOnTime = onTimeArray.join(', ');
-                    this.movieList[i].onTime = formattedOnTime;
-                }
-                console.log(this.movieList);
+                // //將播放時間變成可視化格式
+                // for (let i = 0; i < this.movieList.length; i++) {
+                //     let onTimeString = this.movieList[i].onTime;
+                //     let cleanedOnTime = onTimeString.replace(/[\[\]"']/g, '');
+                //     let onTimeArray = cleanedOnTime.split(',');
+                //     let formattedOnTime = onTimeArray.join(', ');
+                //     this.movieList[i].onTime = formattedOnTime;
+                // }
+                // console.log(this.movieList);
 
                 //設置一個新時間  設置時間在今天的零時零分離秒
                 const today = new Date();
@@ -406,7 +432,7 @@ export default {
 
     .check {
         display: flex;
-        flex-wrap: wrap;
+        // flex-wrap: wrap;
         width: 90vw;
         height: 12vh;
         border: 1px solid black;
@@ -421,12 +447,12 @@ export default {
         }
 
         .movieName {
-            width: 20vw;
+            width: 21vw;
             display: flex;
             justify-content: start;
             align-items: center;
             font-size: 16pt;
-            margin-left: 1vw;
+            margin-left: 10px;
             color: white;
 
             input {
@@ -436,7 +462,7 @@ export default {
         }
 
         .cinema {
-            width: 15vw;
+            width: 16vw;
             display: flex;
             justify-content: start;
             align-items: center;
@@ -452,12 +478,12 @@ export default {
         }
 
         .onDate {
-            width: 45vw;
+            width: 43vw;
             display: flex;
             justify-content: start;
             align-items: center;
             font-size: 16pt;
-            margin-left: 1vw;
+            margin-left: 10px;
             color: white;
 
             input {
@@ -541,8 +567,117 @@ export default {
     }
 }
 
-.playTime {
-    height: 15vh;
-    border: 1px solid black;
-    overflow-y: auto;
-}</style>
+// .playTime {
+//     height: 15vh;
+//     border: 1px solid black;
+//     overflow-y: auto;
+// }
+
+.fixword{
+        width: 6.2vw;
+        height: 3.9vh;
+        border: none;
+        font-size: 1em;
+        font-family:'jf-openhuninn-2.0';
+        color: white;
+        margin-top: 2.5%;
+        transition: 0.4s;
+        line-height: 1em;
+        border: none;
+        background: none;
+        outline: none;
+        &:hover{
+          color:rgb(255, 255, 255);
+          transform:scale(1.2,1.2);
+        }
+    }
+
+.buttonS{
+        width: 6.2vw;
+        height: 3.9vh;
+        border: none;
+        background-color: rgb(176, 182, 213);
+        border-radius: 10px;
+        font-size: 1em;
+        font-family:'jf-openhuninn-2.0';
+        margin-top: 2.5%;
+        transition: 0.4s;
+        line-height: 1em;
+        margin: 20px 20px 10px 20px;
+        &:hover{
+          background-color: gainsboro;
+          color:darkslategray;
+          transform:scale(1.1,1.1);
+        }
+    }
+    .buttonX{
+        width: 6.2vw;
+        height: 5.9vh;
+        border: none;
+        background-color: rgb(74, 174, 46);
+        border-radius: 10px;
+        font-size: 1em;
+        font-family:'jf-openhuninn-2.0';
+        margin-top: 2.5%;
+        transition: 0.4s;
+        line-height: 1em;
+        margin: 20px 20px 10px 20px;
+        &:hover{
+          background-color: rgb(65, 227, 20);
+          color:rgb(255, 255, 255);
+          transform:scale(1.1,1.1);
+        }
+    }
+
+    .buttonY{
+        width: 6.2vw;
+        height: 5.9vh;
+        border: none;
+        background-color: rgb(174, 46, 46);
+        border-radius: 10px;
+        font-size: 1em;
+        font-family:'jf-openhuninn-2.0';
+        margin-top: 2.5%;
+        transition: 0.4s;
+        line-height: 1em;
+        margin: 20px 20px 10px 20px;
+        &:hover{
+          background-color: rgb(227, 20, 20);
+          color:rgb(255, 255, 255);
+          transform:scale(1.1,1.1);
+        }
+    }
+    .buttonZ{
+        width: 5.2vw;
+        height: 4.9vh;
+        border: none;
+        background-color: rgb(176, 182, 213);
+        border-radius: 10px;
+        font-size: 1em;
+        font-family:'jf-openhuninn-2.0';
+        transition: 0.4s;
+        line-height: 1em;
+        margin: 25px 0 0 0;
+        &:hover{
+          background-color: gainsboro;
+          color:darkslategray;
+          transform:scale(1.1,1.1);
+        }
+    }
+    .textT{
+    font-family:'jf-openhuninn-2.0';
+    font-size: 1.5em;
+    margin-top: 20px;
+    color: rgb(0, 0, 0);
+    margin-bottom: 50px;
+  }
+
+  .playTime {
+        margin-top: 10px;
+        padding: 5px 0 0 10px;
+        height: 15vh;
+        border: 2px solid black;
+        overflow-y: auto;
+        border-radius: 10px;
+    }
+</style>

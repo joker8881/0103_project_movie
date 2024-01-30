@@ -201,6 +201,7 @@ export default {
     logincheck(){
         this.userLoggedIn = Cookies.get('userLoggedIn')
         if (this.userLoggedIn) {
+          this.account = Cookies.get('account')
           let a = Cookies.get('account')
           Cookies.set('userLoggedIn', true, { expires: 7, path: '/' });
           Cookies.set('account', a, { expires: 7, path: '/' });
@@ -289,9 +290,71 @@ export default {
       });
   },
   searchmypageaccount(){
-    this.account = this.searchaccount
+    
     console.log(this.account)
     fetch('http://localhost:8080/movie/mypage/search'+ '?' + "account=" + this.searchaccount, {
+        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+        headers: {
+          'Content-Type': 'application/json'
+          },
+        body: JSON.stringify({
+        })
+      })
+      .then(response => response.json())
+      .then(data => { // 處理返回的數據
+        console.log(data);
+        if(data.code == 200){
+          this.movieInfo = JSON.parse(data.mypageList.favorit)
+          this.mymovie = JSON.parse(data.mypageList.accountMovieList)
+          this.moviecomment = data.mypageList.favoritComment
+          // console.log(this.movieInfo)
+          // console.log(this.mymovie)
+          console.log(this.moviecomment)
+          this.$router.push({
+            name: "mypage",
+            query: {
+              movieInfo: JSON.stringify(this.movieInfo),
+              mymovie: JSON.stringify(this.mymovie),
+              moviecomment: JSON.stringify(this.moviecomment),
+            },
+          });
+          setTimeout(() => {
+            this.movieType = []
+            this.getMovieType();
+            this.getPerson();
+          }, 500);
+          setTimeout(() => {
+            this.getTrailer();
+          }, 1000);
+          setTimeout(() => {
+            this.splitMovies();
+          }, 1000);
+          this.$nextTick(() => {
+                var swiper = new Swiper(this.$refs.mySwiper, {
+                  slidesPerView: 3,
+                  slidesPerColumn: 3,
+                  spaceBetween:10,
+                  autoplay: {
+                    delay: 3000,
+                    disableOnInteraction: false,
+                    stopOnLastSlide: false,
+                  },
+                  loop: false,
+                  observer: true,
+                  observeParents: true,
+                });
+              })
+          this.logincheck()
+          this.account = this.searchaccount
+          }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  },
+  logaccount(x){
+    console.log(x)
+    fetch('http://localhost:8080/movie/mypage/search'+ '?' + "account=" + x, {
         method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
         headers: {
           'Content-Type': 'application/json'
@@ -367,6 +430,13 @@ export default {
       });
   },
 },
+  beforeMount(){
+    this.logincheck()
+    if (this.account !="") {
+      this.logaccount(this.account)
+      console.log("login check")
+    }
+  },
   async mounted() {
     if(Object.keys(this.$route.query).length !== 0){
       console.log("A")
@@ -374,7 +444,7 @@ export default {
       this.movieInfo = this.$route.query.movieInfo
       this.mymovie = this.$route.query.mymovie
       this.moviecomment = this.$route.query.moviecomment
-    } else{
+    } else if (this.account =="") {
       console.log("B")
       this.getrandonpage()
     }

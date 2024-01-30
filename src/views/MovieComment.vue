@@ -1,6 +1,7 @@
 <script>
 import Cookies from "js-cookie";
 import axios from "axios";
+import { NCarousel } from "naive-ui";
 export default {
   data() {
     return {
@@ -17,6 +18,13 @@ export default {
       name: "snsdarea1209", // 帳號
       userLoggedIn: false,
       loginAccount: "",
+      // 展示區相關
+      artName: "",
+      carouselImages: [], // 作品URL
+      carouselAccount: [], // 作品帳號
+      carouselArt: [], // 畫作名稱
+      showDots: false, // 關閉展示區的點點
+      pictureCode: "",
       // 評論區相關
       sortOrder: "sort",
       baoleiButton: false, // 暴雷按鈕
@@ -30,6 +38,9 @@ export default {
       objPlayingMovie: [],
       selectedTime: "",
     };
+  },
+  components: {
+    NCarousel,
   },
   computed: {
     sortComments() { // 篩選留言
@@ -148,7 +159,38 @@ export default {
         })
         .catch((err) => console.error(err));
     },
-    //評論區相關
+    // 展示區相關
+    async searchPicture() {
+      try {
+        const response = await fetch("http://localhost:8080/movie/art/search", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            movie: this.movieInfo.movieTitle,
+            movieId: this.movieInfo.movieId,
+            artname: this.artName,
+          }),
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log(data);
+        this.pictureCode = data.code;
+        console.log(this.pictureCode);
+        this.carouselArt = data.artList.map((art) => art.artName);
+        console.log(this.carouselArt);
+        this.carouselAccount = data.artList.map((art) => art.account);
+        console.log(this.carouselAccount);
+        this.carouselImages = data.artList.map((art) => art.artLocation);
+        console.log(this.carouselImages);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
+    // 評論區相關
     toggleBaolei() { // 暴雷按鈕
       this.baoleiButton = !this.baoleiButton;
     },
@@ -308,7 +350,7 @@ export default {
       const dirtyWords = ['黃牛'];
       let filteredText = commentText;
       for (const word of dirtyWords) {
-        const regex = new RegExp(word, 'gi');
+        const regex = new RegExp(word.split('').join('\\s*'), 'gi');
         filteredText = filteredText.replace(regex, '*'.repeat(word.length));
       }
       return filteredText;
@@ -513,6 +555,7 @@ export default {
     this.getMovieType();
     this.commentSearch();
     this.getMovieTime();
+    this.searchPicture();
   },
 };
 </script>
@@ -547,25 +590,20 @@ export default {
               <div class="type">
                 <h3 class="textHeader">類型：</h3>
                 <span class="textall" style="line-height: 50px" v-for="(item, index) in this.movieType" :key="index">{{
-                  item }}<span v-if="index < this.movieType.length - 1" class="textall"
-                    style="font-size: 1em">、</span></span><br />
+                  item }}<span v-if="index < this.movieType.length - 1" class="textall" style="font-size: 1em">、</span></span><br />
               </div>
               <div class="director">
                 <h3 class="textHeader">片長：</h3>
-                <span class="textallx" style="line-height: 50px">{{ this.hours == 0 && this.minutes == 0 ? "未知" :
-                  this.hours + "h" + this.minutes + "m" }}</span><br />
+                <span class="textallx" style="line-height: 50px">{{ this.hours == 0 && this.minutes == 0 ? "未知" : this.hours + "小時" + this.minutes + "分鐘" }}</span><br />
               </div>
               <div class="director">
                 <h3 class="textHeader">導演：</h3>
-                <span class="textall" style="line-height: 50px" v-for="(item, index) in this.directors" :key="index">{{
-                  item.original_name }}<span v-if="index < this.directors.length - 1">,</span></span><br />
+                <span class="textall" style="line-height: 50px" v-for="(item, index) in this.directors" :key="index">{{ item.original_name }}<span v-if="index < this.directors.length - 1">,</span></span><br />
               </div>
               <div class="casts">
                 <h3 class="textHeader" style="width: 105px; height: 50px">演員：</h3>
                 <div style="width: 90%; display: flex">
-                  <p class="textall" style="line-height: 50px" v-for="(item, index) in this.casts" :key="index">{{
-                    item.original_name }}<span v-if="index < this.casts.length - 1" class="textall"
-                      style="font-size: 1em">、</span></p><br />
+                  <p class="textall" style="line-height: 50px" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em">、</span></p><br />
                 </div>
               </div>
               <div class="voteAvg">
@@ -574,8 +612,7 @@ export default {
               </div>
               <div class="movieOverview">
                 <h3 class="textHeader" style="width: 105px; height: 50px">簡介：</h3>
-                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 90%; line-height: 50px">{{
-                  this.movieInfo.movieOverview }}</p>
+                <p class="textallx" v-if="this.movieInfo.movieOverview" style="width: 90%; line-height: 50px">{{ this.movieInfo.movieOverview }}</p>
                 <p class="textall" v-else>此電影無簡介</p>
               </div>
             </div>
@@ -586,15 +623,14 @@ export default {
     <!-- <hr /> -->
 
     <!-- 預告片 -->
-    <div class="middleInfo" style="margin-top:  50px; ">
+    <div class="middleInfo" style="margin-top: 50px; ">
       <div class="middle">
         <div class="mid">
           電影預告
         </div>
       </div>
       <div class="trailer">
-        <iframe width="80%" height="500" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0"
-          allowfullscreen></iframe>
+        <iframe width="720" height="480" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen></iframe>
       </div>
       <div class="down">
         <div class="turn">
@@ -621,6 +657,25 @@ export default {
           <option v-for="(time, timeIndex) in JSON.parse(movie.onTime)" :key="timeIndex">{{ time }}</option>
         </select>
         <button type="button" @click="gotoSeat(movie)">選取位置</button>
+      </div>
+    </div>
+
+    <!-- 創作區 -->
+    <h1>展示區</h1>
+    <div class="ShowPoster">
+      <div v-if="carouselImages.length === 0">
+        <h4>此電影暫無創作</h4>
+      </div>
+      <div v-else>
+        <n-carousel direction="vertical" :show-dots="showDots" dot-placement="right" mousewheel style="width: 763px; height: 450px;" class="nColor">
+        <div v-for="(image, index) in carouselImages" :key="index">
+          <img class="carousel-img" :src="image" style="margin-top:0px; max-width: 100%; max-height: 100%; object-fit: cover;" />
+          <div class="" style="position:absolute; left:3.1%; bottom:1.2%;">
+            <p style="color:black; background-color:pink; border-radius:20px; margin-bottom:10px; padding: 5px 15px;">{{ "創作者:" + carouselAccount[index] }}</p>
+            <p style="color:black; background-color:#a4b3cc; border-radius:20px; padding: 5px 15px;">{{ "作品名稱:" + carouselArt[index] }}</p>
+          </div>
+        </div>
+      </n-carousel>
       </div>
     </div>
 
@@ -782,7 +837,6 @@ export default {
   pointer-events: none;
   animation: bgGrade 10s ease infinite;
 }
-
 .ldio-b9el9z8mymt div {
   //轉動齒輪
   position: absolute;
@@ -793,20 +847,17 @@ export default {
   border-radius: 50%;
   opacity: 0.5;
 }
-
 .ldio-b9el9z8mymt div {
   animation: ldio-b9el9z8mymt 1s linear infinite;
   top: 100px;
   left: 100px;
 }
-
 .loadingio-spinner-rolling-3hvvs6i9c3b {
   width: 200px;
   height: 200px;
   display: inline-block;
   overflow: hidden;
 }
-
 .ldio-b9el9z8mymt {
   width: 100%;
   height: 100%;
@@ -815,7 +866,6 @@ export default {
   backface-visibility: hidden;
   transform-origin: 0 0;
 }
-
 .ldio-b9el9z8mymt div {
   box-sizing: content-box;
 }
@@ -829,44 +879,23 @@ export default {
     transform: translate(-50%, -50%) rotate(360deg);
   }
 }
-
-span,
-button,
-p,
-label,
-select {
+span, button, p, label, select {
   font-family: "Montserrat", sans-serif, sans-serif, "M PLUS 1";
   color: #557;
   font-size: 18px;
 }
-
-small,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+small, h1, h2, h3, h4, h5, h6 {
   font-family: "Montserrat", sans-serif, sans-serif, "M PLUS 1";
   color: #557;
 }
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-family: "Montserrat", sans-serif, sans-serif, "M PLUS 1";
   color: #557;
   line-height: 50px;
 }
-
-span,
-button {
+span, button {
   margin: 10px 10px 10px 0;
 }
-
 .col-md-8 {
   width: 50vw;
   margin: 0 auto;
@@ -874,48 +903,38 @@ button {
   justify-content: start;
   text-align: start;
 }
-
 .card {
   margin-bottom: 10px;
-
   .card-body {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .btn-link {
     padding: 0;
     margin-right: 10px;
     cursor: pointer;
   }
-
   .btn-primary,
   .btn-outline-primary {
     margin-right: 10px;
   }
-
   .text-muted {
     margin-left: auto;
   }
-
   .mt-2 {
     margin-top: 10px;
   }
 }
-
 .body {
   width: 100vw;
   height: 200vh;
-
   .header {
     width: 95vw;
     height: 110vh;
     margin: 0 auto;
     padding-top: 20px;
-
     .movieData {
       display: flex;
-
       .movieDataLeft {
         width: 35%;
         height: 110vh;
@@ -923,36 +942,30 @@ button {
         align-items: end;
         margin-right: 50px;
       }
-
       .movieDataRight {
         width: 65%;
         height: 110vh;
         text-align: start;
         align-items: start;
-
         .movieDataRight1 {
           width: 100%;
           height: 20vh;
           display: flex;
-
           .movieDataRight11 {
             width: 10%;
             height: 40vh;
             text-align: start;
             align-items: start;
           }
-
           .movieDataRight22 {
             width: 90%;
             height: 40vh;
             text-align: start;
             align-items: start;
-
             .type {
               display: flex;
               margin-bottom: 10px;
             }
-
             .director {
               display: flex;
               margin-bottom: 10px;
@@ -967,7 +980,6 @@ button {
               display: flex;
               margin-bottom: 10px;
             }
-
             .movieOverview {
               display: flex;
               margin-bottom: 10px;
@@ -977,7 +989,6 @@ button {
       }
     }
   }
-
   .middleInfo {
     .middle {
       display: flex;
@@ -990,7 +1001,6 @@ button {
       align-items: center;
       justify-content: space-between;
       border-top: 2px solid rgb(230, 230, 230);
-
       .mid {
         font-weight: 300;
         letter-spacing: 0.5em;
@@ -1010,13 +1020,11 @@ button {
             rgba(0, 0, 0, 0) 4px);
       }
     }
-
     .trailer {
       width: 100vw;
       height: 500px;
-      background-color: black;
+      // background-color: black;
     }
-
     .down {
       display: flex;
       justify-content: start;
@@ -1028,7 +1036,6 @@ button {
       align-items: center;
       justify-content: space-between;
       border-bottom: 2px solid rgb(230, 230, 230);
-
       .turn {
         font-weight: 300;
         letter-spacing: 0.5em;
@@ -1049,7 +1056,6 @@ button {
       }
     }
   }
-
   .middle1 {
     display: flex;
     flex-direction: column;
@@ -1062,15 +1068,12 @@ button {
     font-size: 1.8em;
     letter-spacing: 0.2em;
     font-weight: 300;
-
     .selectTheater {
       margin-bottom: 1em;
     }
-
     .selectButton {
       width: 100vw;
       border-bottom: 3px solid rgb(238, 238, 238);
-
       button {
         width: 10vw;
         height: 6vh;
@@ -1079,7 +1082,6 @@ button {
         padding: 5px;
       }
     }
-
     .selectDate {
       width: 100vw;
       display: flex;
@@ -1090,43 +1092,36 @@ button {
       font-weight: 300;
     }
   }
-
   .commentArea {
     width: 95vw;
     height: 30vh;
     margin: 0 auto;
   }
 }
-
 .textTilte {
   font-family: "jf-openhuninn-2.0";
   font-size: 4em;
   margin: 0 0 20px 0;
 }
-
 .text {
   font-family: "jf-openhuninn-2.0";
   font-size: 2em;
   width: 80%;
   margin: 0 auto 0 auto;
 }
-
 .textall {
   font-family: "jf-openhuninn-2.0";
   font-size: 1.5em;
   margin: 0;
 }
-
 .textHeader {
   font-family: "jf-openhuninn-2.0";
   font-size: 2em;
   margin: 0;
 }
-
 .selectTheater {
   margin-bottom: 1em;
 }
-
 .selectButton {
   width: 100vw;
   border-bottom: 3px solid rgb(238, 238, 238);
@@ -1137,11 +1132,16 @@ button {
     padding: 5px;
   }
 }
-
 .textallx {
   font-family: "jf-openhuninn-2.0";
   font-size: 1.5em;
   margin: 0;
   overflow: auto;
   max-height: 190px;
-}</style>
+}
+.nColor {
+  background-color: rgb(255, 255, 255, 0.01);
+  margin: 0 auto 10px auto;
+  border: 1px solid black;
+}
+</style>

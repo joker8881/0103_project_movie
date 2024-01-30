@@ -431,7 +431,7 @@ export default {
     font-size: 18pt;
     background-color: white;
     border: 0px;
-    margin-bottom: 5px;
+    margin-bottom: 12px;
 
     &.active-page,
     &:hover {

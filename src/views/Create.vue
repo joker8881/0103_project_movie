@@ -183,6 +183,10 @@ export default defineComponent({
       console.log('Performing search:', this.searchText);
     },
     ResetSearch() {
+      // 重置相關數據
+      this.carouselImages = [];
+      this.carouselAccount = [];
+      this.carouselArt = [];
       // 重置搜尋相關資料
       this.searchText = '';
       this.searchResults = '';

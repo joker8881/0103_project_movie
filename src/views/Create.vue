@@ -566,6 +566,11 @@ export default defineComponent({
     },
 
     searchMovie(movie) {
+      // 重置相關數據
+      this.carouselImages = [];
+      this.carouselAccount = [];
+      this.carouselArt = [];
+      
       this.selectedMovie = movie;
 
       fetch('http://localhost:8080/movie/art/search', {
@@ -772,7 +777,7 @@ export default defineComponent({
       
       
       <!-- <p>電影名稱: {{ selectedMovie.title }}</p> -->
- <n-carousel
+ <n-carousel v-if="carouselImages.length > 0"
   direction="vertical"
   :show-dots="showDots"
   dot-placement="right"
@@ -789,7 +794,10 @@ export default defineComponent({
   </div>
 
 </n-carousel>
-<!-- getMovieType() { //電影類型 -->
+<div v-else>
+  <p style="color:rgba(255, 255, 255, 0.01);">232</p>
+    <h1 style="font-size:20pt; margin-top:215px; margin-right:15px;">未點選『前往展示區』或『暫無作品』</h1>
+  </div>
 </div>
 </div>
 </template>

@@ -66,9 +66,6 @@ export default {
             userLoggedIn: false,
             account: "",
             lockedSeats: [
-                // { row: 2, col: 3 },
-                // { row: 4, col: 6 },
-                // { row: 3, col: 2 }
             ] // 鎖定的座位
         };
     }, computed: {

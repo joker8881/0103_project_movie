@@ -25,11 +25,12 @@
             <thead>
                 <tr class="index">
                     <th style="width: 5vw;">刪除</th>
-                    <th style="width: 25vw;">電影名稱</th>
-                    <th>影院</th>
-                    <th>影廳</th>
-                    <th>價格</th>
-                    <th>撥放日期</th>
+                    <th style="width: 15vw;">電影名稱</th>
+                    <th style="width: 12vw;">影院</th>
+                    <th style="width: 12vw;">影廳</th>
+                    <th style="width: 6vw;">價格</th>
+                    <th style="width: 10vw;">播放日期</th>
+                    <th style="width: 15vw;">播放時段</th>
                     <th style="width: 10vw;">修改</th>
                 </tr>
                 <tr v-for="(movie, index) in displayedMovies" :key="index">
@@ -41,10 +42,11 @@
                     <td>{{ movie.area }}</td>
                     <td>{{ movie.price }}</td>
                     <td>{{ movie.onDate }}</td>
+                    <td>{{ movie.onTime }}</td>
                     <td>
                         <!-- 修改按鈕 -->
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#staticBackdrop" @click="showEditModal(movie); searchTime()">
+                            data-bs-target="#staticBackdrop" @click="showEditModal(movie); searchTime()" :disabled="movie.onSell">
                             修改
                         </button>
 
@@ -270,6 +272,16 @@ export default {
                 console.log(res);
                 console.log(res.data.movieInfoList);
                 this.movieList = res.data.movieInfoList
+
+                //將播放時間變成可視化格式
+                for (let i = 0; i < this.movieList.length; i++) {
+                    let onTimeString = this.movieList[i].onTime;
+                    let cleanedOnTime = onTimeString.replace(/[\[\]"']/g, '');
+                    let onTimeArray = cleanedOnTime.split(',');
+                    let formattedOnTime = onTimeArray.join(', ');
+                    this.movieList[i].onTime = formattedOnTime;
+                }
+                console.log(this.movieList);
 
                 //設置一個新時間  設置時間在今天的零時零分離秒
                 const today = new Date();

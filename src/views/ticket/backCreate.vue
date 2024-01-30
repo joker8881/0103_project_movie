@@ -264,11 +264,11 @@ export default {
     },
     mounted() {
         this.getPlayMovie()
-        this.getMovieType()
+        // this.getMovieType()
     },
     computed: {
         displayedMovies() {
-            const startIndex = (this.currentPage - 1) * this.pageSize;
+            const startIndex = (this.currentPage -1) * this.pageSize;
             const endIndex = startIndex + this.pageSize;
             return this.objPlayMovies.slice(startIndex, endIndex);
         },

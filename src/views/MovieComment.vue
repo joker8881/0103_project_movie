@@ -644,17 +644,10 @@ export default {
         選取影城
       </div>
       <div class="selectButton">
-<<<<<<< HEAD
-        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3; " type="button" @click="cinemaSearch('紹人戲院')">紹人戲院</button>
-        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('裕峰影城')">裕峰影城</button>
-        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('梓宏影院')">梓宏影院</button>
-        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('暐衡劇院')">暐衡劇院</button>
-=======
-        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3; " type="button" @click="cinemaSearch('紹仁戲院')">桃園紹仁戲院</button>
+        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3; " type="button" @click="cinemaSearch('紹人戲院')">桃園紹仁戲院</button>
         <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('裕峰影城')">基隆裕峰影城</button>
         <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('梓宏影院')">新竹梓宏影院</button>
         <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('暐衡劇院')">台北暐衡劇院</button>
->>>>>>> 6b892863d4bc87a9e7ba40ea91e4f3bd87f60678
       </div>
       <div class="selectDate" v-for="(movie, index) in objPlayingMovie">
         <h6 style="font-family:'jf-openhuninn-2.0'; color: #557;">{{ movie.onDate }}</h6>

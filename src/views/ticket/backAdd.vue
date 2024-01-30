@@ -28,10 +28,15 @@
             <div class="form-floating mb-3">
                 <input type="time" class="form-control" id="floatingTime" placeholder="撥放時間" v-model="this.movieTime">
                 <label for="floatingTime">播放時間</label>
-                <button type="button" @click="movieTimeAdd()" :disabled="isDisabled || isDisabledtime" class="buttonX">新增場次時段</button>
+                <button type="button" @click="movieTimeAdd()" :disabled="isDisabled || isDisabledtime"
+                    class="buttonX">新增場次時段</button>
             </div>
-            <p v-if="isDisabled" style="color: rgb(255, 0, 0); background-color: rgb(221, 161, 65); border-radius: 20px;margin: 10px 0 10px 0 ;height: 30px;line-height: 1.7em;">每個項目都必須填入才可以新增場次時段</p>
-            <p v-if="isDisabledtime" style="color: rgb(255, 0, 0); background-color: rgb(221, 161, 65); border-radius: 20px;height: 30px;line-height: 1.7em;">播放日期必須在今天之後！</p>
+            <p v-if="isDisabled"
+                style="color: rgb(255, 0, 0); background-color: rgb(221, 161, 65); border-radius: 20px;margin: 10px 0 10px 0 ;height: 30px;line-height: 1.7em;">
+                每個項目都必須填入才可以新增場次時段</p>
+            <p v-if="isDisabledtime"
+                style="color: rgb(255, 0, 0); background-color: rgb(221, 161, 65); border-radius: 20px;height: 30px;line-height: 1.7em;">
+                播放日期必須在今天之後！</p>
             <p style="margin: 0;" class="textT">時間選項</p>
             <div class="playTime" style="background-color: white;">
                 <tr v-for="(play, index) in movieAllTime " :key="index">
@@ -42,7 +47,7 @@
             <button v-if="movieAllTime.length > 0" type="button" @click="deleteSelected()" class="buttonS">刪除</button>
             <div class="checkButton">
                 <button type="button" @click="backCreate()" class="buttonX">返回</button>
-                <button type="button" @click="createN()" class="buttonX">送出資料</button>
+                <button type="button" @click="createS()" class="buttonX">送出資料</button>
                 <button type="button" @click="createP()" class="buttonXL">送出資料並開啟售票</button>
             </div>
         </div>
@@ -71,6 +76,9 @@ export default {
             selectedItems: [],
             //上一頁推過來的電影資訊
             movieInfo: [],
+            //把搜尋的電影時刻傳進來
+            movieList: [],
+
         }
     },
     computed: {
@@ -93,25 +101,27 @@ export default {
 
             // 添加条件检查
             return (
-                selectedDate <= today 
+                selectedDate <= today
             );
         }
     },
     components: {
-      Swal,
+        Swal,
     },
     methods: {
+        //添加時間
         movieTimeAdd() {
             // 檢查是否至少相隔一個 runtime
             if (this.checkTimeGap()) {
                 this.movieAllTime.push(this.movieTime);
                 // 對 movieAllTime 進行排序
                 this.movieAllTime.sort();
-                this.movieTime=""
+                this.movieTime = ""
             } else {
                 Swal.fire("新加入的時間必須至少相隔 " + this.runtime + " 分鐘");
             }
         },
+        //確認時間的間隔差
         checkTimeGap() {
             // 如果 movieAllTime 長度為 0，直接允許加入
             if (this.movieAllTime.length === 0) {
@@ -133,20 +143,36 @@ export default {
             // 所有時間差都大於等於 runtime，返回 true
             return true;
         },
+        //把電影時間解析程分鐘
         convertTimeToMinutes(time) {
             // 解析時間為分鐘
             return parseInt(time.split(":")[0]) * 60 + parseInt(time.split(":")[1]);
         },
+        //刪除勾選的時間
         deleteSelected() {
             // 過濾出被勾選的項目並更新 movieAllTime
             this.movieAllTime = this.movieAllTime.filter((play, index) => !this.selectedItems[index]);
             // 刪除後清空 selectedItems 陣列
             this.selectedItems = [];
         },
+        //返回創造頁面
         backCreate() {
             this.$router.push('/backCreate')
         },
-        createN() {
+        //傳送資訊 不可購票
+        createS() {
+
+            const repet = this.movieList.some(movie =>
+                movie.cinema === this.movieCinema &&
+                movie.area === this.movieArea &&
+                movie.onDate === this.movieDate
+            );
+            console.log(repet);
+
+            if (repet) {
+                Swal.fire("此影城的影廳在這一天已經有排程了");
+                return;
+            }
             // 初始化錯誤訊息
             let errorMessage = "";
 
@@ -160,7 +186,7 @@ export default {
             if (this.movieArea === "選擇影廳") {
                 errorMessage += "請選擇影廳\n";
             }
-            if (isNaN(this.moviePrice) || this.moviePrice === ""||this.moviePrice === "0") {
+            if (isNaN(this.moviePrice) || this.moviePrice === "" || this.moviePrice === "0") {
                 errorMessage += "請填寫有效的價格\n";
             }
             if (this.movieDate === "") {
@@ -190,15 +216,28 @@ export default {
                         price: this.moviePrice,
                         onDate: this.movieDate,
                         onTime: JSON.stringify(this.movieAllTime),
-                        onSell:false
+                        onSell: false
                     },
                 }).then(res => {
                     console.log(res);
-                    this.$router.push("/backSearch");
+                    // this.$router.push("/backSearch");
                 });
             }
         },
+        //傳送資訊 可購票
         createP() {
+
+            const repet = this.movieList.some(movie =>
+                movie.cinema === this.movieCinema &&
+                movie.area === this.movieArea &&
+                movie.onDate === this.movieDate
+            );
+            console.log(repet);
+
+            if (repet) {
+                Swal.fire("此影城的影廳在這一天已經有排程了");
+                return;
+            }
             // 初始化錯誤訊息
             let errorMessage = "";
 
@@ -212,7 +251,7 @@ export default {
             if (this.movieArea === "選擇影廳") {
                 errorMessage += "請選擇影廳\n";
             }
-            if (isNaN(this.moviePrice) || this.moviePrice === ""||this.moviePrice === "0") {
+            if (isNaN(this.moviePrice) || this.moviePrice === "" || this.moviePrice === "0") {
                 errorMessage += "請填寫有效的價格\n";
             }
             if (this.movieDate === "") {
@@ -242,7 +281,7 @@ export default {
                         price: this.moviePrice,
                         onDate: this.movieDate,
                         onTime: JSON.stringify(this.movieAllTime),
-                        onSell:true
+                        onSell: true
                     },
                 }).then(res => {
                     console.log(res);
@@ -250,6 +289,7 @@ export default {
                 });
             }
         },
+        //搜尋電影時間
         searchTime() {
             axios({
                 method: 'GET',
@@ -261,10 +301,40 @@ export default {
                 }
             }).then(res => {
                 console.log(res);
-                this.runtime = res.data.runtime +40
+                this.runtime = res.data.runtime + 40
                 console.log(this.runtime);
             })
-        }
+        },
+        //搜尋電影時刻表
+        search() {
+            axios({
+                url: 'http://localhost:8080/movie/movieinfo/search',
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                data: {
+                    movie: this.movieName,
+                    cinema: this.cinema,
+                    on_date: this.onDate,
+                    startDate: this.startDate,
+                    endDate: this.endDate
+                },
+            }).then(res => {
+                console.log(res);
+                console.log(res.data.movieInfoList);
+                this.movieList = res.data.movieInfoList
+                //設置一個新時間  設置時間在今天的零時零分離秒
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                //把movieInfoList篩選  設置一個movieDate= 一個新的時間序列  當movieDate >= today才會回傳到movieList裡面
+                this.movieList = res.data.movieInfoList.filter(movie => {
+                    const movieDate = new Date(movie.onDate).getTime();
+                    return movieDate >= today;
+                });
+            }
+            )
+        },
     },
     mounted() {
         this.movieInfo = this.$route.query;
@@ -272,6 +342,7 @@ export default {
         this.movieId = this.movieInfo.movieId
         console.log("Movie Details:", this.movieInfo);
         this.searchTime()
+        this.search()
     },
 }
 </script>
@@ -317,77 +388,81 @@ export default {
     }
 }
 
-.buttonS{
-        width: 10.2vw;
-        height: 3.9vh;
-        border: none;
-        background-color: rgb(176, 182, 213);
-        border-radius: 10px;
-        font-size: 1em;
-        font-family:'jf-openhuninn-2.0';
-        margin-top: 2.5%;
-        transition: 0.4s;
-        line-height: 1em;
-        margin: 20px 20px 10px 20px;
-        &:hover{
-            background-color: rgb(63, 85, 195);
-            color:rgb(255, 255, 255);
-            transform:scale(1.1,1.1);
-        }
-    }
+.buttonS {
+    width: 10.2vw;
+    height: 3.9vh;
+    border: none;
+    background-color: rgb(176, 182, 213);
+    border-radius: 10px;
+    font-size: 1em;
+    font-family: 'jf-openhuninn-2.0';
+    margin-top: 2.5%;
+    transition: 0.4s;
+    line-height: 1em;
+    margin: 20px 20px 10px 20px;
 
-.buttonX{
-        width: 14.2vw;
-        height: 5.9vh;
-        border: none;
-        background-color: rgb(127, 136, 180);
-        border-radius: 10px;
-        font-size: 1.5em;
-        font-family:'jf-openhuninn-2.0';
-        margin-top: 2.5%;
-        transition: 0.4s;
-        line-height: 1em;
-        margin: 20px 20px 10px 20px;
-        color: rgb(0, 0, 0);
-        &:hover{
-          background-color: rgb(63, 85, 195);
-          color:rgb(255, 255, 255);
-          transform:scale(1.1,1.1);
-        }
+    &:hover {
+        background-color: rgb(63, 85, 195);
+        color: rgb(255, 255, 255);
+        transform: scale(1.1, 1.1);
     }
+}
 
-    .buttonXL{
-        width: 14.2vw;
-        height: 5.9vh;
-        border: none;
-        background-color: rgb(127, 136, 180);
-        border-radius: 10px;
-        font-size: 1.3em;
-        font-family:'jf-openhuninn-2.0';
-        margin-top: 2.5%;
-        transition: 0.4s;
-        line-height: 1em;
-        margin: 20px 20px 10px 20px;
-        color: rgb(0, 0, 0);
-        &:hover{
-            background-color: rgb(63, 85, 195);
-            color:rgb(255, 255, 255);
-            transform:scale(1.1,1.1);
-        }
+.buttonX {
+    width: 14.2vw;
+    height: 5.9vh;
+    border: none;
+    background-color: rgb(127, 136, 180);
+    border-radius: 10px;
+    font-size: 1.5em;
+    font-family: 'jf-openhuninn-2.0';
+    margin-top: 2.5%;
+    transition: 0.4s;
+    line-height: 1em;
+    margin: 20px 20px 10px 20px;
+    color: rgb(0, 0, 0);
+
+    &:hover {
+        background-color: rgb(63, 85, 195);
+        color: rgb(255, 255, 255);
+        transform: scale(1.1, 1.1);
     }
+}
 
-    .textT{
-    font-family:'jf-openhuninn-2.0';
+.buttonXL {
+    width: 14.2vw;
+    height: 5.9vh;
+    border: none;
+    background-color: rgb(127, 136, 180);
+    border-radius: 10px;
+    font-size: 1.3em;
+    font-family: 'jf-openhuninn-2.0';
+    margin-top: 2.5%;
+    transition: 0.4s;
+    line-height: 1em;
+    margin: 20px 20px 10px 20px;
+    color: rgb(0, 0, 0);
+
+    &:hover {
+        background-color: rgb(63, 85, 195);
+        color: rgb(255, 255, 255);
+        transform: scale(1.1, 1.1);
+    }
+}
+
+.textT {
+    font-family: 'jf-openhuninn-2.0';
     font-size: 1.5em;
     margin-top: 20px;
     color: rgb(0, 0, 0);
     margin-bottom: 50px;
-  }
-  .textTX{
-    font-family:'jf-openhuninn-2.0';
+}
+
+.textTX {
+    font-family: 'jf-openhuninn-2.0';
     font-size: 1.2em;
     margin-top: 20px;
     color: rgb(0, 0, 0);
     margin-bottom: 50px;
-  }
+}
 </style>

@@ -31,15 +31,18 @@
                 </tr>
                 <tr v-for="(movie, index) in displayedMovies " :key="index">
 
-                    <td style="width: 200px; background-color: #6f81a2;"><img :src="'https://image.tmdb.org/t/p/w342' + movie.poster_path" alt=""
-                            @click="gotoSeat(movie)" style="width: 200px; ">
+                    <td style="width: 200px; background-color: #6f81a2;"><img
+                            :src="'https://image.tmdb.org/t/p/w342' + movie.poster_path" alt="" @click="gotoSeat(movie)"
+                            style="width: 200px; ">
                     </td>
                     <td style="background-color: #6f81a2;">{{ movie.title }}</td>
                     <!-- <td>{{ getType(movie) }}</td> -->
-                    <td style=" width: 35vw;background-color: #6f81a2;">{{ truncateOverview(movie.overview === "" ? "尚未有簡介" :
+                    <td style=" width: 35vw;background-color: #6f81a2;">{{ truncateOverview(movie.overview === "" ? "尚未有簡介"
+                        :
                         movie.overview) }}</td>
                     <td style="margin: 0 2% 0 2%;background-color: #6f81a2;">{{ movie.release_date }}</td>
-                    <td style="background-color: #6f81a2;"><button class="create" type="button" @click="gotoSeat(movie)">建立場次</button></td>
+                    <td style="background-color: #6f81a2;"><button class="create" type="button"
+                            @click="gotoSeat(movie)">建立場次</button></td>
                 </tr>
             </thead>
         </table>
@@ -73,6 +76,7 @@ export default {
         }
     },
     methods: {
+        //限制簡介的數字
         truncateOverview(overview) {
             const maxLength = 200; // 设置最大字数
             if (overview.length > maxLength) {
@@ -81,30 +85,43 @@ export default {
                 return overview;
             }
         },
+        //滑到最上面
         scrollToTop() {
             window.scrollTo(0, 0);
         },
+        //到指定頁數
         goToPage(pageNumber) {
             this.currentPage = pageNumber;
             this.scrollToTop()
         },
+        //下一頁
         nextPage() {
             if (this.currentPage < Math.ceil(this.objPlayMovies.length / this.pageSize)) {
                 this.currentPage++;
             }
             this.scrollToTop()
         },
+        //上一頁
         prevPage() {
             if (this.currentPage > 1) {
                 this.currentPage--;
             }
             this.scrollToTop()
         },
+        //回到搜尋頁面
         gobackSearch() {
             this.$router.push('/backSearch')
         },
-        gobackAdd() {
-            this.$router.push('/backAdd')
+        //到添加資訊頁面
+        gotoSeat(movie) {
+            console.log(movie)
+            this.$router.push({
+                name: 'backAdd',
+                query: {
+                    movieId: movie.id,
+                    movieTitle: movie.title,
+                }
+            });
         },
         async getPlayMovie() { //上映中
             const options = {
@@ -162,16 +179,6 @@ export default {
             } catch (error) {
                 console.error(error);
             }
-        },
-        gotoSeat(movie) {
-            console.log(movie)
-            this.$router.push({
-                name: 'backAdd',
-                query: {
-                    movieId: movie.id,
-                    movieTitle: movie.title,
-                }
-            });
         },
         async getMovieName() { //上映中
             const options = {
@@ -268,7 +275,7 @@ export default {
     },
     computed: {
         displayedMovies() {
-            const startIndex = (this.currentPage -1) * this.pageSize;
+            const startIndex = (this.currentPage - 1) * this.pageSize;
             const endIndex = startIndex + this.pageSize;
             return this.objPlayMovies.slice(startIndex, endIndex);
         },
@@ -372,12 +379,13 @@ export default {
         // line-height: 2em;
         padding-top: 10px;
     }
-    .textTC{
-            font-family:'jf-openhuninn-2.0';
-            font-size: 1.5em;
-            margin-top: 20px;
-            color: rgb(0, 0, 0);
-            // margin-bottom: 50px;
+
+    .textTC {
+        font-family: 'jf-openhuninn-2.0';
+        font-size: 1.5em;
+        margin-top: 20px;
+        color: rgb(0, 0, 0);
+        // margin-bottom: 50px;
     }
 
 
@@ -416,7 +424,7 @@ export default {
         .create {
             border: 0;
             font-size: 1em;
-            font-family:'jf-openhuninn-2.0';
+            font-family: 'jf-openhuninn-2.0';
             color: rgb(0, 0, 0);
             margin-top: 2.5%;
             transition: 0.4s;
@@ -425,9 +433,10 @@ export default {
             background: none;
             outline: none;
             background-color: none;
-            &:hover{
-            color:rgb(228, 220, 220);
-            transform:scale(1.2,1.2);
+
+            &:hover {
+                color: rgb(228, 220, 220);
+                transform: scale(1.2, 1.2);
             }
         }
     }
@@ -452,41 +461,43 @@ export default {
 
     }
 }
-.buttonZ{
-        width: 12.2vw;
-        height: 4.9vh;
-        border: none;
-        background-color: rgb(176, 182, 213);
-        border-radius: 10px;
-        font-size: 1.2em;
-        font-family:'jf-openhuninn-2.0';
-        transition: 0.4s;
-        line-height: 1em;
-        margin: 25px 30px 0 0;
-        &:hover{
-          background-color: gainsboro;
-          color:darkslategray;
-          transform:scale(1.1,1.1);
-        }
-    }
 
-    
-.fixword{
-        width: 6.2vw;
-        height: 3.9vh;
-        border: none;
-        font-size: 1em;
-        font-family:'jf-openhuninn-2.0';
-        color: white;
-        margin-top: 2.5%;
-        transition: 0.4s;
-        line-height: 1em;
-        border: none;
-        background: none;
-        outline: none;
-        &:hover{
-          color:rgb(255, 255, 255);
-          transform:scale(1.2,1.2);
-        }
+.buttonZ {
+    width: 12.2vw;
+    height: 4.9vh;
+    border: none;
+    background-color: rgb(176, 182, 213);
+    border-radius: 10px;
+    font-size: 1.2em;
+    font-family: 'jf-openhuninn-2.0';
+    transition: 0.4s;
+    line-height: 1em;
+    margin: 25px 30px 0 0;
+
+    &:hover {
+        background-color: gainsboro;
+        color: darkslategray;
+        transform: scale(1.1, 1.1);
     }
-</style>
+}
+
+
+.fixword {
+    width: 6.2vw;
+    height: 3.9vh;
+    border: none;
+    font-size: 1em;
+    font-family: 'jf-openhuninn-2.0';
+    color: white;
+    margin-top: 2.5%;
+    transition: 0.4s;
+    line-height: 1em;
+    border: none;
+    background: none;
+    outline: none;
+
+    &:hover {
+        color: rgb(255, 255, 255);
+        transform: scale(1.2, 1.2);
+    }
+}</style>

@@ -60,9 +60,6 @@ export default {
             .then(kk => {
             // 處理返回的數據
               console.log(kk)
-              if(kk.code =200){
-                this.$router.push("/login")
-              }
             })
             .catch(error => {
               console.error('Error fetching data:', error);

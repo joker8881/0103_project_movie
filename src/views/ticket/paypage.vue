@@ -227,6 +227,32 @@ export default {
     gotobackcreate(){
       this.$router.push("/backSearch")
     },
+    paycheck(index){
+      console.log(index)
+      fetch('http://localhost:8080/movie/buyinfo/paycheck', {
+        method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          number:index,
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+      // 處理返回的數據
+      console.log(data)
+      console.log(data.code)
+      if(data.code = 200){
+        Swal.fire('已繳費完成')
+      } else{
+        Swal.fire('已繳費過')
+      }
+      })
+      .catch(error => {
+      console.error('Error fetching data:', error);
+      });
+    },
   },
   mounted(){
     this.ticketinfo = this.$route.query
@@ -292,7 +318,7 @@ export default {
                         </div>
                     </div>
                     <div class="modal-footer" style="justify-content: space-around;">
-                        <button type="button" class="btn btn-primary a" data-bs-dismiss="modal" style="background-color: green;border: none;" @click="verifyway" :disabled="!this.holdname || !this.holdcardnumber || !this.holdcarddate || !this.holdcardpass">付款</button>
+                        <button type="button" class="btn btn-primary a" data-bs-dismiss="modal" style="background-color: green;border: none;" @click="paycheck()" :disabled="!this.holdname || !this.holdcardnumber || !this.holdcarddate || !this.holdcardpass">付款</button>
                     </div>
                 </div>
             </div>

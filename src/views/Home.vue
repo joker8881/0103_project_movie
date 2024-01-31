@@ -68,7 +68,7 @@ export default {
     },
   },
   methods: {
-    async getPlayMovie() { // 上映中123
+    async getPlayMovie() { // 上映中
       const options = {
         method: "GET",
         headers: {

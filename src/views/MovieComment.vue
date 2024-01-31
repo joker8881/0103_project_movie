@@ -11,6 +11,7 @@ export default {
       trailerLink: null,
       type: [], // 所有類型19個
       movieType: [], // 此電影類型
+      movieType1: [], // 此電影類型
       movieTime: "",
       hours: "",
       minutes: "",
@@ -137,6 +138,40 @@ export default {
               }
           }
           console.log(this.movieType);
+        })
+        .catch((err) => console.error(err));
+    },
+    getMovieTypeToZhTW() { //電影類型轉中文
+      const options = {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
+        },
+      };
+      fetch(
+        "https://api.themoviedb.org/3/genre/movie/list?language=en",
+        options
+      )
+        .then((response) => response.json())
+        .then((response) => {
+          (this.type = response.genres), console.log(this.type);
+          console.log(this.type);
+          const a = ["動作", "冒險", "動畫", "喜劇", "犯罪", "紀錄", "劇情", "家庭", "奇幻", "歷史", "恐怖", "音樂", "懸疑", "愛情", "科幻", "電視電影", "驚悚", "戰爭", "西部"]
+          this.type = this.type.map((item, index) => {
+            return { ...item, name1: a[index] };
+          });
+          console.log(this.type);
+          for (let i = 0; i < this.movieInfo.movieGenreid.length; i++) {
+            for (let j = 0; j < this.type.length; j++)
+              if (
+                parseInt(this.movieInfo.movieGenreid[i]) === this.type[j].id
+              ) {
+                this.movieType1.push(this.type[j].name1);
+              }
+          }
+          console.log(this.movieType1);
         })
         .catch((err) => console.error(err));
     },
@@ -553,6 +588,7 @@ export default {
     this.getTrailer();
     this.getPerson();
     this.getMovieType();
+    this.getMovieTypeToZhTW();
     this.commentSearch();
     this.getMovieTime();
     this.searchPicture();
@@ -589,7 +625,7 @@ export default {
             <div class="movieDataRight22">
               <div class="type">
                 <h3 class="textHeader">類型：</h3>
-                <span class="textall" style="line-height: 50px" v-for="(item, index) in this.movieType" :key="index">{{
+                <span class="textall" style="line-height: 50px" v-for="(item, index) in this.movieType1" :key="index">{{
                   item }}<span v-if="index < this.movieType.length - 1" class="textall" style="font-size: 1em">、</span></span><br />
               </div>
               <div class="director">

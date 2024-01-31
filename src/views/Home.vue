@@ -325,7 +325,7 @@ export default {
       console.log(this.selectedType);
       let genres = "";
       for (let i = 0; i < this.objtype.length; i++) {
-        if (this.selectedType === this.objtype[i].name) {
+        if (this.selectedType === this.objtype[i].name1) {
           genres = this.type[i].id;
         }
       }
@@ -488,6 +488,12 @@ export default {
         .then((response) => {
           (this.type = response.genres), console.log(this.type);
           this.objtype = this.type;
+          console.log(this.objtype);
+          const a = ["動作", "冒險", "動畫", "喜劇", "犯罪", "紀錄", "劇情", "家庭", "奇幻", "歷史", "恐怖", "音樂", "懸疑", "愛情", "科幻", "電視電影", "驚悚", "戰爭", "西部"]
+          this.objtype = this.type.map((item, index) => {
+            return { ...item, name1: a[index] };
+          });
+          console.log(this.objtype);
         })
         .catch((err) => console.error(err));
     },
@@ -685,7 +691,7 @@ export default {
   <div class="movieType" style="margin: 20px 0 60px 0;">
     <select @change="getTypeMovie">
       <option v-for="(item, index) in this.objtype" :key="index">
-        {{ item.name }}
+        {{ item.name1 }}
       </option>
     </select>
   </div>
@@ -733,7 +739,6 @@ h1 {
   text-align: center;
 }
 span, button, p, label, select {
-  // font-family: "Montserrat", sans-serif, sans-serif, "M PLUS 1";
   font-family:'jf-openhuninn-2.0';
   color: rgb(51, 51, 62);
   font-size: 22px;

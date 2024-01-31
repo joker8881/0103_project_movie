@@ -513,10 +513,11 @@ export default {
         // 请求成功的回调函数
         console.log(res);
         console.log(res.data.movieInfoList);
-        const= res.data.movieInfoList.some(movie => movie.onSell ==true){}
-        
+
+        const sell = res.data.movieInfoList.filter(movie => movie.onSell ==true)
+        console.log(sell);
         // 对获取到的电影信息数组按照 onDate 进行排序
-        this.objPlayingMovie = res.data.movieInfoList.sort((a, b) => {
+        this.objPlayingMovie = sell.sort((a, b) => {
           // 将日期字符串转换为 Date 对象进行比较
           return new Date(a.onDate) - new Date(b.onDate);
         });

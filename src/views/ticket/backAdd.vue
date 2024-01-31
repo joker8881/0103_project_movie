@@ -47,7 +47,7 @@
             <button v-if="movieAllTime.length > 0" type="button" @click="deleteSelected()" class="buttonS">刪除</button>
             <div class="checkButton">
                 <button type="button" @click="backCreate()" class="buttonX">返回</button>
-                <button type="button" @click="createS()" class="buttonX">送出資料</button>
+                <button type="button" @click="createS()" class="buttonX">儲存資料</button>
                 <button type="button" @click="createP()" class="buttonXL">送出資料並開啟售票</button>
             </div>
         </div>

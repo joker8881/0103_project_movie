@@ -1,6 +1,7 @@
 <script>
 import Cookies from "js-cookie";
 import axios from "axios";
+import Swal from 'sweetalert2'
 import { NCarousel } from "naive-ui";
 export default {
   data() {
@@ -42,6 +43,7 @@ export default {
   },
   components: {
     NCarousel,
+    Swal,
   },
   computed: {
     sortComments() { // 篩選留言
@@ -560,10 +562,12 @@ export default {
     gotoSeat(movie) {
       if (!this.selectedTime) {
         // 如果沒有選擇時間，可以進行相應的處理，例如顯示提示訊息
-        alert('請選擇時間');
+        // alert('請選擇時間');
+        Swal.fire("請選擇時間")
         return;
       }
       // 在這裡可以進行相應的處理，比如導航到座位選擇頁面
+      Swal.fire("開始選取座位")
       this.$router.push({
         name: 'seat',
         query: {

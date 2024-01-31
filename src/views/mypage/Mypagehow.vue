@@ -17,6 +17,7 @@ export default {
       trailerLink: null,
       type: [],
       movieType: [],
+      movieType1: [], // 此電影類型
       //評論區相關
       mymovie:[
         { title:"0",imgUrl:"/r5kvFAqfyDBFZzDY5XTJYxDidsZ.jpg"},
@@ -162,34 +163,39 @@ export default {
         return null; // 或者返回其他适当的值，视情况而定
       }
     },
-    getMovieType() { //電影類型 
-        const options = {
-        method: 'GET',
+    getMovieTypeToZhTW() { //電影類型轉中文
+      const options = {
+        method: "GET",
         headers: {
-          accept: 'application/json',
-          Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww'
-        }
+          accept: "application/json",
+          Authorization:
+            "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIxZTBiNGVhYWYyMjVhZTdmYzFhNjdjYzk0ODk5Mjk5OSIsInN1YiI6IjY1N2ZjYzAzMGU2NGFmMDgxZWE4Mjc3YSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3d6GcXTBf2kwGx9GzG7O4_8eCoHAjGxXNr9vV1lVXww",
+        },
       };
-      fetch('https://api.themoviedb.org/3/genre/movie/list?language=en', options)
+      fetch(
+        "https://api.themoviedb.org/3/genre/movie/list?language=en",
+        options
+      )
         .then((response) => response.json())
         .then((response) => {
-          this.type = response.genres,
-          console.log(this.type)
-          console.log(this.movielove.movieGenreid)
-          console.log(this.movielove.movieGenreid.length)
-          console.log(this.type.length)
-          console.log(this.movielove.movieGenreid[0])
-          console.log(this.type[6].id)
-          console.log(parseInt(this.movielove.movieGenreid[0])===this.type[6].id ? 1:2)
-          for(let i=0;i<this.movielove.movieGenreid.length;i++){
-            for(let j=0;j<this.type.length;j++)
-            if(parseInt(this.movielove.movieGenreid[i])===this.type[j].id){
-              this.movieType.push(this.type[j].name)
-            }
+          (this.type = response.genres), console.log(this.type);
+          console.log(this.type);
+          const a = ["動作", "冒險", "動畫", "喜劇", "犯罪", "紀錄", "劇情", "家庭", "奇幻", "歷史", "恐怖", "音樂", "懸疑", "愛情", "科幻", "電視電影", "驚悚", "戰爭", "西部"]
+          this.type = this.type.map((item, index) => {
+            return { ...item, name1: a[index] };
+          });
+          console.log(this.type);
+          for (let i = 0; i < this.movieInfo.movieGenreid.length; i++) {
+            for (let j = 0; j < this.type.length; j++)
+              if (
+                parseInt(this.movieInfo.movieGenreid[i]) === this.type[j].id
+              ) {
+                this.movieType1.push(this.type[j].name1);
+              }
           }
-          console.log(this.movieType)
+          console.log(this.movieType1);
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
     },
     splitMovies() {
       const pageSize = 9;
@@ -254,12 +260,8 @@ export default {
     console.log(this.movielove)
     console.log(this.movielove.movieGenreid)
     console.log(this.moviewall)
-    // console.log("Movie Details:", this.movieInfo);
-    // this.getPerson();
-    // await this.getTrailer();
-    // await this.getMovieType();
     setTimeout(() => {
-      this.getMovieType();
+      this.getMovieTypeToZhTW();
       this.getPerson();
     }, 500);
     setTimeout(() => {
@@ -309,8 +311,8 @@ export default {
           <img :src="'https://image.tmdb.org/t/p/w500' + this.movielove.moviePoster" alt=""/>
         </div>
         <div class="movieDataRight">
-          <h1>{{ this.movielove.movieTitle }}</h1>
-          <h6>{{ this.movielove.movieOriginaltitle }}</h6>
+          <h1 class="textHeader">{{ this.movielove.movieTitle }}</h1>
+          <h6 class="textall">{{ this.movielove.movieOriginaltitle }}</h6>
           <h2 class="textHeader">上映日期：{{ this.movielove.movieReleasedate }}</h2>
           <hr />
           <h2>Movie Info</h2>
@@ -318,15 +320,17 @@ export default {
             <div class="movieDataRight22">
               <div class="type">
                 <h3 class="textHeader">類型：</h3>
-                <span class="textall" style="line-height: 50px;" v-for="(item,index) in this.movieType" :key="index">{{ item }}<span v-if="index < this.movieType.length - 1" class="textall" style="font-size: 1em;">、</span></span><br>
+                <span class="textall" style="line-height: 50px;" v-for="(item,index) in this.movieType1" :key="index">{{ item }}<span v-if="index < this.movieType1.length - 1" class="textall" style="font-size: 1em;">、</span></span><br>
               </div>
               <div class="director">
                 <h3 class="textHeader">導演：</h3>
                 <span class="textall" style="line-height: 50px;" v-for="(item, index) in this.directors" :key="index">{{ item.original_name }}<span v-if="index < this.directors.length - 1">,</span></span><br>
               </div>
               <div class="casts">
-                <h3 class="textHeader" style="width: 90px; height: 50px;">演員：</h3>
-                <div style="width: 90%;display: flex;"><p class="textall" style="line-height: 50px;" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em;">、</span></p><br></div>
+                <h3 class="textHeader" style="width: 105px; height: 50px">演員：</h3>
+                <div style="width: 90%; display: flex ;flex-wrap: wrap;">
+                  <p class="textall" style="line-height: 50px;" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em;">、</span></p><br>
+                </div>
               </div>
               <div class="voteAvg">
                 <h3 class="textHeader">評分：</h3>

@@ -638,8 +638,8 @@ export default {
               </div>
               <div class="casts">
                 <h3 class="textHeader" style="width: 105px; height: 50px">演員：</h3>
-                <div style="width: 90%; display: flex">
-                  <p class="textall" style="line-height: 50px" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em">、</span></p><br />
+                <div style="width: 90%; display: flex ;flex-wrap: wrap;">
+                  <span class="textall" style="line-height: 50px;" v-for="(item, index) in this.casts" :key="index">{{ item.original_name }}<span v-if="index < this.casts.length - 1" class="textall" style="font-size: 1em">、</span></span><br />
                 </div>
               </div>
               <div class="voteAvg">

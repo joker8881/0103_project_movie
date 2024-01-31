@@ -30,22 +30,7 @@ export default {
   methods:{
     register(){
       if(this.account != "" && this.password == this.password2 && this.account != this.password && this.email .toString().length > 6 && this.phone.toString().length == 10 && this.name !=""){
-          fetch('http://localhost:8080/movie/user/search', {
-          method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            account:this.account,
-          })
-      })
-      .then(response => response.json())
-      .then(data => {
-      // 處理返回的數據
-          console.log(data)
-          console.log(data.code)
-          if(data.code = 200){
-            fetch('http://localhost:8080/movie/user/create', {
+        fetch('http://localhost:8080/movie/user/create', {
               method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping
               headers: {
                   'Content-Type': 'application/json'
@@ -62,18 +47,17 @@ export default {
             .then(kk => {
             // 處理返回的數據
               console.log(kk)
-              Swal.fire('請前往信箱領取驗證碼進行驗證！')
+              if(kk.code==200){
+                Swal.fire('請前往信箱領取驗證碼進行驗證！')
+              }else if(kk.code==401){
+                Swal.fire('帳號已存在，請使用別的帳號註冊')
+              }else if(kk.code==402){
+                Swal.fire('信箱已註冊，請使用別的信箱註冊')
+              }
             })
             .catch(error => {
               console.error('Error fetching data:', error);
             });
-          } else if (data.code = 400){
-            this.b = "已有相同的帳號存在"
-          }
-      })
-      .catch(error => {
-          console.error('Error fetching data:', error);
-      });
       // this.$router.push("/")
       } else if( this.account=="") {
         this.b = "請確認帳號的輸入"

@@ -161,6 +161,8 @@ export default {
                       this.accountInfo.name = this.changeName
                       this.accountInfo.email = (this.changeemail + this.emailboxTarget)
                       this.accountInfo.phone = this.changephone
+                    }else if (data.code ==402){
+                      Swal.fire('信箱已被使用')
                     }
                 })
                 .catch(error => {

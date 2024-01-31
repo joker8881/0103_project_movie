@@ -12,9 +12,9 @@ export default defineComponent({
 
   data() {
     return {
-      searchMode: 'original',   // 搜尋模式：original（原始）或 result（結果）
-      searchText: '',           // 搜尋文字
-      searchResults: '',         // 搜尋結果
+      searchMode: 'original',   //  搜尋模式：original（原始）或 result（結果）
+      searchText: '',           //   搜尋文字
+      searchResults: '',         //  搜尋結果
       convasIsCloss: false,
       convasIs: false,
       //電影相關

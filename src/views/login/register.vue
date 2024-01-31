@@ -1,6 +1,7 @@
 <script>
 import { RouterLink, RouterView } from "vue-router";
 import Popper from "vue3-popper";
+import Swal from 'sweetalert2'
 export default {
   data() {
     return{
@@ -24,6 +25,7 @@ export default {
   components: {
     RouterLink,
     Popper,
+    Swal,
   },
   methods:{
     register(){
@@ -60,6 +62,7 @@ export default {
             .then(kk => {
             // 處理返回的數據
               console.log(kk)
+              Swal.fire('請前往信箱領取驗證碼進行驗證！')
             })
             .catch(error => {
               console.error('Error fetching data:', error);
@@ -131,6 +134,7 @@ export default {
       .then(response => response.json())
       .then(data => { // 處理返回的數據
         console.log(data);
+        Swal.fire('驗證完成，帳號已開通')
         this.$router.push("/login")
       })
       .catch(error => {

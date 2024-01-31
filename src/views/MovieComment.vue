@@ -517,9 +517,9 @@ export default {
           // 将日期字符串转换为 Date 对象进行比较
           return new Date(a.onDate) - new Date(b.onDate);
         });
-        // 过滤出小于或等于今天日期的电影信息
+        // 过滤出小于或等于今天日期的电影信息，并且 onSell 为 true
         const today = new Date()
-        this.objPlayingMovie = this.objPlayingMovie.filter(movie => new Date(movie.onDate) >= today);
+        this.objPlayingMovie = this.objPlayingMovie.filter(movie => new Date(movie.onDate) >= today && movie.onSell);
       });
     },
     gotoSeat(movie) {
@@ -650,13 +650,13 @@ export default {
         <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 15pt; color:#557; background-color: #d1d8e3;" type="button" @click="cinemaSearch('暐衡劇院')">台北暐衡劇院</button>
       </div>
       <div class="selectDate" v-for="(movie, index) in objPlayingMovie">
-        <h6 style="font-family:'jf-openhuninn-2.0'; color: #557;">{{ movie.onDate }}</h6>
-        <h5 style="font-family:'jf-openhuninn-2.0'; color: #557;">{{ movie.area }}</h5>
-        <select style="font-family:'jf-openhuninn-2.0'; color: #557;" v-model="this.selectedTime">
+        <h6 style="font-family:'jf-openhuninn-2.0'; color: #557;" >{{ movie.onDate }}</h6>
+        <h5 style="font-family:'jf-openhuninn-2.0'; color: #557;" >{{ movie.area }}</h5>
+        <select style="font-family:'jf-openhuninn-2.0'; color: #557;" v-model="this.selectedTime" >
           <option style=" " value="">選擇時間</option>
           <option v-for="(time, timeIndex) in JSON.parse(movie.onTime)" :key="timeIndex">{{ time }}</option>
         </select>
-        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 12pt; color:#557; background-color: #d1d8e3;" type="button" @click="gotoSeat(movie)">選取位置</button>
+        <button style="font-family:'jf-openhuninn-2.0'; border-radius: 6px; font-size: 12pt; color:#557; background-color: #d1d8e3;" type="button" @click="gotoSeat(movie)" >選取位置</button>
       </div>
     </div>
 

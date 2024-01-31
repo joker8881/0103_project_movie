@@ -61,6 +61,7 @@ export default {
               Cookies.set('account', this.account, { expires: 7, path: '/' });
               // Cookies.set('admin', true, { expires: 7, path: '/' });
               this.login(this.account)
+              Swal.fire('登入成功，歡迎管理者');
               this.$router.push("/")
             }
             if(data.code == 200){
@@ -71,6 +72,7 @@ export default {
               console.log(Cookies.get('account'))
               console.log(this.getAuth)
               console.log(this.getuser)
+              Swal.fire('登入成功');
               this.$router.push("/")
             }
             if(data.rtnCode == "Account not verify"){

@@ -340,7 +340,7 @@ export default {
               <div class="leftbox">
                 <p class="transcolor" @click="gotomyInfo()">個人資訊</p>
                 <p class="transcolor" @click="gotomyticket()" v-if="this.accountadminverify == false">訂票資訊</p>
-                <p class="transcolor" @click="gotomypageB()">修改個人頁</p>
+                <p class="transcolor" @click="gotomypageB()" v-if="this.accountadminverify == false">修改個人頁</p>
                 <p class="transcolor" v-if="this.accountadminverify" @click="gotobackcreate()">後台系統</p>
               </div>
               <div class="rightbox" v-if="selectbar == 1">

@@ -36,8 +36,9 @@
                     <th style="width: 10vw;">修改場次</th>
                 </tr>
                 <tr v-for="(movie, index) in displayedMovies" :key="index">
-                    <td style="background-color: #6f81a2;"><i class="fa-solid fa-trash"
-                            @click="this.deleteMovie(movie.number)"></i>
+                    <td style="background-color: #6f81a2;">
+                        <i class="fa-solid fa-trash" @click="this.deleteMovie(movie.number)" v-if="!movie.onSell"></i>
+                        <i class="fa-solid fa-xmark" v-if="movie.onSell"></i>
                     </td>
                     <td style="background-color: #6f81a2;">{{ movie.movie }}</td>
                     <td style="background-color: #6f81a2;">{{ movie.cinema }}</td>

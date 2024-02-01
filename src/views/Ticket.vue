@@ -391,7 +391,7 @@ export default {
           width: 100%;
           margin-right: 10px;
           border-radius: 10px 10px 0 0;
-          object-fit: cover; // 保持圖片比例並填滿 img 區域
+          object-fit: cover; // 保持圖片比例並填滿 img 區
           cursor: pointer;
           
         }

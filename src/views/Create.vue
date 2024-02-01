@@ -49,7 +49,7 @@ export default defineComponent({
       pageTitle: '', // 初始化为空
 
       //畫板相關
-      canvasWidth: 763, // 畫板的寬度
+      canvasWidth: 755, // 畫板的寬度
       canvasHeight: 450, // 畫板的高度
       canvasContext: null,
       backgroundColor: 'rgba(40, 40, 40)',
@@ -739,7 +739,7 @@ export default defineComponent({
  <canvas ref="sketchpad" 
    @mousedown="onCanvasMouseDown"
    @mouseup="onCanvasMouseUp"
-   style="background-color: #f6fbff; border: 2px solid #000;"
+   style="background-color: #f6fbff; border: 2px solid #000; margin-left:8px"
    ></canvas>
 
  <ul class="toolbar" :class="{hideToolBar}">

@@ -31,17 +31,17 @@
                 </tr>
                 <tr v-for="(movie, index) in displayedMovies " :key="index">
 
-                    <td style="width: 200px; background-color: #6f81a2;"><img
+                    <td style="width: 200px; background-color: #b9c3d5;"><img
                             :src="'https://image.tmdb.org/t/p/w342' + movie.poster_path" alt="" @click="gotoSeat(movie)"
                             style="width: 200px; ">
                     </td>
-                    <td style="background-color: #6f81a2;">{{ movie.title }}</td>
+                    <td style="background-color: #b9c3d5;">{{ movie.title }}</td>
                     <!-- <td>{{ getType(movie) }}</td> -->
-                    <td style=" width: 35vw;background-color: #6f81a2;">{{ truncateOverview(movie.overview === "" ? "尚未有簡介"
+                    <td style=" width: 35vw;background-color: #b9c3d5;">{{ truncateOverview(movie.overview === "" ? "尚未有簡介"
                         :
                         movie.overview) }}</td>
-                    <td style="margin: 0 2% 0 2%;background-color: #6f81a2;">{{ movie.release_date }}</td>
-                    <td style="background-color: #6f81a2;"><button class="create" type="button"
+                    <td style="margin: 0 2% 0 2%;background-color: #b9c3d5;">{{ movie.release_date }}</td>
+                    <td style="background-color: #b9c3d5;"><button class="create" type="button"
                             @click="gotoSeat(movie)">建立場次</button></td>
                 </tr>
             </thead>
@@ -292,13 +292,14 @@ export default {
 
 <style scoped lang="scss">
 .view {
-
+    
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: rgb(174, 177, 192);
-    // background-color: rgb(255, 255, 255);
-
+    // background-color: rgb(174, 177, 192);
+    background-image: url(../../picture/Movie1.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
     .check {
         display: flex;
         width: 90vw;
@@ -409,7 +410,7 @@ export default {
         th {
             height: 5vh;
             border: 1px solid black;
-            border-radius: 5px;
+            // border-radius: 5px;
             color: rgb(237, 235, 235);
 
         }
@@ -500,4 +501,5 @@ export default {
         color: rgb(255, 255, 255);
         transform: scale(1.2, 1.2);
     }
-}</style>
+}
+</style>

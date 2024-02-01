@@ -207,6 +207,7 @@ export default {
                 return cc;
             };
         },
+        
     },
     methods: {
         //滑到最上面
@@ -365,27 +366,41 @@ export default {
         },
         //刪除電影的功能
         async deleteMovie(movieNumber) {
-            // 提示使用者確認是否刪除
-            const confirmDelete = window.confirm('確定要刪除此電影嗎？');
-
-            if (confirmDelete) {
-                // 如果使用者確認刪除，再進行刪除操作
-                try {
-                    const response = await axios.post('http://localhost:8080/movie/movieinfo/delete', {
-                        number: movieNumber
+            Swal.fire({
+                title: "確定嗎?",
+                text: "你確定要刪除這部電影資訊!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                cancelButtonText: "取消",
+                confirmButtonText: "我確定!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "刪除!",
+                        text: "你的資料已刪除.",
+                        icon: "success"
                     });
+                    const response = axios.post('http://localhost:8080/movie/movieinfo/delete', {
+                        number: movieNumber
 
-                    // 刪除成功的處理，例如重新載入或更新電影列表
-                    console.log(response);
-                } catch (error) {
-                    // 刪除失敗的處理，例如顯示錯誤信息
-                    console.error('刪除電影失敗', error);
+                    });
+                    setTimeout(() => { location.reload(); }, 2000);
                 }
-            } else {
-                // 如果使用者取消刪除，不執行任何操作
-                console.log('取消刪除');
-            }
-            this.search()
+            });
+            await this.search();
+            // // 提示使用者確認是否刪除
+            // const confirmDelete = window.confirm('確定要刪除此電影嗎？');
+            // if (confirmDelete) {
+            //     // 如果使用者確認刪除，再進行刪除操作
+            //     const response = await axios.post('http://localhost:8080/movie/movieinfo/delete', {
+            //         number: movieNumber
+            //     }
+            //     );
+            //     this.search();
+
+            // }
         },
         //更新電影不可購票
         updateS() {

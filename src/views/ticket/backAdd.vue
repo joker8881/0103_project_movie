@@ -48,7 +48,7 @@
             <div class="checkButton">
                 <button type="button" @click="backCreate()" class="buttonX">返回</button>
                 <button type="button" @click="createS()" class="buttonX">儲存資料</button>
-                <button type="button" @click="createP()" class="buttonXL">送出資料並開啟售票</button>
+                <button type="button" @click="createP()" class="buttonXL">儲存資料並開啟售票</button>
             </div>
         </div>
     </div>

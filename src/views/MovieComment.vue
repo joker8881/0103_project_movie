@@ -663,12 +663,17 @@ export default {
     <!-- <hr /> -->
 
     <!-- 預告片 -->
+    <div class="down" style="margin-top: 30px;">
+        <div class="turn FontA">
+          預告片
+        </div>
+      </div>
     <div class="middleInfo" style="margin-top: 50px; ">
-      <div class="middle">
+      <!-- <div class="middle">
         <div class="mid FontA">
           電影預告
         </div>
-      </div>
+      </div> -->
       <div class="trailer">
         <iframe width="720" height="480" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen></iframe>
       </div>
@@ -701,7 +706,12 @@ export default {
     </div>
 
     <!-- 創作區 -->
-    <h1 style="font-family:'jf-openhuninn-2.0'; color: #557;">網友創作展示</h1>
+    <div class="down" style="margin-top: 30px;margin-bottom: 30px;">
+        <div class="turn FontA">
+          網友創作展示
+        </div>
+      </div>
+    <!-- <h1 style="font-family:'jf-openhuninn-2.0'; color: #557;">網友創作展示</h1> -->
     <div class="ShowPoster">
       <div v-if="carouselImages.length === 0">
         <h4 style="font-family:'jf-openhuninn-2.0'; color: #557;">此電影暫無創作</h4>
@@ -720,7 +730,12 @@ export default {
     </div>
 
     <!-- 討論區 -->
-    <h1 style="font-family:'jf-openhuninn-2.0'; color: #557;">討論區</h1>
+    <div class="down" style="margin-top: 30px;margin-bottom: 30px;">
+        <div class="turn FontA">
+          討論區
+        </div>
+      </div>
+    <!-- <h1 style="font-family:'jf-openhuninn-2.0'; color: #557;">討論區</h1> -->
     <div class="footer">
       <div class="row">
         <div class="col-md-8">
@@ -1193,4 +1208,35 @@ span, button {
 .FontB{
   font-family:'jf-openhuninn-2.0'; 
 }
+
+.down {
+      display: flex;
+      justify-content: start;
+      width: 100vw;
+      height: 4em;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid rgb(230, 230, 230);
+      .turn {
+        font-weight: 300;
+        letter-spacing: 0.5em;
+        color: rgb(51, 51, 51);
+        height: 100%;
+        margin-left: 5vw;
+        font-size: 1.5em;
+        padding: 0px 2em;
+        display: flex;
+        align-items: center;
+        border-left: 1px solid rgb(230, 230, 230);
+        border-right: 1px solid rgb(230, 230, 230);
+        background: repeating-linear-gradient(-45deg,
+            rgba(0, 0, 0, 0.067),
+            rgba(0, 0, 0, 0.067) 2px,
+            rgba(0, 0, 0, 0) 2px,
+            rgba(0, 0, 0, 0) 4px);
+      }
+    }
 </style>

@@ -346,39 +346,33 @@ export default {
         </div>
       </div>
     </div>
-    <hr />
     <!-- 預告片 -->
+    <div class="down" style="margin-top: 30px;margin-bottom: 30px;">
+        <div class="turn FontA">
+          預告片
+        </div>
+      </div>
     <div class="middle">
       <!-- <h1>預告片</h1> -->
       <!-- <video :src="this.trailerLink" controls></video> -->
       <!-- <iframe :src="this.trailerLink" controls></iframe>-->
       <iframe width="1100" height="630" :src="'https://www.youtube.com/embed/' + trailerLink" frameborder="0" allowfullscreen></iframe>
     </div>
-    <hr />
     <!-- 討論區 -->
-    <h1 class="textTilte">個人影評</h1>
+    <div class="down" style="margin-top: 30px;margin-bottom: 30px;">
+        <div class="turn FontA">
+          個人影評
+        </div>
+      </div>
     <div class="comment">
       <textarea class="text" v-model="this.commentText" name="" id="" cols="30" rows="10" style="resize: none;height: 300px;width: 80%; margin-bottom: 10px;" placeholder="這裡可撰寫你自己對這部電影的想法心得"></textarea>
     </div>
-    <!-- <p class="text">我的電影清單（可以以電影海報的方式排列，像
-      是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
-      電影清單裡面的資料一樣會影響到＂為你推薦＂功能）我的電影清單（可以以電影海報的方式排列，像
-      是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
-      電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
-      我的電影清單（可以以電影海報的方式排列，像
-      是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
-      電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
-      我的電影清單（可以以電影海報的方式排列，像
-      是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
-      電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
-      我的電影清單（可以以電影海報的方式排列，像
-      是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
-      電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
-      我的電影清單（可以以電影海報的方式排列，像
-      是裝飾自己房間的牆壁一樣，一頁可以放滿九張海報，
-      電影清單裡面的資料一樣會影響到＂為你推薦＂功能）
-  </p> -->
   <button type="button" @click="gosend()" class="buttonX">確認送出</button>
+  <div class="down" style="margin-top: 30px;margin-bottom: 60px;">
+        <div class="turn FontA">
+          推薦電影
+        </div>
+      </div>
     <div class="footer" ref="scheduleSwipers">
       <swiper :options="swiperOption" ref="mySwiper">
         <swiper-slide v-for="(page, index) in pages" :key="index">
@@ -650,4 +644,35 @@ span, button {
         transform: scale(1.1, 1.1);
     }
 }
+
+.down {
+      display: flex;
+      justify-content: start;
+      width: 100vw;
+      height: 4em;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid rgb(230, 230, 230);
+      .turn {
+        font-weight: 300;
+        letter-spacing: 0.5em;
+        color: rgb(51, 51, 51);
+        height: 100%;
+        margin-left: 5vw;
+        font-size: 1.5em;
+        padding: 0px 2em;
+        display: flex;
+        align-items: center;
+        border-left: 1px solid rgb(230, 230, 230);
+        border-right: 1px solid rgb(230, 230, 230);
+        background: repeating-linear-gradient(-45deg,
+            rgba(0, 0, 0, 0.067),
+            rgba(0, 0, 0, 0.067) 2px,
+            rgba(0, 0, 0, 0) 2px,
+            rgba(0, 0, 0, 0) 4px);
+      }
+    }
 </style>

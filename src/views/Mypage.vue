@@ -578,10 +578,19 @@ export default {
         </div>
       </div>
     </div>
-    <hr />
     <!-- 預告片 -->
-    <h1 class="textTilte">個人影評</h1>
+    <div class="down" style="margin-bottom: 30px;">
+        <div class="turn FontA">
+          個人影評
+        </div>
+      </div>
+    <!-- <h1 class="textTilte">個人影評</h1> -->
     <p class="text" style="margin-bottom: 30px;">{{ this.moviecomment }}</p>
+    <div class="down" style="margin-bottom: 30px;">
+        <div class="turn FontA">
+          預告片
+        </div>
+      </div>
     <div class="middle">
       <!-- <h1>預告片</h1> -->
       <!-- <video :src="this.trailerLink" controls></video> -->
@@ -591,9 +600,12 @@ export default {
     </div>
     <!-- 討論區 -->
 
-  <hr />
+    <div class="down" style="margin-top: 30px;margin-bottom: 30px;">
+        <div class="turn FontA">
+          推薦電影
+        </div>
+      </div>
     <div class="footer" ref="scheduleSwipers">
-      <h1 class="textTilte">我的推薦電影</h1>
       <swiper :options="swiperOption" ref="mySwiper">
         <swiper-slide v-for="(page, index) in pages" :key="index">
           <div class="grid-container">
@@ -866,5 +878,36 @@ span, button {
         font-family:'jf-openhuninn-2.0';
         margin-top: 2.5%;
         margin-left: 2%;
+    }
+
+    .down {
+      display: flex;
+      justify-content: start;
+      width: 100vw;
+      height: 4em;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid rgb(230, 230, 230);
+      .turn {
+        font-weight: 300;
+        letter-spacing: 0.5em;
+        color: rgb(51, 51, 51);
+        height: 100%;
+        margin-left: 5vw;
+        font-size: 1.5em;
+        padding: 0px 2em;
+        display: flex;
+        align-items: center;
+        border-left: 1px solid rgb(230, 230, 230);
+        border-right: 1px solid rgb(230, 230, 230);
+        background: repeating-linear-gradient(-45deg,
+            rgba(0, 0, 0, 0.067),
+            rgba(0, 0, 0, 0.067) 2px,
+            rgba(0, 0, 0, 0) 2px,
+            rgba(0, 0, 0, 0) 4px);
+      }
     }
 </style>

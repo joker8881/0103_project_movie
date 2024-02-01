@@ -169,7 +169,7 @@ export default {
 <template>
     <div class="cBox">
         <div class="box">
-            <p class="textT">這裡是登入</p>
+            <p class="textT">登入</p>
             <p class="textL">帳號</p>
             <div class="form-floating mb-3">
                 <input type="text" class="form-control tb" id="floatingInput" placeholder="" v-model="this.account">
@@ -244,7 +244,7 @@ export default {
 <style scoped lang="scss">
 .cBox{
   width: 100vw;
-  height: 90vh;
+  height: 92vh;
   text-align: center;
   display: flex;
   justify-content: center;

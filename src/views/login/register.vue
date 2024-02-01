@@ -29,6 +29,7 @@ export default {
   },
   methods:{
     register(){
+      this.b =""
       if(this.account != "" && this.password == this.password2 && this.account != this.password && this.email .toString().length > 6 && this.phone.toString().length == 10 && this.name !=""){
         fetch('http://localhost:8080/movie/user/create', {
               method: 'POST', // 這裡使用POST方法，因為後端是@PostMapping

@@ -708,7 +708,7 @@ export default {
     <!-- 創作區 -->
     <div class="down" style="margin-top: 30px;margin-bottom: 30px;">
         <div class="turn FontA">
-          網友創作展示
+          影迷創作展示
         </div>
       </div>
     <!-- <h1 style="font-family:'jf-openhuninn-2.0'; color: #557;">網友創作展示</h1> -->

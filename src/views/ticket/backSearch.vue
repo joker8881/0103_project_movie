@@ -36,18 +36,18 @@
                     <th style="width: 10vw;">修改場次</th>
                 </tr>
                 <tr v-for="(movie, index) in displayedMovies" :key="index">
-                    <td style="background-color: #6f81a2;">
+                    <td style="background-color: #b9c3d5;">
                         <i class="fa-solid fa-trash" @click="this.deleteMovie(movie.number)" v-if="!movie.onSell"></i>
                         <i class="fa-solid fa-xmark" v-if="movie.onSell"></i>
                     </td>
-                    <td style="background-color: #6f81a2;">{{ movie.movie }}</td>
-                    <td style="background-color: #6f81a2;">{{ movie.cinema }}</td>
-                    <td style="background-color: #6f81a2;">{{ movie.area }}</td>
-                    <td style="background-color: #6f81a2;">{{ movie.price }}</td>
-                    <td style="background-color: #6f81a2;">{{ movie.onDate }}</td>
-                    <td style="background-color: #6f81a2;">{{ visableTime(movie.onTime) }}</td>
-                    <td style="background-color: #6f81a2;">{{ visableSell(movie.onSell) }}</td>
-                    <td style="background-color: #6f81a2;">
+                    <td style="background-color: #b9c3d5;">{{ movie.movie }}</td>
+                    <td style="background-color: #b9c3d5;">{{ movie.cinema }}</td>
+                    <td style="background-color: #b9c3d5;">{{ movie.area }}</td>
+                    <td style="background-color: #b9c3d5;">{{ movie.price }}</td>
+                    <td style="background-color: #b9c3d5;">{{ movie.onDate }}</td>
+                    <td style="background-color: #b9c3d5;">{{ visableTime(movie.onTime) }}</td>
+                    <td style="background-color: #b9c3d5;">{{ visableSell(movie.onSell) }}</td>
+                    <td style="background-color: #b9c3d5;">
                         <!-- 修改按鈕 -->
                         <button type="button" class="fixword" data-bs-toggle="modal" data-bs-target="#staticBackdrop"
                             @click="showEditModal(movie); searchTime()" :disabled="movie.onSell" v-if="!movie.onSell">
@@ -546,12 +546,14 @@ export default {
 
 <style scoped lang="scss">
 .view {
-    height: 100vh;
+    height: 92vh;
     display: flex;
     flex-direction: column;
     // justify-content: center;
     align-items: center;
-    background-color: rgb(174, 177, 192);
+    background-image: url(../../picture/Movie1.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
 
     .check {
         display: flex;
@@ -560,7 +562,7 @@ export default {
         height: 12vh;
         // border: 1px solid black;
         border-radius: 10px;
-        margin-top: 10px;
+        margin-top: 25px;
         background-color: #525f75;
 
         .search {

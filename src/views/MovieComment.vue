@@ -685,7 +685,7 @@ export default {
     </div>
     <!-- 選擇影城 -->
     <div class="middle1" v-if="this.userLoggedIn">
-      <div class="selectTheater" style="color:#557;">
+      <div class="selectTheater" style="color:#557;margin-left: 260px;">
         選取影城
       </div>
       <div class="selectButton">
@@ -1128,7 +1128,7 @@ span, button {
     }
     .selectButton {
       width: 100vw;
-      border-bottom: 3px solid rgb(238, 238, 238);
+      // border-bottom: 3px solid rgb(238, 238, 238);
       button {
         width: 10vw;
         height: 6vh;
@@ -1143,7 +1143,7 @@ span, button {
       padding: 1em 0px;
       justify-content: space-around;
       align-items: center;
-      border-bottom: 3px solid rgb(238, 238, 238);
+      border-top: 3px solid rgb(238, 238, 238);
       font-weight: 300;
     }
   }
@@ -1179,7 +1179,7 @@ span, button {
 }
 .selectButton {
   width: 100vw;
-  border-bottom: 3px solid rgb(238, 238, 238);
+  // border-bottom: 3px solid rgb(238, 238, 238);
 
   button {
     margin-right: 1em;
